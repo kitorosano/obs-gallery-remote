@@ -323,3 +323,191 @@ export async function setInputVolume(req, res) {
     });
   }
 }
+
+export async function getOutputStatus(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const [stream, record] = await Promise.all([
+      obs.call('GetStreamStatus'),
+      obs.call('GetRecordStatus'),
+    ]);
+
+    res.json({
+      ok: true,
+
+      stream: {
+        active: stream.outputActive,
+        reconnecting: stream.outputReconnecting,
+        timecode: stream.outputTimecode,
+        durationMs: stream.outputDuration,
+        congestion: stream.outputCongestion,
+      },
+
+      record: {
+        active: record.outputActive,
+        paused: record.outputPaused,
+        timecode: record.outputTimecode,
+        durationMs: record.outputDuration,
+      },
+    });
+  } catch (error) {
+    const message =
+      error?.message || 'No se pudo obtener el estado de emisión de OBS.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function startStream(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const current = await obs.call('GetStreamStatus');
+
+    if (current.outputActive) {
+      return res.status(409).json({
+        error: 'La transmisión ya está activa.',
+      });
+    }
+
+    await obs.call('StartStream');
+
+    const result = await obs.call('GetStreamStatus');
+
+    res.json({
+      ok: true,
+      active: result.outputActive,
+      reconnecting: result.outputReconnecting,
+      timecode: result.outputTimecode,
+      durationMs: result.outputDuration,
+      congestion: result.outputCongestion,
+    });
+  } catch (error) {
+    const message = error?.message || 'No se pudo iniciar la transmisión.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function stopStream(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const current = await obs.call('GetStreamStatus');
+
+    if (!current.outputActive) {
+      return res.status(409).json({
+        error: 'La transmisión no está activa.',
+      });
+    }
+
+    await obs.call('StopStream');
+
+    const result = await obs.call('GetStreamStatus');
+
+    res.json({
+      ok: true,
+      active: result.outputActive,
+      reconnecting: result.outputReconnecting,
+      timecode: result.outputTimecode,
+      durationMs: result.outputDuration,
+      congestion: result.outputCongestion,
+    });
+  } catch (error) {
+    const message = error?.message || 'No se pudo detener la transmisión.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function startRecord(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const current = await obs.call('GetRecordStatus');
+
+    if (current.outputActive) {
+      return res.status(409).json({
+        error: 'La grabación ya está activa.',
+      });
+    }
+
+    await obs.call('StartRecord');
+
+    const result = await obs.call('GetRecordStatus');
+
+    res.json({
+      ok: true,
+      active: result.outputActive,
+      paused: result.outputPaused,
+      timecode: result.outputTimecode,
+      durationMs: result.outputDuration,
+    });
+  } catch (error) {
+    const message = error?.message || 'No se pudo iniciar la grabación.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function stopRecord(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const current = await obs.call('GetRecordStatus');
+
+    if (!current.outputActive) {
+      return res.status(409).json({
+        error: 'La grabación no está activa.',
+      });
+    }
+
+    const stopped = await obs.call('StopRecord');
+
+    const result = await obs.call('GetRecordStatus');
+
+    res.json({
+      ok: true,
+      active: result.outputActive,
+      paused: result.outputPaused,
+      timecode: result.outputTimecode,
+      durationMs: result.outputDuration,
+      outputPath: stopped.outputPath || null,
+    });
+  } catch (error) {
+    const message = error?.message || 'No se pudo detener la grabación.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
