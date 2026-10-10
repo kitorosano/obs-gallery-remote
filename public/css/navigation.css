@@ -1,0 +1,41 @@
+/* NAVEGACIÓN */
+
+.app-nav {
+  display: flex;
+
+  gap: 0.35rem;
+
+  padding: 0.3rem;
+
+  margin-bottom: 1rem;
+
+  border: 1px solid #283247;
+  border-radius: 0.85rem;
+
+  background: #111827;
+
+  width: fit-content;
+}
+
+.nav-button {
+  min-width: 110px;
+
+  background: transparent;
+
+  border-color: transparent;
+
+  color: #9ca3af;
+}
+
+.nav-button.active {
+  background: #2563eb;
+
+  border-color: #3b82f6;
+
+  color: #ffffff;
+}
+
+.app-view[hidden] {
+  display: none;
+}
+

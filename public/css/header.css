@@ -1,0 +1,54 @@
+/* HEADER */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  padding: 1.1rem clamp(1rem, 3vw, 2rem);
+
+  border-bottom: 1px solid #283247;
+  background: #111827;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: #9ca3af;
+
+  margin: 0 0 0.25rem;
+}
+
+.topbar h1 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.obs-connection {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.status {
+  font-size: 0.8rem;
+
+  border-radius: 999px;
+
+  padding: 0.5rem 0.75rem;
+
+  white-space: nowrap;
+}
+
+.connected {
+  background: #064e3b;
+  color: #a7f3d0;
+}
+
+.disconnected {
+  background: #3f1d2a;
+  color: #fecdd3;
+}
+

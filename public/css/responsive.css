@@ -1,0 +1,93 @@
+/* TABLET / MÓVIL */
+
+@media (max-width: 850px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-panel {
+    order: -1;
+  }
+
+  .preview-frame {
+    min-height: 170px;
+
+    max-height: 38vh;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  }
+
+  .tile img {
+    height: 85px;
+  }
+
+  .scene-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 460px) {
+  .topbar {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .obs-connection {
+    width: 100%;
+  }
+
+  .status {
+    flex: 1;
+
+    text-align: center;
+  }
+
+  .obs-connection button {
+    flex: 1;
+  }
+
+  .app-nav {
+    width: 100%;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
+  }
+
+  .nav-button {
+    flex: 1;
+
+    min-width: 0;
+
+    min-height: 48px;
+  }
+
+  .toolbar button {
+    flex: 1;
+  }
+
+  .gallery-panel,
+  .preview-panel,
+  .scenes-panel {
+    padding: 0.75rem;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scene-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scene-button {
+    min-height: 88px;
+
+    padding: 0.8rem;
+  }
+}

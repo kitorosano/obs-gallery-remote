@@ -1,0 +1,142 @@
+/* ESCENAS */
+
+.scenes-panel {
+  max-width: 1000px;
+
+  margin: 0 auto;
+}
+
+.scenes-heading h2 {
+  margin: 0;
+}
+
+.program-card {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.55rem;
+
+  margin-top: 1rem;
+  margin-bottom: 1.4rem;
+
+  padding: 1rem;
+
+  border: 1px solid #065f46;
+
+  border-radius: 0.9rem;
+
+  background: #062d27;
+}
+
+.program-label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.45rem;
+
+  font-size: 0.7rem;
+
+  font-weight: 750;
+
+  letter-spacing: 0.08em;
+
+  color: #6ee7b7;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #34d399;
+
+  box-shadow: 0 0 0 4px #34d39920;
+}
+
+#current-scene {
+  font-size: clamp(1.25rem, 4vw, 1.8rem);
+
+  overflow-wrap: anywhere;
+}
+
+.scene-list-heading {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 0.75rem;
+}
+
+.scene-list-heading h3 {
+  font-size: 0.9rem;
+
+  margin: 0;
+}
+
+.scene-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+  gap: 0.75rem;
+}
+
+.scene-button {
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  gap: 0.45rem;
+
+  min-height: 78px;
+
+  padding: 0.9rem 1rem;
+
+  text-align: left;
+
+  background: #172033;
+
+  border: 1px solid #374151;
+
+  color: #f3f4f6;
+}
+
+.scene-button:not(:disabled):hover {
+  border-color: #60a5fa;
+
+  background: #1e293b;
+}
+
+.scene-button.active {
+  background: #064e3b;
+
+  border-color: #34d399;
+
+  opacity: 1;
+}
+
+.scene-name {
+  font-size: 0.95rem;
+
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.scene-live-badge {
+  font-size: 0.62rem;
+
+  letter-spacing: 0.07em;
+
+  color: #a7f3d0;
+}
+

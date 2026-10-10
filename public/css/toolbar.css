@@ -1,0 +1,12 @@
+/* TOOLBAR */
+
+.toolbar {
+  display: flex;
+
+  gap: 0.65rem;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 1rem;
+}
+

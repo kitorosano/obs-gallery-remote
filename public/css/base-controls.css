@@ -1,0 +1,50 @@
+/* BASE */
+
+main {
+  padding: 1.2rem clamp(1rem, 3vw, 2rem);
+
+  max-width: 1600px;
+
+  margin: auto;
+}
+
+input,
+button {
+  font: inherit;
+
+  border-radius: 0.7rem;
+  border: 1px solid #374151;
+
+  padding: 0.75rem 0.9rem;
+}
+
+input {
+  background: #111827;
+  color: #f9fafb;
+
+  flex: 1;
+
+  min-width: 180px;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+
+  border-color: #2563eb;
+
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: #1f2937;
+  border-color: #374151;
+}
+
