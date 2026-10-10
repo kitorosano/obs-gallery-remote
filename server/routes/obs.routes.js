@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import {
   connectToObs,
+  getAudioInputs,
   getObsStatus,
   getScenes,
   setCurrentScene,
+  setInputMute,
   showImage,
 } from '../controllers/obs.controller.js';
 
@@ -16,5 +18,8 @@ router.get('/scenes', getScenes);
 router.post('/scenes/current', setCurrentScene);
 
 router.post('/show', showImage);
+
+router.get('/audio', getAudioInputs);
+router.post('/audio/mute', setInputMute);
 
 export default router;

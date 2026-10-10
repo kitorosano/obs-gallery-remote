@@ -73,11 +73,9 @@ export async function showImage(req, res) {
 
   const imagePath = await resolveImageId(config.galleryRoot, imageId);
   if (!imagePath) {
-    return res
-      .status(404)
-      .json({
-        error: 'La imagen seleccionada no existe en la galería autorizada.',
-      });
+    return res.status(404).json({
+      error: 'La imagen seleccionada no existe en la galería autorizada.',
+    });
   }
 
   try {
@@ -149,6 +147,99 @@ export async function setCurrentScene(req, res) {
     });
   } catch (error) {
     const message = error?.message || 'No se pudo cambiar la escena de OBS.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function getAudioInputs(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const { inputs } = await obs.call('GetInputList');
+
+    const audioInputs = [];
+
+    for (const input of inputs) {
+      try {
+        const { inputMuted } = await obs.call('GetInputMute', {
+          inputName: input.inputName,
+        });
+
+        audioInputs.push({
+          inputName: input.inputName,
+          inputKind: input.inputKind,
+          muted: inputMuted,
+        });
+      } catch {
+        // Si GetInputMute falla, normalmente significa que
+        // este input no tiene capacidad de audio.
+        // Simplemente lo ignoramos.
+      }
+    }
+
+    res.json({
+      ok: true,
+      inputs: audioInputs,
+    });
+  } catch (error) {
+    const message =
+      error?.message || 'No se pudieron obtener las fuentes de audio de OBS.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function setInputMute(req, res) {
+  const { inputName, muted } = req.body || {};
+
+  if (typeof inputName !== 'string' || !inputName.trim()) {
+    return res.status(400).json({
+      error: 'Debes enviar inputName.',
+    });
+  }
+
+  if (typeof muted !== 'boolean') {
+    return res.status(400).json({
+      error: 'Debes enviar muted como true o false.',
+    });
+  }
+
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  const cleanInputName = inputName.trim();
+
+  try {
+    await obs.call('SetInputMute', {
+      inputName: cleanInputName,
+      inputMuted: muted,
+    });
+
+    // Confirmamos el estado real después del cambio.
+    const result = await obs.call('GetInputMute', {
+      inputName: cleanInputName,
+    });
+
+    res.json({
+      ok: true,
+      inputName: cleanInputName,
+      muted: result.inputMuted,
+    });
+  } catch (error) {
+    const message =
+      error?.message || 'No se pudo cambiar el estado de audio en OBS.';
 
     res.status(502).json({
       error: message,
