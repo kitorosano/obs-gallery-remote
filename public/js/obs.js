@@ -1,0 +1,46 @@
+export function createObsController({ api, elements }) {
+  async function refreshStatus() {
+    try {
+      const status = await api('/api/obs/status');
+
+      elements.status.textContent = status.connected
+        ? `OBS conectado${status.version ? ` · ${status.version}` : ''}`
+        : 'OBS desconectado';
+      elements.status.className = `status ${
+        status.connected ? 'connected' : 'disconnected'
+      }`;
+
+      return status.connected;
+    } catch {
+      elements.status.textContent = 'Servidor no disponible';
+      elements.status.className = 'status disconnected';
+      return false;
+    }
+  }
+
+  async function connect() {
+    return api('/api/obs/connect', { method: 'POST' });
+  }
+
+  async function showImage(image) {
+    elements.showButton.disabled = true;
+    elements.message.textContent = 'Enviando imagen a OBS…';
+
+    try {
+      const result = await api('/api/obs/show', {
+        method: 'POST',
+        body: JSON.stringify({ imageId: image.id }),
+      });
+
+      elements.message.textContent = result.message || 'Imagen enviada a OBS.';
+      elements.message.className = 'message success';
+    } catch (error) {
+      elements.message.textContent = `No se pudo mostrar la imagen: ${error.message}`;
+      elements.message.className = 'message error';
+    } finally {
+      elements.showButton.disabled = false;
+    }
+  }
+
+  return { connect, refreshStatus, showImage };
+}
