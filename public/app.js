@@ -135,6 +135,17 @@ function filteredImages() {
   });
 }
 
+function updateGallerySelection() {
+  const selectedId = selectedImage ? String(selectedImage.id) : null;
+
+  galleryEl.querySelectorAll('.tile').forEach((tile) => {
+    const isSelected = tile.dataset.imageId === selectedId;
+
+    tile.classList.toggle('selected', isSelected);
+    tile.setAttribute('aria-pressed', String(isSelected));
+  });
+}
+
 function renderGallery() {
   const visibleImages = filteredImages();
 
@@ -161,9 +172,11 @@ function renderGallery() {
   for (const image of visibleImages) {
     const tile = document.createElement('button');
 
-    tile.className = `tile${selectedImage?.id === image.id ? ' selected' : ''}`;
+    const isSelected = selectedImage?.id === image.id;
 
-    tile.setAttribute('aria-pressed', String(selectedImage?.id === image.id));
+    tile.className = `tile${isSelected ? ' selected' : ''}`;
+    tile.dataset.imageId = String(image.id);
+    tile.setAttribute('aria-pressed', String(isSelected));
 
     const img = document.createElement('img');
 
@@ -203,7 +216,7 @@ function selectImage(image) {
 
   showButton.disabled = false;
 
-  renderGallery();
+  updateGallerySelection();
 
   if (autoShowEl.checked) {
     showImage(image);
