@@ -1,0 +1,16 @@
+{
+  "name": "obs-gallery-remote",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Galería móvil local para controlar imágenes en OBS Studio mediante OBS WebSocket.",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "obs-websocket-js": "^5.0.6"
+  }
+}
