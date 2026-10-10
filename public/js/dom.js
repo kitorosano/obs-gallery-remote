@@ -36,6 +36,9 @@ export const elements = {
 
   streamStatus: $('#stream-status'),
   streamDuration: $('#stream-duration'),
+  streamDelayInfo: $('#stream-delay-info'),
+  streamDelay: $('#stream-delay'),
+  streamTotalTime: $('#stream-total-time'),
   streamButton: $('#stream-button'),
 
   recordStatus: $('#record-status'),

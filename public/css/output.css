@@ -153,6 +153,44 @@
 
   text-align: center;
 }
+.stream-delay-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.65rem;
+
+  padding: 0.85rem;
+
+  background: #0b1020;
+
+  border: 1px solid #283247;
+  border-radius: 0.75rem;
+}
+
+.stream-delay-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+}
+
+.stream-delay-row span {
+  font-size: 0.65rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.06em;
+
+  color: #9ca3af;
+}
+
+.stream-delay-row strong {
+  font-variant-numeric: tabular-nums;
+
+  white-space: nowrap;
+}
 
 @media (max-width: 700px) {
   .output-panel {

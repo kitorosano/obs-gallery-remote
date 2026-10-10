@@ -21,8 +21,7 @@ export function createOutput({ api, elements, refreshStatus }) {
 
   function setMessage(text = '', type = '') {
     elements.outputMessage.textContent = text;
-    elements.outputMessage.className =
-      `message ${type}`.trim();
+    elements.outputMessage.className = `message ${type}`.trim();
   }
 
   function formatDuration(durationMs) {
@@ -30,21 +29,14 @@ export function createOutput({ api, elements, refreshStatus }) {
       return '00:00:00';
     }
 
-    const totalSeconds = Math.max(
-      0,
-      Math.floor(Number(durationMs) / 1000),
-    );
+    const totalSeconds = Math.max(0, Math.floor(Number(durationMs) / 1000));
 
     const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor(
-      (totalSeconds % 3600) / 60,
-    );
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
     return [hours, minutes, seconds]
-      .map((value) =>
-        String(value).padStart(2, '0'),
-      )
+      .map((value) => String(value).padStart(2, '0'))
       .join(':');
   }
 
@@ -53,32 +45,21 @@ export function createOutput({ api, elements, refreshStatus }) {
       return 0;
     }
 
-    const baseDuration =
-      Number(output.durationMs) || 0;
+    const baseDuration = Number(output.durationMs) || 0;
 
     if (!lastSyncAt) {
       return baseDuration;
     }
 
-    const elapsed =
-      Date.now() - lastSyncAt;
+    const elapsed = Date.now() - lastSyncAt;
 
     return baseDuration + elapsed;
   }
 
-  function renderStatus({
-    container,
-    active,
-    activeText,
-    inactiveText,
-  }) {
-    container.className =
-      `output-status ${
-        active ? 'active' : 'inactive'
-      }`;
+  function renderStatus({ container, active, activeText, inactiveText }) {
+    container.className = `output-status ${active ? 'active' : 'inactive'}`;
 
-    container.textContent =
-      active ? activeText : inactiveText;
+    container.textContent = active ? activeText : inactiveText;
   }
 
   function renderTimers() {
@@ -86,15 +67,49 @@ export function createOutput({ api, elements, refreshStatus }) {
       return;
     }
 
-    elements.streamDuration.textContent =
-      formatDuration(
-        getEstimatedDuration(state.stream),
-      );
+    /*
+     * Duración que OBS WebSocket reporta
+     * como efectivamente emitida.
+     */
+    const streamDurationMs = getEstimatedDuration(state.stream);
 
-    elements.recordDuration.textContent =
-      formatDuration(
-        getEstimatedDuration(state.record),
-      );
+    elements.streamDuration.textContent = formatDuration(streamDurationMs);
+
+    /*
+     * Stream Delay configurado.
+     */
+    const delaySeconds = Number(state.stream.delaySeconds) || 0;
+
+    const delayMs = delaySeconds * 1000;
+
+    elements.streamDelay.textContent = `${delaySeconds} s`;
+
+    /*
+     * Nuestra prueba mostró:
+     *
+     * OBS visual: ~00:00:30
+     * WebSocket:   00:00:19.499
+     *
+     * Por lo tanto:
+     *
+     * tiempo desde inicio
+     * =
+     * tiempo emitido + Stream Delay
+     */
+    if (state.stream.active) {
+      const totalDurationMs = streamDurationMs + delayMs;
+
+      elements.streamTotalTime.textContent = `≈ ${formatDuration(totalDurationMs)}`;
+    } else {
+      elements.streamTotalTime.textContent = '—';
+    }
+
+    /*
+     * Grabación permanece igual.
+     */
+    elements.recordDuration.textContent = formatDuration(
+      getEstimatedDuration(state.record),
+    );
   }
 
   function render() {
@@ -108,27 +123,31 @@ export function createOutput({ api, elements, refreshStatus }) {
     /*
      * STREAM
      */
+    const streamDuration = getEstimatedDuration(stream);
+    const streamDelayMs = (Number(stream.delaySeconds) || 0) * 1000;
+    const waitingForDelay =
+      stream.active && streamDelayMs > 0 && streamDuration < streamDelayMs;
+
     renderStatus({
       container: elements.streamStatus,
       active: stream.active,
       activeText: stream.reconnecting
         ? 'RECONECTANDO'
-        : 'EN VIVO',
+        : waitingForDelay
+          ? 'EN RETRASO'
+          : 'EN VIVO',
       inactiveText: 'FUERA DEL AIRE',
     });
 
-    elements.streamButton.textContent =
-      stream.active
-        ? 'Detener transmisión'
-        : 'Iniciar transmisión';
+    elements.streamButton.textContent = stream.active
+      ? 'Detener transmisión'
+      : 'Iniciar transmisión';
 
-    elements.streamButton.className =
-      stream.active
-        ? 'output-action danger'
-        : 'output-action start';
+    elements.streamButton.className = stream.active
+      ? 'output-action danger'
+      : 'output-action start';
 
-    elements.streamButton.disabled =
-      actionInProgress;
+    elements.streamButton.disabled = actionInProgress;
 
     /*
      * RECORD
@@ -136,42 +155,30 @@ export function createOutput({ api, elements, refreshStatus }) {
     renderStatus({
       container: elements.recordStatus,
       active: record.active,
-      activeText: record.paused
-        ? 'PAUSADA'
-        : 'GRABANDO',
+      activeText: record.paused ? 'PAUSADA' : 'GRABANDO',
       inactiveText: 'SIN GRABAR',
     });
 
-    elements.recordButton.textContent =
-      record.active
-        ? 'Detener grabación'
-        : 'Iniciar grabación';
+    elements.recordButton.textContent = record.active
+      ? 'Detener grabación'
+      : 'Iniciar grabación';
 
-    elements.recordButton.className =
-      record.active
-        ? 'output-action danger'
-        : 'output-action start';
+    elements.recordButton.className = record.active
+      ? 'output-action danger'
+      : 'output-action start';
 
-    elements.recordButton.disabled =
-      actionInProgress;
+    elements.recordButton.disabled = actionInProgress;
 
     renderTimers();
   }
 
-  async function loadOutput({
-    silent = false,
-    preserveMessage = false,
-  } = {}) {
+  async function loadOutput({ silent = false, preserveMessage = false } = {}) {
     if (!silent) {
-      setMessage(
-        'Consultando estado de emisión…',
-      );
+      setMessage('Consultando estado de emisión…');
     }
 
     try {
-      const data = await api(
-        '/api/obs/output/status',
-      );
+      const data = await api('/api/obs/output/status');
 
       state = {
         stream: data.stream,
@@ -183,9 +190,7 @@ export function createOutput({ api, elements, refreshStatus }) {
        * este estado de OBS.
        */
       lastSyncAt = Date.now();
-
       outputLoaded = true;
-
       render();
 
       if (!silent && !preserveMessage) {
@@ -205,11 +210,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
   }
 
-  async function executeAction({
-    endpoint,
-    workingMessage,
-    successMessage,
-  }) {
+  async function executeAction({ endpoint, workingMessage, successMessage }) {
     if (actionInProgress) {
       return;
     }
@@ -236,15 +237,9 @@ export function createOutput({ api, elements, refreshStatus }) {
         );
       }
 
-      setMessage(
-        successMessage,
-        'success',
-      );
+      setMessage(successMessage, 'success');
     } catch (error) {
-      setMessage(
-        `La operación falló: ${error.message}`,
-        'error',
-      );
+      setMessage(`La operación falló: ${error.message}`, 'error');
 
       await loadOutput({
         silent: true,
@@ -275,10 +270,8 @@ export function createOutput({ api, elements, refreshStatus }) {
 
       await executeAction({
         endpoint: '/api/obs/stream/stop',
-        workingMessage:
-          'Deteniendo transmisión…',
-        successMessage:
-          'La transmisión fue detenida.',
+        workingMessage: 'Deteniendo transmisión…',
+        successMessage: 'La transmisión fue detenida.',
       });
 
       return;
@@ -286,10 +279,8 @@ export function createOutput({ api, elements, refreshStatus }) {
 
     await executeAction({
       endpoint: '/api/obs/stream/start',
-      workingMessage:
-        'Iniciando transmisión…',
-      successMessage:
-        'La transmisión está en vivo.',
+      workingMessage: 'Iniciando transmisión…',
+      successMessage: 'La transmisión está en vivo.',
     });
   }
 
@@ -299,9 +290,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
 
     if (state.record.active) {
-      const confirmed = window.confirm(
-        '¿Detener la grabación actual?',
-      );
+      const confirmed = window.confirm('¿Detener la grabación actual?');
 
       if (!confirmed) {
         return;
@@ -309,10 +298,8 @@ export function createOutput({ api, elements, refreshStatus }) {
 
       await executeAction({
         endpoint: '/api/obs/record/stop',
-        workingMessage:
-          'Deteniendo grabación…',
-        successMessage:
-          'La grabación fue detenida.',
+        workingMessage: 'Deteniendo grabación…',
+        successMessage: 'La grabación fue detenida.',
       });
 
       return;
@@ -320,10 +307,8 @@ export function createOutput({ api, elements, refreshStatus }) {
 
     await executeAction({
       endpoint: '/api/obs/record/start',
-      workingMessage:
-        'Iniciando grabación…',
-      successMessage:
-        'La grabación está activa.',
+      workingMessage: 'Iniciando grabación…',
+      successMessage: 'La grabación está activa.',
     });
   }
 
@@ -335,11 +320,7 @@ export function createOutput({ api, elements, refreshStatus }) {
    * sin generar polling excesivo.
    */
   async function syncWithObs() {
-    if (
-      document.hidden ||
-      actionInProgress ||
-      elements.outputView.hidden
-    ) {
+    if (document.hidden || actionInProgress || elements.outputView.hidden) {
       return;
     }
 
@@ -351,17 +332,11 @@ export function createOutput({ api, elements, refreshStatus }) {
 
   function startRealtime() {
     if (!timerInterval) {
-      timerInterval = window.setInterval(
-        renderTimers,
-        TIMER_INTERVAL_MS,
-      );
+      timerInterval = window.setInterval(renderTimers, TIMER_INTERVAL_MS);
     }
 
     if (!syncInterval) {
-      syncInterval = window.setInterval(
-        syncWithObs,
-        SYNC_INTERVAL_MS,
-      );
+      syncInterval = window.setInterval(syncWithObs, SYNC_INTERVAL_MS);
     }
   }
 
@@ -381,30 +356,18 @@ export function createOutput({ api, elements, refreshStatus }) {
    * Cuando el usuario vuelve a la pestaña del
    * navegador, sincronizamos inmediatamente.
    */
-  document.addEventListener(
-    'visibilitychange',
-    () => {
-      if (
-        !document.hidden &&
-        !elements.outputView.hidden
-      ) {
-        loadOutput({
-          silent: true,
-          preserveMessage: true,
-        });
-      }
-    },
-  );
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !elements.outputView.hidden) {
+      loadOutput({
+        silent: true,
+        preserveMessage: true,
+      });
+    }
+  });
 
-  elements.streamButton.addEventListener(
-    'click',
-    toggleStream,
-  );
+  elements.streamButton.addEventListener('click', toggleStream);
 
-  elements.recordButton.addEventListener(
-    'click',
-    toggleRecord,
-  );
+  elements.recordButton.addEventListener('click', toggleRecord);
 
   return {
     isLoaded: () => outputLoaded,

@@ -346,6 +346,7 @@ export async function getOutputStatus(_req, res) {
         timecode: stream.outputTimecode,
         durationMs: stream.outputDuration,
         congestion: stream.outputCongestion,
+        delaySeconds: config.obsStreamDelaySeconds,
       },
 
       record: {

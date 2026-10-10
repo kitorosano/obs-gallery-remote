@@ -12,6 +12,7 @@ const {
   OBS_PORT = '4455',
   OBS_PASSWORD = '',
   OBS_IMAGE_INPUT = 'OBS_GALLERY_REMOTE',
+  OBS_STREAM_DELAY_SECONDS = 0,
 } = process.env;
 
 export const config = {
@@ -23,4 +24,5 @@ export const config = {
   obsPort: Number.parseInt(OBS_PORT, 10),
   obsPassword: OBS_PASSWORD,
   obsImageInput: OBS_IMAGE_INPUT,
+  obsStreamDelaySeconds: Number.parseInt(OBS_STREAM_DELAY_SECONDS, 10),
 };
