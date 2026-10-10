@@ -168,19 +168,30 @@ export async function getAudioInputs(_req, res) {
 
     for (const input of inputs) {
       try {
-        const { inputMuted } = await obs.call('GetInputMute', {
-          inputName: input.inputName,
-        });
+        const [{ inputMuted }, { inputVolumeDb, inputVolumeMul }] =
+          await Promise.all([
+            obs.call('GetInputMute', {
+              inputName: input.inputName,
+            }),
+
+            obs.call('GetInputVolume', {
+              inputName: input.inputName,
+            }),
+          ]);
 
         audioInputs.push({
           inputName: input.inputName,
           inputKind: input.inputKind,
           muted: inputMuted,
+          volumeDb: inputVolumeDb,
+          volumeMul: inputVolumeMul,
         });
       } catch {
-        // Si GetInputMute falla, normalmente significa que
-        // este input no tiene capacidad de audio.
-        // Simplemente lo ignoramos.
+        /*
+         * Si las operaciones de audio fallan para este input,
+         * lo ignoramos. Normalmente significa que no tiene
+         * capacidad de audio.
+         */
       }
     }
 
@@ -240,6 +251,72 @@ export async function setInputMute(req, res) {
   } catch (error) {
     const message =
       error?.message || 'No se pudo cambiar el estado de audio en OBS.';
+
+    res.status(502).json({
+      error: message,
+    });
+  }
+}
+
+export async function setInputVolume(req, res) {
+  const { inputName, volumeDb } = req.body || {};
+
+  if (typeof inputName !== 'string' || !inputName.trim()) {
+    return res.status(400).json({
+      error: 'Debes enviar inputName.',
+    });
+  }
+
+  if (typeof volumeDb !== 'number' || !Number.isFinite(volumeDb)) {
+    return res.status(400).json({
+      error: 'Debes enviar volumeDb como número.',
+    });
+  }
+
+  /*
+   * Limitamos deliberadamente el rango que exponemos
+   * desde nuestra aplicación.
+   */
+  if (volumeDb < -60 || volumeDb > 0) {
+    return res.status(400).json({
+      error: 'volumeDb debe estar entre -60 y 0 dB.',
+    });
+  }
+
+  const cleanInputName = inputName.trim();
+
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    await obs.call('SetInputVolume', {
+      inputName: cleanInputName,
+      inputVolumeDb: volumeDb,
+    });
+
+    /*
+     * No confiamos solamente en que SetInputVolume
+     * haya terminado correctamente.
+     *
+     * Volvemos a consultar OBS para devolver el
+     * valor realmente aplicado.
+     */
+    const result = await obs.call('GetInputVolume', {
+      inputName: cleanInputName,
+    });
+
+    res.json({
+      ok: true,
+      inputName: cleanInputName,
+      volumeDb: result.inputVolumeDb,
+      volumeMul: result.inputVolumeMul,
+    });
+  } catch (error) {
+    const message =
+      error?.message || 'No se pudo cambiar el volumen de la fuente en OBS.';
 
     res.status(502).json({
       error: message,

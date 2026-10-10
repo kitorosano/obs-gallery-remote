@@ -6,6 +6,7 @@ import {
   getScenes,
   setCurrentScene,
   setInputMute,
+  setInputVolume,
   showImage,
 } from '../controllers/obs.controller.js';
 
@@ -21,5 +22,6 @@ router.post('/show', showImage);
 
 router.get('/audio', getAudioInputs);
 router.post('/audio/mute', setInputMute);
+router.post('/audio/volume', setInputVolume);
 
 export default router;
