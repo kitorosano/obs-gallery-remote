@@ -44,6 +44,9 @@ createNavigation({
 
   isOutputLoaded: output.isLoaded,
   loadOutput: output.loadOutput,
+
+  startOutputRealtime: output.startRealtime,
+  stopOutputRealtime: output.stopRealtime,
 });
 
 elements.refreshButton.addEventListener('click', gallery.loadGallery);

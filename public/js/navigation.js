@@ -9,6 +9,8 @@ export function createNavigation({
 
   loadOutput,
   isOutputLoaded,
+  startOutputRealtime,
+  stopOutputRealtime,
 }) {
   function setActiveView(viewName) {
     elements.galleryView.hidden = viewName !== 'gallery';
@@ -32,8 +34,14 @@ export function createNavigation({
       loadAudio();
     }
 
-    if (viewName === 'output' && !isOutputLoaded()) {
-      loadOutput();
+    if (viewName === 'output') {
+      startOutputRealtime();
+
+      if (!isOutputLoaded()) {
+        loadOutput();
+      }
+    } else {
+      stopOutputRealtime();
     }
   }
 
