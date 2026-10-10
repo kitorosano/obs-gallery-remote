@@ -1,39 +1,138 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111827">
-  <title>OBS Gallery Remote</title>
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <header class="topbar">
-    <div><p class="eyebrow">CONTROL LOCAL</p><h1>OBS Gallery Remote</h1></div>
-    <span id="obs-status" class="status disconnected">OBS desconectado</span>
-  </header>
-  <main>
-    <section class="toolbar">
-      <input id="search" type="search" placeholder="Buscar imágenes…" aria-label="Buscar imágenes">
-      <button id="refresh" class="secondary">Actualizar galería</button>
-      <button id="connect">Conectar con OBS</button>
-    </section>
-    <section class="workspace">
-      <div class="gallery-panel">
-        <div class="section-heading"><h2>Galería</h2><span id="image-count">0 imágenes</span></div>
-        <div id="categories" class="categories"></div>
-        <div id="gallery" class="gallery-grid"><p class="muted">Cargando imágenes…</p></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#111827" />
+    <title>OBS Gallery Remote</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">CONTROL LOCAL</p>
+        <h1>OBS Gallery Remote</h1>
       </div>
-      <aside class="preview-panel">
-        <h2>Vista previa</h2>
-        <div class="preview-frame"><img id="preview" alt="Vista previa de la imagen seleccionada" hidden><p id="preview-placeholder">Selecciona una miniatura para previsualizarla.</p></div>
-        <p id="selected-name" class="selected-name">Ninguna imagen seleccionada</p>
-        <button id="show" class="show-button" disabled>Mostrar en OBS</button>
-        <p id="message" class="message" role="status"></p>
-        <p class="note">Seleccionar una miniatura no la muestra en OBS. Debes confirmar con el botón.</p>
-      </aside>
-    </section>
-  </main>
-  <script src="/app.js" type="module"></script>
-</body>
+
+      <div class="obs-connection">
+        <span id="obs-status" class="status disconnected"
+          >OBS desconectado</span
+        >
+        <button id="connect" class="secondary">Conectar con OBS</button>
+      </div>
+    </header>
+
+    <main>
+      <nav class="app-nav" aria-label="Secciones">
+        <button
+          class="nav-button active"
+          data-view="gallery"
+          aria-pressed="true"
+        >
+          Galería
+        </button>
+
+        <button class="nav-button" data-view="scenes" aria-pressed="false">
+          Escenas
+        </button>
+      </nav>
+
+      <!-- GALERÍA -->
+      <section id="gallery-view" class="app-view">
+        <section class="toolbar">
+          <input
+            id="search"
+            type="search"
+            placeholder="Buscar imágenes…"
+            aria-label="Buscar imágenes"
+          />
+          <button id="refresh" class="secondary">Actualizar galería</button>
+        </section>
+
+        <section class="workspace">
+          <div class="gallery-panel">
+            <div class="section-heading">
+              <h2>Galería</h2>
+              <span id="image-count">0 imágenes</span>
+            </div>
+
+            <div id="categories" class="categories"></div>
+
+            <div id="gallery" class="gallery-grid">
+              <p class="muted">Cargando imágenes…</p>
+            </div>
+          </div>
+
+          <aside class="preview-panel">
+            <h2>Vista previa</h2>
+
+            <div class="preview-frame">
+              <img
+                id="preview"
+                alt="Vista previa de la imagen seleccionada"
+                hidden
+              />
+              <p id="preview-placeholder">
+                Selecciona una miniatura para previsualizarla.
+              </p>
+            </div>
+
+            <p id="selected-name" class="selected-name">
+              Ninguna imagen seleccionada
+            </p>
+
+            <button id="show" class="show-button" disabled>
+              Mostrar en OBS
+            </button>
+
+            <p id="message" class="message" role="status"></p>
+
+            <p class="note">
+              Seleccionar una miniatura no la muestra en OBS. Debes confirmar
+              con el botón.
+            </p>
+          </aside>
+        </section>
+      </section>
+
+      <!-- ESCENAS -->
+      <section id="scenes-view" class="app-view" hidden>
+        <div class="scenes-panel">
+          <div class="section-heading scenes-heading">
+            <div>
+              <p class="eyebrow">CONTROL OBS</p>
+              <h2>Escenas</h2>
+            </div>
+
+            <button id="refresh-scenes" class="secondary">Actualizar</button>
+          </div>
+
+          <div class="program-card">
+            <span class="program-label">
+              <span class="live-dot"></span>
+              EN PROGRAMA
+            </span>
+
+            <strong id="current-scene">—</strong>
+          </div>
+
+          <div class="scene-list-heading">
+            <h3>Cambiar escena</h3>
+            <span id="scene-count" class="muted"></span>
+          </div>
+
+          <div id="scene-grid" class="scene-grid">
+            <p class="muted">Abre esta sección para cargar las escenas.</p>
+          </div>
+
+          <p id="scene-message" class="message" role="status"></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
 </html>
