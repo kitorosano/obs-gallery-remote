@@ -1,9 +1,10 @@
 import { api } from './js/api.js';
+import { createAudio } from './js/audio.js';
+import { elements } from './js/dom.js';
 import { createGallery } from './js/gallery.js';
 import { createNavigation } from './js/navigation.js';
 import { createObsController } from './js/obs.js';
 import { createScenes } from './js/scenes.js';
-import { elements } from './js/dom.js';
 
 const obs = createObsController({ api, elements });
 
@@ -19,14 +20,27 @@ const scenes = createScenes({
   refreshStatus: obs.refreshStatus,
 });
 
+const audio = createAudio({
+  api,
+  elements,
+  refreshStatus: obs.refreshStatus,
+});
+
 createNavigation({
   elements,
+
   isScenesLoaded: scenes.isLoaded,
   loadScenes: scenes.loadScenes,
+
+  isAudioLoaded: audio.isLoaded,
+  loadAudio: audio.loadAudio,
 });
 
 elements.refreshButton.addEventListener('click', gallery.loadGallery);
-elements.refreshScenesButton.addEventListener('click', () => scenes.loadScenes());
+elements.refreshScenesButton.addEventListener('click', () =>
+  scenes.loadScenes(),
+);
+elements.refreshAudioButton.addEventListener('click', () => audio.loadAudio());
 elements.search.addEventListener('input', gallery.render);
 
 elements.autoShow.addEventListener('change', () => {
@@ -50,10 +64,10 @@ elements.connectButton.addEventListener('click', async () => {
     );
 
     scenes.reset();
+    audio.reset();
 
-    if (!elements.scenesView.hidden) {
-      await scenes.loadScenes();
-    }
+    if (!elements.scenesView.hidden) await scenes.loadScenes();
+    if (!elements.audioView.hidden) await audio.loadAudio();
   } catch (error) {
     gallery.setMessage(
       `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,

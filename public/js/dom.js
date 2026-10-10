@@ -14,12 +14,21 @@ export const elements = {
   imageCount: $('#image-count'),
   refreshButton: $('#refresh'),
   connectButton: $('#connect'),
+
   galleryView: $('#gallery-view'),
+
   scenesView: $('#scenes-view'),
   sceneGrid: $('#scene-grid'),
   currentScene: $('#current-scene'),
   sceneCount: $('#scene-count'),
   sceneMessage: $('#scene-message'),
   refreshScenesButton: $('#refresh-scenes'),
+
+  audioView: $('#audio-view'),
+  audioGrid: $('#audio-grid'),
+  audioCount: $('#audio-count'),
+  audioMessage: $('#audio-message'),
+  refreshAudioButton: $('#refresh-audio'),
+
   navigationButtons: document.querySelectorAll('.nav-button'),
 };

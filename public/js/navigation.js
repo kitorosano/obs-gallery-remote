@@ -1,9 +1,14 @@
-export function createNavigation({ elements, loadScenes, isScenesLoaded }) {
+export function createNavigation({
+  elements,
+  loadScenes,
+  isScenesLoaded,
+  loadAudio,
+  isAudioLoaded,
+}) {
   function setActiveView(viewName) {
-    const showGallery = viewName === 'gallery';
-
-    elements.galleryView.hidden = !showGallery;
-    elements.scenesView.hidden = showGallery;
+    elements.galleryView.hidden = viewName !== 'gallery';
+    elements.scenesView.hidden = viewName !== 'scenes';
+    elements.audioView.hidden = viewName !== 'audio';
 
     elements.navigationButtons.forEach((button) => {
       const active = button.dataset.view === viewName;
@@ -14,6 +19,10 @@ export function createNavigation({ elements, loadScenes, isScenesLoaded }) {
 
     if (viewName === 'scenes' && !isScenesLoaded()) {
       loadScenes();
+    }
+
+    if (viewName === 'audio' && !isAudioLoaded()) {
+      loadAudio();
     }
   }
 

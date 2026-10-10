@@ -38,6 +38,10 @@
         <button class="nav-button" data-view="scenes" aria-pressed="false">
           Escenas
         </button>
+
+        <button class="nav-button" data-view="audio" aria-pressed="false">
+          Audio
+        </button>
       </nav>
 
       <!-- GALERÍA -->
@@ -137,6 +141,39 @@
           </div>
 
           <p id="scene-message" class="message" role="status"></p>
+        </div>
+      </section>
+
+      <!-- AUDIO -->
+      <section id="audio-view" class="app-view" hidden>
+        <div class="audio-panel">
+          <div class="section-heading audio-heading">
+            <div>
+              <p class="eyebrow">CONTROL OBS</p>
+              <h2>Audio</h2>
+            </div>
+
+            <button id="refresh-audio" class="secondary">Actualizar</button>
+          </div>
+
+          <div class="audio-list-heading">
+            <div>
+              <h3>Fuentes de audio</h3>
+              <p class="muted">
+                Activa o silencia las fuentes de audio de OBS.
+              </p>
+            </div>
+
+            <span id="audio-count" class="muted"></span>
+          </div>
+
+          <div id="audio-grid" class="audio-grid">
+            <p class="muted">
+              Abre esta sección para cargar las fuentes de audio.
+            </p>
+          </div>
+
+          <p id="audio-message" class="message" role="status"></p>
         </div>
       </section>
     </main>
