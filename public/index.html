@@ -88,11 +88,19 @@
               Mostrar en OBS
             </button>
 
+            <label class="auto-show-option">
+              <span>Mostrar automáticamente al seleccionar</span>
+              <span class="switch">
+                <input id="auto-show" type="checkbox" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
             <p id="message" class="message" role="status"></p>
 
-            <p class="note">
+            <p id="auto-show-note" class="note">
               Seleccionar una miniatura no la muestra en OBS. Debes confirmar
-              con el botón.
+              con el botón, o activar la opción automática.
             </p>
           </aside>
         </section>

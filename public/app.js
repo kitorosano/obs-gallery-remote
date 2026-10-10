@@ -7,7 +7,9 @@ const previewEl = $('#preview');
 const placeholderEl = $('#preview-placeholder');
 const selectedNameEl = $('#selected-name');
 const showButton = $('#show');
+const autoShowEl = $('#auto-show');
 const messageEl = $('#message');
+const AUTO_SHOW_STORAGE_KEY = 'obs-gallery-auto-show';
 
 const galleryViewEl = $('#gallery-view');
 const scenesViewEl = $('#scenes-view');
@@ -24,6 +26,8 @@ let scenes = [];
 let currentScene = null;
 let scenesLoaded = false;
 let sceneChangeInProgress = false;
+
+autoShowEl.checked = localStorage.getItem(AUTO_SHOW_STORAGE_KEY) === 'true';
 
 function setMessage(text = '', type = '') {
   messageEl.textContent = text;
@@ -199,9 +203,13 @@ function selectImage(image) {
 
   showButton.disabled = false;
 
-  setMessage('Imagen seleccionada. Todavía no se ha enviado a OBS.');
-
   renderGallery();
+
+  if (autoShowEl.checked) {
+    showImage(image);
+  } else {
+    setMessage('Imagen seleccionada. Todavía no se ha enviado a OBS.');
+  }
 }
 
 async function loadGallery() {
@@ -418,6 +426,10 @@ $('#refresh-scenes').addEventListener('click', () => loadScenes());
 
 searchEl.addEventListener('input', renderGallery);
 
+autoShowEl.addEventListener('change', () => {
+  localStorage.setItem(AUTO_SHOW_STORAGE_KEY, String(autoShowEl.checked));
+});
+
 $('#connect').addEventListener('click', async () => {
   setMessage('Conectando con OBS…');
 
@@ -448,11 +460,7 @@ $('#connect').addEventListener('click', async () => {
   await refreshStatus();
 });
 
-showButton.addEventListener('click', async () => {
-  if (!selectedImage) {
-    return;
-  }
-
+async function showImage(image) {
   showButton.disabled = true;
 
   setMessage('Enviando imagen a OBS…');
@@ -461,7 +469,7 @@ showButton.addEventListener('click', async () => {
     const result = await api('/api/obs/show', {
       method: 'POST',
       body: JSON.stringify({
-        imageId: selectedImage.id,
+        imageId: image.id,
       }),
     });
 
@@ -469,7 +477,13 @@ showButton.addEventListener('click', async () => {
   } catch (error) {
     setMessage(`No se pudo mostrar la imagen: ${error.message}`, 'error');
   } finally {
-    showButton.disabled = false;
+    showButton.disabled = !selectedImage;
+  }
+}
+
+showButton.addEventListener('click', () => {
+  if (selectedImage) {
+    showImage(selectedImage);
   }
 });
 
