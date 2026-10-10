@@ -30,5 +30,17 @@ export const elements = {
   audioMessage: $('#audio-message'),
   refreshAudioButton: $('#refresh-audio'),
 
+  outputView: $('#output-view'),
+  outputMessage: $('#output-message'),
+  refreshOutputButton: $('#refresh-output'),
+
+  streamStatus: $('#stream-status'),
+  streamDuration: $('#stream-duration'),
+  streamButton: $('#stream-button'),
+
+  recordStatus: $('#record-status'),
+  recordDuration: $('#record-duration'),
+  recordButton: $('#record-button'),
+
   navigationButtons: document.querySelectorAll('.nav-button'),
 };

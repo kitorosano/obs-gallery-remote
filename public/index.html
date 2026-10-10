@@ -42,6 +42,10 @@
         <button class="nav-button" data-view="audio" aria-pressed="false">
           Audio
         </button>
+
+        <button class="nav-button" data-view="output" aria-pressed="false">
+          Emisión
+        </button>
       </nav>
 
       <!-- GALERÍA -->
@@ -174,6 +178,82 @@
           </div>
 
           <p id="audio-message" class="message" role="status"></p>
+        </div>
+      </section>
+
+      <!-- EMISIÓN -->
+      <section id="output-view" class="app-view" hidden>
+        <div class="output-panel">
+          <div class="section-heading output-heading">
+            <div>
+              <p class="eyebrow">CONTROL OBS</p>
+              <h2>Emisión</h2>
+            </div>
+
+            <button id="refresh-output" class="secondary">Actualizar</button>
+          </div>
+
+          <div class="output-grid">
+            <!-- STREAM -->
+            <article class="output-card">
+              <div class="output-card-header">
+                <div>
+                  <span class="output-type"> STREAMING </span>
+
+                  <h3>Transmisión</h3>
+                </div>
+
+                <span id="stream-status" class="output-status inactive">
+                  —
+                </span>
+              </div>
+
+              <div class="output-time">
+                <span>TIEMPO DE EMISIÓN</span>
+
+                <strong id="stream-duration"> 00:00:00 </strong>
+              </div>
+
+              <button id="stream-button" class="output-action start" disabled>
+                Iniciar transmisión
+              </button>
+
+              <p class="output-warning">
+                Detener una transmisión requiere confirmación.
+              </p>
+            </article>
+
+            <!-- RECORD -->
+            <article class="output-card">
+              <div class="output-card-header">
+                <div>
+                  <span class="output-type"> GRABACIÓN </span>
+
+                  <h3>Grabación</h3>
+                </div>
+
+                <span id="record-status" class="output-status inactive">
+                  —
+                </span>
+              </div>
+
+              <div class="output-time">
+                <span>TIEMPO GRABADO</span>
+
+                <strong id="record-duration"> 00:00:00 </strong>
+              </div>
+
+              <button id="record-button" class="output-action start" disabled>
+                Iniciar grabación
+              </button>
+
+              <p class="output-warning">
+                Detener una grabación requiere confirmación.
+              </p>
+            </article>
+          </div>
+
+          <p id="output-message" class="message" role="status"></p>
         </div>
       </section>
     </main>

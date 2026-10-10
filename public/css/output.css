@@ -1,0 +1,169 @@
+.output-panel {
+  max-width: 1000px;
+  margin: 0 auto;
+
+  padding: 1rem;
+
+  background: #111827;
+
+  border: 1px solid #283247;
+  border-radius: 1rem;
+}
+
+.output-heading h2 {
+  margin: 0;
+}
+
+.output-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 1rem;
+
+  margin-top: 1.2rem;
+}
+
+.output-card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.2rem;
+
+  padding: 1rem;
+
+  background: #172033;
+
+  border: 1px solid #374151;
+  border-radius: 0.9rem;
+}
+
+.output-card-header {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 1rem;
+}
+
+.output-card-header h3 {
+  margin: 0.25rem 0 0;
+
+  font-size: 1.1rem;
+}
+
+.output-type {
+  font-size: 0.65rem;
+
+  font-weight: 750;
+
+  letter-spacing: 0.09em;
+
+  color: #9ca3af;
+}
+
+.output-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 0.35rem 0.55rem;
+
+  border-radius: 999px;
+
+  font-size: 0.65rem;
+
+  font-weight: 750;
+
+  letter-spacing: 0.06em;
+
+  white-space: nowrap;
+}
+
+.output-status.active {
+  color: #fecaca;
+
+  background: #7f1d1d;
+}
+
+.output-status.inactive {
+  color: #d1d5db;
+
+  background: #374151;
+}
+
+.output-time {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.4rem;
+
+  padding: 1rem;
+
+  background: #0b1020;
+
+  border: 1px solid #283247;
+  border-radius: 0.75rem;
+}
+
+.output-time span {
+  font-size: 0.65rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  color: #9ca3af;
+}
+
+.output-time strong {
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+
+  font-variant-numeric: tabular-nums;
+}
+
+.output-action {
+  width: 100%;
+
+  min-height: 52px;
+}
+
+.output-action.start {
+  background: #047857;
+
+  border-color: #059669;
+}
+
+.output-action.danger {
+  background: #b91c1c;
+
+  border-color: #dc2626;
+}
+
+.output-warning {
+  margin: -0.5rem 0 0;
+
+  font-size: 0.7rem;
+
+  line-height: 1.4;
+
+  color: #9ca3af;
+
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .output-panel {
+    padding: 0.75rem;
+  }
+
+  .output-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .output-action {
+    min-height: 56px;
+  }
+}
