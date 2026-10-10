@@ -76,10 +76,17 @@ Elegir una miniatura no cambia lo que se muestra en OBS. La emisión siempre req
 - El backend envía a OBS la ruta del archivo seleccionado mediante `SetInputSettings`. Si la fuente no existe o no es de tipo Imagen, la operación fallará y la API devolverá un error.
 - La aplicación aún no confirma de forma autoritativa cuál imagen está visible en la salida de programa; esa función requiere una estrategia de sincronización adicional.
 - Las imágenes se leen de la carpeta configurada; no se copian ni se modifican.
-- La lista de formatos permitidos se encuentra en `server/index.js`.
+- La lista de formatos permitidos se encuentra en `server/constants/gallery.js`.
 - Este MVP es una base inicial y debe probarse en el PC objetivo antes de utilizarse en un evento en directo.
 
 ## 7. Arquitectura y siguientes pasos
+
+La aplicación sigue una estructura Express por responsabilidades:
+
+- `server/routes`: definición de endpoints y routers.
+- `server/controllers`: lógica de cada recurso de la API.
+- `server/utils`: operaciones reutilizables, como el recorrido y la validación de imágenes.
+- `server/constants`: configuración y constantes compartidas.
 
 - Mantener la interfaz móvil desacoplada de OBS.
 - Mantener el control de OBS en el backend, nunca desde el navegador del teléfono.
