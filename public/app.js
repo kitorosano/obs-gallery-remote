@@ -88,6 +88,26 @@ const obsEvents = createObsEvents({
       }),
     ]);
   },
+  onGalleryImageChanged: async () => {
+    try {
+      const result = await api('/api/obs/gallery-image');
+
+      if (!result.matched) {
+        gallery.setMessage(
+          'OBS está mostrando una imagen externa a la galería.',
+        );
+
+        return;
+      }
+
+      gallery.selectImageFromObs(result.imageId);
+    } catch (error) {
+      gallery.setMessage(
+        `No se pudo sincronizar la imagen de OBS: ${error.message}`,
+        'error',
+      );
+    }
+  },
 });
 obsEvents.connect();
 

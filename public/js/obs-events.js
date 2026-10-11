@@ -4,6 +4,7 @@ export function createObsEvents({
   onOutputChanged,
   onObsConnected,
   onObsDisconnected,
+  onGalleryImageChanged,
 }) {
   let eventSource = null;
 
@@ -34,13 +35,14 @@ export function createObsEvents({
           case 'record-state-changed':
             onOutputChanged?.(message.data);
             break;
-
           case 'obs-connected':
             onObsConnected?.(message.data);
             break;
-
           case 'obs-disconnected':
             onObsDisconnected?.(message.data);
+            break;
+          case 'gallery-image-changed':
+            onGalleryImageChanged?.(message.data);
             break;
           default:
             break;

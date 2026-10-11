@@ -3,6 +3,7 @@ import { subscribeToObsEvents } from '../controllers/obs-events.controller.js';
 import {
   connectToObs,
   getAudioInputs,
+  getCurrentGalleryImage,
   getObsStatus,
   getOutputStatus,
   getScenes,
@@ -25,6 +26,7 @@ router.get('/scenes', getScenes);
 router.post('/scenes/current', setCurrentScene);
 
 router.post('/show', showImage);
+router.get('/gallery-image', getCurrentGalleryImage);
 
 router.get('/audio', getAudioInputs);
 router.post('/audio/mute', setInputMute);

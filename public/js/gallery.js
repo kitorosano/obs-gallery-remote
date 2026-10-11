@@ -129,6 +129,22 @@ export function createGallery({ api, elements, showImage }) {
     }
   }
 
+  function selectImageFromObs(imageId) {
+    const image = images.find((item) => String(item.id) === String(imageId));
+    if (!image) return false;
+
+    selectedImage = image;
+    elements.preview.src = image.previewUrl;
+    elements.preview.hidden = false;
+    elements.previewPlaceholder.hidden = true;
+    elements.selectedName.textContent = `${image.name} · ${image.category}`;
+    elements.showButton.disabled = false;
+    updateSelection();
+
+    setMessage('Imagen sincronizada desde OBS.', 'success');
+    return true;
+  }
+
   async function loadGallery() {
     setMessage('');
 
@@ -159,6 +175,7 @@ export function createGallery({ api, elements, showImage }) {
     getSelectedImage: () => selectedImage,
     loadGallery,
     render,
+    selectImageFromObs,
     setMessage,
   };
 }

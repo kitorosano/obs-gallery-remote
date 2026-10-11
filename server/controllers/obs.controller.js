@@ -1,7 +1,9 @@
+import path from 'node:path';
 import OBSWebSocket from 'obs-websocket-js';
+
 import { config } from '../constants/config.js';
 import { broadcastObsEvent } from '../services/obs-events.js';
-import { resolveImageId } from '../utils/gallery.js';
+import { listImages, resolveImageId } from '../utils/gallery.js';
 
 const obs = new OBSWebSocket();
 let obsConnected = false;
@@ -94,10 +96,16 @@ obs.on('ConnectionError', (error) => {
   lastObsError = error?.message || 'Error de conexión con OBS.';
   console.error('Error de OBS WebSocket:', lastObsError);
 });
-
 obs.on('CurrentProgramSceneChanged', (event) => {
   broadcastObsEvent('scene-changed', {
     sceneName: event.sceneName,
+  });
+});
+obs.on('InputSettingsChanged', (event) => {
+  if (event.inputName !== config.obsImageInput) return;
+
+  broadcastObsEvent('gallery-image-changed', {
+    inputName: event.inputName,
   });
 });
 obs.on('InputMuteStateChanged', (event) => {
@@ -151,13 +159,11 @@ export async function connectToObs(_req, res) {
       obsWebSocketVersion: result.obsWebSocketVersion || null,
     });
   } catch (error) {
-    res
-      .status(502)
-      .json({
-        ok: false,
-        connected: false,
-        error: lastObsError || 'No se pudo conectar con OBS.',
-      });
+    res.status(502).json({
+      ok: false,
+      connected: false,
+      error: lastObsError || 'No se pudo conectar con OBS.',
+    });
   }
 }
 
@@ -195,6 +201,60 @@ export async function showImage(req, res) {
     res.status(502).json({
       error: message,
       hint: `Verifica que exista una fuente de tipo Image llamada "${config.obsImageInput}" en OBS.`,
+    });
+  }
+}
+
+export async function getCurrentGalleryImage(_req, res) {
+  if (!obsConnected) {
+    return res.status(503).json({
+      error: 'OBS no está conectado. Usa primero /api/obs/connect.',
+    });
+  }
+
+  try {
+    const result = await obs.call('GetInputSettings', {
+      inputName: config.obsImageInput,
+    });
+
+    const file = result.inputSettings?.file;
+
+    if (typeof file !== 'string' || !file) {
+      return res.json({
+        ok: true,
+        matched: false,
+        imageId: null,
+        file: null,
+      });
+    }
+
+    const images = await listImages(config.galleryRoot);
+
+    const normalizedFile = path.resolve(file);
+
+    let matchedImage = null;
+
+    for (const image of images) {
+      const imagePath = await resolveImageId(config.galleryRoot, image.id);
+
+      if (imagePath && path.resolve(imagePath) === normalizedFile) {
+        matchedImage = image;
+        break;
+      }
+    }
+
+    res.json({
+      ok: true,
+      matched: Boolean(matchedImage),
+      imageId: matchedImage?.id ?? null,
+      file,
+    });
+  } catch (error) {
+    const message =
+      error?.message || 'No se pudo obtener la imagen actual de OBS.';
+
+    res.status(502).json({
+      error: message,
     });
   }
 }
