@@ -2,9 +2,10 @@ import 'dotenv/config';
 import express from 'express';
 import fs from 'node:fs/promises';
 import { config } from './constants/config.js';
+import { startObsConnection } from './controllers/obs.controller.js';
+import galleryRoutes from './routes/gallery.routes.js';
 import healthRoutes from './routes/health.routes.js';
 import obsRoutes from './routes/obs.routes.js';
-import galleryRoutes from './routes/gallery.routes.js';
 
 const app = express();
 
@@ -22,9 +23,18 @@ app.use((error, _req, res, _next) => {
 });
 
 await fs.mkdir(config.galleryRoot, { recursive: true });
+
 app.listen(config.port, config.host, () => {
-  console.log(`OBS Gallery Remote disponible en http://localhost:${config.port}`);
+  console.log(
+    `OBS Gallery Remote disponible en http://localhost:${config.port}`,
+  );
   console.log(`Carpeta de galería: ${config.galleryRoot}`);
-  console.log(`OBS WebSocket configurado en ws://${config.obsHost}:${config.obsPort}`);
-  console.log('Conexión OBS: ejecuta POST /api/obs/connect desde la interfaz o una herramienta HTTP.');
+  console.log(
+    `OBS WebSocket configurado en ws://${config.obsHost}:${config.obsPort}`,
+  );
+  console.log(
+    'Conexión OBS: ejecuta POST /api/obs/connect desde la interfaz o una herramienta HTTP.',
+  );
+
+  startObsConnection();
 });

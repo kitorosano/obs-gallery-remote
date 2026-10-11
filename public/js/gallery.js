@@ -122,7 +122,9 @@ export function createGallery({ api, elements, showImage }) {
     elements.showButton.disabled = false;
     updateSelection();
 
-    if (elements.autoShow.checked) {
+    const obsConnected = document.body.dataset.obsConnected === 'true';
+
+    if (elements.autoShow.checked && obsConnected) {
       showImage(image);
     } else {
       setMessage('Imagen seleccionada. Todavía no se ha enviado a OBS.');

@@ -1,6 +1,8 @@
 const $ = (selector) => document.querySelector(selector);
 
 export const elements = {
+  app: document.body,
+  
   gallery: $('#gallery'),
   search: $('#search'),
   status: $('#obs-status'),

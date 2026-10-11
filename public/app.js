@@ -8,34 +8,55 @@ import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
 import { createScenes } from './js/scenes.js';
 
-const obs = createObsController({ api, elements });
+function setObsAvailability(connected) {
+  elements.app.classList.toggle('obs-disconnected', !connected);
+  elements.app.dataset.obsConnected = connected ? 'true' : 'false';
+}
+
+const obs = createObsController({
+  api,
+  elements,
+  onConnectionChange: setObsAvailability,
+});
 
 const gallery = createGallery({
   api,
   elements,
   showImage: obs.showImage,
 });
-
 const scenes = createScenes({
   api,
   elements,
   refreshStatus: obs.refreshStatus,
 });
-
 const audio = createAudio({
   api,
   elements,
   refreshStatus: obs.refreshStatus,
 });
-
 const output = createOutput({
   api,
   elements,
   refreshStatus: obs.refreshStatus,
 });
 
-let audioRefreshTimer = null;
+async function syncGalleryFromObs() {
+  try {
+    const result = await api('/api/obs/gallery-image');
 
+    if (!result.matched) {
+      gallery.setMessage('OBS está mostrando una imagen externa a la galería.');
+
+      return;
+    }
+
+    gallery.selectImageFromObs(result.imageId);
+  } catch (error) {
+    console.warn('No se pudo sincronizar la imagen actual de OBS:', error);
+  }
+}
+
+let audioRefreshTimer = null;
 function scheduleAudioRefresh() {
   if (audioRefreshTimer) {
     window.clearTimeout(audioRefreshTimer);
@@ -68,12 +89,13 @@ const obsEvents = createObsEvents({
     });
   },
   onObsDisconnected: async () => {
-    await refreshStatus();
+    await obs.refreshStatus();
   },
   onObsConnected: async () => {
-    await refreshStatus();
+    await obs.refreshStatus();
 
     await Promise.allSettled([
+      syncGalleryFromObs(),
       scenes.loadScenes({
         silent: true,
         preserveMessage: true,
@@ -89,24 +111,7 @@ const obsEvents = createObsEvents({
     ]);
   },
   onGalleryImageChanged: async () => {
-    try {
-      const result = await api('/api/obs/gallery-image');
-
-      if (!result.matched) {
-        gallery.setMessage(
-          'OBS está mostrando una imagen externa a la galería.',
-        );
-
-        return;
-      }
-
-      gallery.selectImageFromObs(result.imageId);
-    } catch (error) {
-      gallery.setMessage(
-        `No se pudo sincronizar la imagen de OBS: ${error.message}`,
-        'error',
-      );
-    }
+    await syncGalleryFromObs();
   },
 });
 obsEvents.connect();

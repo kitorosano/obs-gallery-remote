@@ -32,10 +32,19 @@ export function subscribeToObsEvents(req, res) {
   addObsEventClient(res);
 
   /*
-   * Cuando el teléfono cierra la página,
-   * eliminamos esa conexión.
+   * Mantiene activa la conexión SSE.
+   *
+   * ":" representa un comentario SSE,
+   * por lo que EventSource no lo entrega
+   * como evento a nuestro JavaScript.
    */
+  const heartbeat = setInterval(() => {
+    res.write(`: heartbeat ${Date.now()}\n\n`);
+  }, 20000);
+
   req.on('close', () => {
+    clearInterval(heartbeat);
+
     removeObsEventClient(res);
   });
 }

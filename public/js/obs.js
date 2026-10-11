@@ -1,4 +1,4 @@
-export function createObsController({ api, elements }) {
+export function createObsController({ api, elements, onConnectionChange }) {
   async function refreshStatus() {
     try {
       const status = await api('/api/obs/status');
@@ -6,14 +6,18 @@ export function createObsController({ api, elements }) {
       elements.status.textContent = status.connected
         ? `OBS conectado${status.version ? ` · ${status.version}` : ''}`
         : 'OBS desconectado';
+
       elements.status.className = `status ${
         status.connected ? 'connected' : 'disconnected'
       }`;
+
+      onConnectionChange?.(status.connected);
 
       return status.connected;
     } catch {
       elements.status.textContent = 'Servidor no disponible';
       elements.status.className = 'status disconnected';
+      onConnectionChange?.(false);
       return false;
     }
   }

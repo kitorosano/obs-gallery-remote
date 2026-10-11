@@ -10,3 +10,12 @@
 @import url('./css/audio.css');
 @import url('./css/output.css');
 @import url('./css/responsive.css');
+
+.obs-disconnected #show-button,
+.obs-disconnected .scene-button,
+.obs-disconnected .audio-card button,
+.obs-disconnected .audio-card input,
+.obs-disconnected .output-action {
+  pointer-events: none;
+  opacity: 0.45;
+}

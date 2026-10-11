@@ -62,6 +62,19 @@ function scheduleReconnect() {
   }, RECONNECT_DELAY_MS);
 }
 
+export async function startObsConnection() {
+  if (obsConnected || reconnecting) return;
+
+  try {
+    console.log('Intentando conexión inicial con OBS…');
+    await connectObs();
+    console.log('Conexión inicial con OBS establecida.');
+  } catch (error) {
+    console.log('OBS no está disponible al iniciar el servidor.');
+    scheduleReconnect();
+  }
+}
+
 obs.on('ConnectionOpened', () => {
   obsConnected = true;
   lastObsError = null;
