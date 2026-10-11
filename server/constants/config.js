@@ -13,6 +13,8 @@ const {
   OBS_PASSWORD = '',
   OBS_IMAGE_INPUT = 'OBS_GALLERY_REMOTE',
   OBS_STREAM_DELAY_SECONDS = 0,
+  PANEL_PASSWORD = '',
+  SESSION_SECRET = '',
 } = process.env;
 
 export const config = {
@@ -25,4 +27,6 @@ export const config = {
   obsPassword: OBS_PASSWORD,
   obsImageInput: OBS_IMAGE_INPUT,
   obsStreamDelaySeconds: Number.parseInt(OBS_STREAM_DELAY_SECONDS, 10),
+  panelPassword: PANEL_PASSWORD,
+  sessionSecret: SESSION_SECRET,
 };
