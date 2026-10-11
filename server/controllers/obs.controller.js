@@ -7,19 +7,89 @@ const obs = new OBSWebSocket();
 let obsConnected = false;
 let obsVersion = null;
 let lastObsError = null;
+let reconnectTimer = null;
+let reconnecting = false;
+
+const RECONNECT_DELAY_MS = 3000;
+
+async function connectObs() {
+  if (obsConnected || reconnecting) return false;
+
+  reconnecting = true;
+
+  try {
+    const result = await obs.connect(
+      `ws://${config.obsHost}:${config.obsPort}`,
+      config.obsPassword || undefined,
+      { rpcVersion: 1 },
+    );
+
+    obsConnected = true;
+    obsVersion = result.obsVersion || null;
+    lastObsError = null;
+
+    return result;
+  } catch (error) {
+    obsConnected = false;
+    lastObsError = error?.message || 'No se pudo conectar con OBS.';
+
+    throw error;
+  } finally {
+    reconnecting = false;
+  }
+}
+
+function scheduleReconnect() {
+  if (reconnectTimer) return;
+
+  console.log(
+    `Reintentando conexión con OBS en ${RECONNECT_DELAY_MS / 1000} segundos…`,
+  );
+
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null;
+
+    if (obsConnected) return;
+
+    try {
+      await connectObs();
+      console.log('Reconexión automática con OBS establecida.');
+    } catch {
+      scheduleReconnect();
+    }
+  }, RECONNECT_DELAY_MS);
+}
 
 obs.on('ConnectionOpened', () => {
   obsConnected = true;
   lastObsError = null;
-  console.log('Conectado a OBS WebSocket.');
-});
 
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
+  console.log('Conectado a OBS WebSocket.');
+  broadcastObsEvent('obs-connected', {
+    connected: true,
+  });
+});
 obs.on('ConnectionClosed', () => {
+  const wasConnected = obsConnected;
+
   obsConnected = false;
   obsVersion = null;
-  console.log('Conexión con OBS cerrada.');
-});
 
+  console.log('Conexión con OBS cerrada.');
+
+  if (wasConnected) {
+    broadcastObsEvent('obs-disconnected', {
+      connected: false,
+    });
+  }
+
+  scheduleReconnect();
+});
 obs.on('ConnectionError', (error) => {
   lastObsError = error?.message || 'Error de conexión con OBS.';
   console.error('Error de OBS WebSocket:', lastObsError);
@@ -73,14 +143,7 @@ export async function connectToObs(_req, res) {
     return res.json({ ok: true, connected: true, version: obsVersion });
 
   try {
-    const result = await obs.connect(
-      `ws://${config.obsHost}:${config.obsPort}`,
-      config.obsPassword || undefined,
-      { rpcVersion: 1 },
-    );
-    obsConnected = true;
-    obsVersion = result.obsVersion || null;
-    lastObsError = null;
+    const result = await connectObs();
     res.json({
       ok: true,
       connected: true,
@@ -88,9 +151,13 @@ export async function connectToObs(_req, res) {
       obsWebSocketVersion: result.obsWebSocketVersion || null,
     });
   } catch (error) {
-    obsConnected = false;
-    lastObsError = error?.message || 'No se pudo conectar con OBS.';
-    res.status(502).json({ ok: false, connected: false, error: lastObsError });
+    res
+      .status(502)
+      .json({
+        ok: false,
+        connected: false,
+        error: lastObsError || 'No se pudo conectar con OBS.',
+      });
   }
 }
 

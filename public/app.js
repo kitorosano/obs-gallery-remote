@@ -67,6 +67,27 @@ const obsEvents = createObsEvents({
       preserveMessage: true,
     });
   },
+  onObsDisconnected: async () => {
+    await refreshStatus();
+  },
+  onObsConnected: async () => {
+    await refreshStatus();
+
+    await Promise.allSettled([
+      scenes.loadScenes({
+        silent: true,
+        preserveMessage: true,
+      }),
+      audio.loadAudio({
+        silent: true,
+        preserveMessage: true,
+      }),
+      output.loadOutput({
+        silent: true,
+        preserveMessage: true,
+      }),
+    ]);
+  },
 });
 obsEvents.connect();
 

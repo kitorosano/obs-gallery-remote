@@ -2,6 +2,8 @@ export function createObsEvents({
   onSceneChanged,
   onAudioChanged,
   onOutputChanged,
+  onObsConnected,
+  onObsDisconnected,
 }) {
   let eventSource = null;
 
@@ -31,6 +33,14 @@ export function createObsEvents({
           case 'stream-state-changed':
           case 'record-state-changed':
             onOutputChanged?.(message.data);
+            break;
+
+          case 'obs-connected':
+            onObsConnected?.(message.data);
+            break;
+
+          case 'obs-disconnected':
+            onObsDisconnected?.(message.data);
             break;
           default:
             break;
