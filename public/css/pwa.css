@@ -1,0 +1,36 @@
+.install-dialog {
+  width: min(calc(100% - 32px), 420px);
+
+  padding: 0;
+  border: 1px solid #374151;
+  border-radius: 18px;
+
+  background: #111827;
+  color: #f9fafb;
+}
+
+.install-dialog::backdrop {
+  background: rgb(0 0 0 / 70%);
+}
+
+.install-dialog-content {
+  padding: 24px;
+}
+
+.install-dialog h2 {
+  margin-top: 0;
+}
+
+.install-dialog ol {
+  margin: 20px 0;
+  padding-left: 24px;
+}
+
+.install-dialog li {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.install-dialog button {
+  width: 100%;
+}

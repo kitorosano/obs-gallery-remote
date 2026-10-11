@@ -7,10 +7,10 @@ import { createNavigation } from './js/navigation.js';
 import { createObsEvents } from './js/obs-events.js';
 import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
-import { registerServiceWorker } from './js/pwa.js';
+import { initializePwa } from './js/pwa.js';
 import { createScenes } from './js/scenes.js';
 
-registerServiceWorker();
+initializePwa();
 
 function setObsAvailability(connected) {
   elements.app.classList.toggle('obs-disconnected', !connected);

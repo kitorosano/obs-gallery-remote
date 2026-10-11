@@ -1,4 +1,4 @@
-const CACHE_NAME = 'obs-gallery-remote-v1';
+const CACHE_NAME = 'obs-gallery-remote-v2';
 
 const APP_SHELL = [
   '/',
@@ -31,6 +31,7 @@ const APP_SHELL = [
   '/css/audio.css',
   '/css/output.css',
   '/css/auth.css',
+  '/css/pwa.css',
   '/css/responsive.css',
 
   '/icons/icon-192.png',
