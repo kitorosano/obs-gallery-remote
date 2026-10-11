@@ -1,4 +1,14 @@
 :root {
+  --color-bg: #0b1020;
+  --color-surface: #111827;
+  --color-surface-raised: #172033;
+  --color-border: #283247;
+  --color-control-border: #374151;
+  --color-muted: #9ca3af;
+  --color-text: #f3f4f6;
+  --color-primary: #2563eb;
+  --radius-panel: 1rem;
+
   font-family:
     Inter,
     ui-sans-serif,
@@ -8,8 +18,8 @@
     'Segoe UI',
     sans-serif;
 
-  color: #f3f4f6;
-  background: #0b1020;
+  color: var(--color-text);
+  background: var(--color-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

@@ -1,4 +1,6 @@
-export function createOutput({ api, elements, refreshStatus }) {
+import { createMessagePresenter, formatDuration } from './ui.js';
+
+export function createOutput({ obsService, elements, refreshStatus }) {
   const SYNC_INTERVAL_MS = 3000;
   const TIMER_INTERVAL_MS = 1000;
 
@@ -19,26 +21,7 @@ export function createOutput({ api, elements, refreshStatus }) {
    */
   let lastSyncAt = null;
 
-  function setMessage(text = '', type = '') {
-    elements.outputMessage.textContent = text;
-    elements.outputMessage.className = `message ${type}`.trim();
-  }
-
-  function formatDuration(durationMs) {
-    if (!Number.isFinite(Number(durationMs))) {
-      return '00:00:00';
-    }
-
-    const totalSeconds = Math.max(0, Math.floor(Number(durationMs) / 1000));
-
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return [hours, minutes, seconds]
-      .map((value) => String(value).padStart(2, '0'))
-      .join(':');
-  }
+  const setMessage = createMessagePresenter(elements.outputMessage);
 
   function getEstimatedDuration(output) {
     if (!output?.active) {
@@ -83,6 +66,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     const delayMs = delaySeconds * 1000;
 
     elements.streamDelay.textContent = `${delaySeconds} s`;
+    elements.streamDelayInfo.hidden = delaySeconds <= 0;
 
     /*
      * Nuestra prueba mostró:
@@ -178,7 +162,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
 
     try {
-      const data = await api('/api/obs/output/status');
+      const data = await obsService.outputs();
 
       state = {
         stream: data.stream,
@@ -210,7 +194,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
   }
 
-  async function executeAction({ endpoint, workingMessage, successMessage }) {
+  async function executeAction({ action, workingMessage, successMessage }) {
     if (actionInProgress) {
       return;
     }
@@ -222,9 +206,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     setMessage(workingMessage);
 
     try {
-      await api(endpoint, {
-        method: 'POST',
-      });
+      await action();
 
       const refreshed = await loadOutput({
         silent: true,
@@ -269,7 +251,7 @@ export function createOutput({ api, elements, refreshStatus }) {
       }
 
       await executeAction({
-        endpoint: '/api/obs/stream/stop',
+        action: obsService.stopStream,
         workingMessage: 'Deteniendo transmisión…',
         successMessage: 'La transmisión fue detenida.',
       });
@@ -278,7 +260,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
 
     await executeAction({
-      endpoint: '/api/obs/stream/start',
+      action: obsService.startStream,
       workingMessage: 'Iniciando transmisión…',
       successMessage: 'La transmisión está en vivo.',
     });
@@ -297,7 +279,7 @@ export function createOutput({ api, elements, refreshStatus }) {
       }
 
       await executeAction({
-        endpoint: '/api/obs/record/stop',
+        action: obsService.stopRecord,
         workingMessage: 'Deteniendo grabación…',
         successMessage: 'La grabación fue detenida.',
       });
@@ -306,7 +288,7 @@ export function createOutput({ api, elements, refreshStatus }) {
     }
 
     await executeAction({
-      endpoint: '/api/obs/record/start',
+      action: obsService.startRecord,
       workingMessage: 'Iniciando grabación…',
       successMessage: 'La grabación está activa.',
     });

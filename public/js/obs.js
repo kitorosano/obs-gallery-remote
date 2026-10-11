@@ -1,7 +1,7 @@
-export function createObsController({ api, elements, onConnectionChange }) {
+export function createObsController({ obsService, elements, onConnectionChange }) {
   async function refreshStatus() {
     try {
-      const status = await api('/api/obs/status');
+      const status = await obsService.status();
 
       elements.status.textContent = status.connected
         ? `OBS conectado${status.version ? ` · ${status.version}` : ''}`
@@ -23,7 +23,7 @@ export function createObsController({ api, elements, onConnectionChange }) {
   }
 
   async function connect() {
-    return api('/api/obs/connect', { method: 'POST' });
+    return obsService.connect();
   }
 
   async function showImage(image) {
@@ -31,10 +31,7 @@ export function createObsController({ api, elements, onConnectionChange }) {
     elements.message.textContent = 'Enviando imagen a OBS…';
 
     try {
-      const result = await api('/api/obs/show', {
-        method: 'POST',
-        body: JSON.stringify({ imageId: image.id }),
-      });
+      const result = await obsService.showImage(image.id);
 
       elements.message.textContent = result.message || 'Imagen enviada a OBS.';
       elements.message.className = 'message success';
@@ -46,5 +43,10 @@ export function createObsController({ api, elements, onConnectionChange }) {
     }
   }
 
-  return { connect, refreshStatus, showImage };
+  return {
+    connect,
+    refreshStatus,
+    showImage,
+    setAvailability: (connected) => onConnectionChange?.(connected),
+  };
 }

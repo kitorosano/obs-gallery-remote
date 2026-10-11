@@ -6,7 +6,9 @@
   "description": "Galería móvil local para controlar imágenes en OBS Studio mediante OBS WebSocket.",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "dev": "node --watch server/index.js",
+    "test": "node scripts/run-tests.js",
+    "check": "node scripts/check-project.js && node scripts/run-tests.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

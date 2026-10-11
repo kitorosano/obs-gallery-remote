@@ -30,3 +30,23 @@ export const config = {
   panelPassword: PANEL_PASSWORD,
   sessionSecret: SESSION_SECRET,
 };
+
+export function validateConfig(candidate = config) {
+  const errors = [];
+  if (!candidate.panelPassword) errors.push('PANEL_PASSWORD');
+  if (!candidate.sessionSecret) errors.push('SESSION_SECRET');
+  if (!Number.isInteger(candidate.port) || candidate.port < 1 || candidate.port > 65535) {
+    errors.push('PORT');
+  }
+  if (!Number.isInteger(candidate.obsPort) || candidate.obsPort < 1 || candidate.obsPort > 65535) {
+    errors.push('OBS_PORT');
+  }
+  if (!Number.isInteger(candidate.obsStreamDelaySeconds) || candidate.obsStreamDelaySeconds < 0) {
+    errors.push('OBS_STREAM_DELAY_SECONDS');
+  }
+
+  if (errors.length) {
+    throw new Error(`Configuración inválida o ausente: ${errors.join(', ')}.`);
+  }
+  return candidate;
+}

@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import fs from 'node:fs/promises';
-import { config } from './constants/config.js';
-import { startObsConnection } from './controllers/obs.controller.js';
+import { config, validateConfig } from './config/config.js';
+import { startObsConnection } from './obs/connection.js';
 import { requireAuth } from './middleware/auth.middleware.js';
 import authRoutes from './routes/auth.routes.js';
 import galleryRoutes from './routes/gallery.routes.js';
@@ -25,13 +25,8 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: 'Error interno del servidor.' });
 });
 
+validateConfig();
 await fs.mkdir(config.galleryRoot, { recursive: true });
-
-if (!config.panelPassword || !config.sessionSecret) {
-  throw new Error(
-    'PANEL_PASSWORD y SESSION_SECRET deben estar configurados en .env.',
-  );
-}
 
 app.listen(config.port, config.host, () => {
   console.log(

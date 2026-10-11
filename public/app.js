@@ -1,242 +1,124 @@
 import { api } from './js/api.js';
 import { createAudio } from './js/audio.js';
 import { createAuth } from './js/auth.js';
-import { elements } from './js/dom.js';
+import {
+  audioElements,
+  galleryElements,
+  navigationElements,
+  outputElements,
+  scenesElements,
+  shellElements,
+} from './js/dom.js';
 import { createGallery } from './js/gallery.js';
 import { createNavigation } from './js/navigation.js';
-import { createObsEvents } from './js/obs-events.js';
 import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
+import { createPanelCoordinator } from './js/panel.js';
 import { initializePwa } from './js/pwa.js';
 import { createScenes } from './js/scenes.js';
+import { createServices } from './js/services.js';
 
 initializePwa();
+const services = createServices(api);
 
 function setObsAvailability(connected) {
-  elements.app.classList.toggle('obs-disconnected', !connected);
-  elements.app.dataset.obsConnected = connected ? 'true' : 'false';
+  shellElements.app.classList.toggle('obs-disconnected', !connected);
+  shellElements.app.dataset.obsConnected = connected ? 'true' : 'false';
 }
 
 const obs = createObsController({
-  api,
-  elements,
+  obsService: services.obs,
+  elements: { ...shellElements, ...galleryElements },
   onConnectionChange: setObsAvailability,
 });
-
 const gallery = createGallery({
-  api,
-  elements,
+  galleryService: services.gallery,
+  elements: galleryElements,
   showImage: obs.showImage,
 });
 const scenes = createScenes({
-  api,
-  elements,
+  obsService: services.obs,
+  elements: scenesElements,
   refreshStatus: obs.refreshStatus,
 });
 const audio = createAudio({
-  api,
-  elements,
+  obsService: services.obs,
+  elements: audioElements,
   refreshStatus: obs.refreshStatus,
 });
 const output = createOutput({
-  api,
-  elements,
+  obsService: services.obs,
+  elements: { ...outputElements, outputView: navigationElements.outputView },
   refreshStatus: obs.refreshStatus,
 });
-
-async function syncGalleryFromObs() {
-  try {
-    const result = await api('/api/obs/gallery-image');
-
-    if (!result.matched) {
-      gallery.setMessage('OBS está mostrando una imagen externa a la galería.');
-
-      return;
-    }
-
-    gallery.selectImageFromObs(result.imageId);
-  } catch (error) {
-    console.warn('No se pudo sincronizar la imagen actual de OBS:', error);
-  }
-}
-
-let audioRefreshTimer = null;
-function scheduleAudioRefresh() {
-  if (audioRefreshTimer) {
-    window.clearTimeout(audioRefreshTimer);
-  }
-
-  audioRefreshTimer = window.setTimeout(async () => {
-    audioRefreshTimer = null;
-
-    await audio.loadAudio({
-      silent: true,
-      preserveMessage: true,
-    });
-  }, 100);
-}
-
-const obsEvents = createObsEvents({
-  onSceneChanged: async () => {
-    await scenes.loadScenes({
-      silent: true,
-      preserveMessage: true,
-    });
-  },
-  onAudioChanged: () => {
-    scheduleAudioRefresh();
-  },
-  onOutputChanged: async () => {
-    await output.loadOutput({
-      silent: true,
-      preserveMessage: true,
-    });
-  },
-  onObsDisconnected: async () => {
-    await obs.refreshStatus();
-  },
-  onObsConnected: async () => {
-    await obs.refreshStatus();
-
-    await Promise.allSettled([
-      syncGalleryFromObs(),
-      scenes.loadScenes({
-        silent: true,
-        preserveMessage: true,
-      }),
-      audio.loadAudio({
-        silent: true,
-        preserveMessage: true,
-      }),
-      output.loadOutput({
-        silent: true,
-        preserveMessage: true,
-      }),
-    ]);
-  },
-  onGalleryImageChanged: async () => {
-    await syncGalleryFromObs();
-  },
+const panel = createPanelCoordinator({
+  services,
+  obs,
+  gallery,
+  scenes,
+  audio,
+  output,
 });
 
 createNavigation({
-  elements,
-
+  elements: navigationElements,
   isScenesLoaded: scenes.isLoaded,
   loadScenes: scenes.loadScenes,
-
   isAudioLoaded: audio.isLoaded,
   loadAudio: audio.loadAudio,
-
   isOutputLoaded: output.isLoaded,
   loadOutput: output.loadOutput,
-
   startOutputRealtime: output.startRealtime,
   stopOutputRealtime: output.stopRealtime,
 });
 
-elements.refreshButton.addEventListener('click', gallery.loadGallery);
-elements.refreshScenesButton.addEventListener('click', () =>
-  scenes.loadScenes(),
-);
-elements.refreshAudioButton.addEventListener('click', () => audio.loadAudio());
-elements.refreshOutputButton.addEventListener('click', () =>
-  output.loadOutput(),
-);
-elements.search.addEventListener('input', gallery.render);
-
-elements.autoShow.addEventListener('change', () => {
+galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
+scenesElements.refreshScenesButton.addEventListener('click', () => scenes.loadScenes());
+audioElements.refreshAudioButton.addEventListener('click', () => audio.loadAudio());
+outputElements.refreshOutputButton.addEventListener('click', () => output.loadOutput());
+galleryElements.search.addEventListener('input', gallery.render);
+galleryElements.autoShow.addEventListener('change', () => {
   localStorage.setItem(
     gallery.AUTO_SHOW_STORAGE_KEY,
-    String(elements.autoShow.checked),
+    String(galleryElements.autoShow.checked),
   );
 });
 
-elements.connectButton.addEventListener('click', async () => {
+shellElements.connectButton.addEventListener('click', async () => {
   gallery.setMessage('Conectando con OBS…');
-
   try {
     const result = await obs.connect();
-
     gallery.setMessage(
-      `Conexión establecida${
-        result.version ? ` con OBS ${result.version}` : ''
-      }.`,
+      `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
       'success',
     );
-
     scenes.reset();
     audio.reset();
     output.reset();
-
-    if (!elements.scenesView.hidden) await scenes.loadScenes();
-    if (!elements.audioView.hidden) await audio.loadAudio();
-    if (!elements.outputView.hidden) await output.loadOutput();
+    await panel.refreshFeatures();
   } catch (error) {
     gallery.setMessage(
       `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,
       'error',
     );
   }
-
   await obs.refreshStatus();
 });
 
-elements.showButton.addEventListener('click', () => {
+galleryElements.showButton.addEventListener('click', () => {
   const selectedImage = gallery.getSelectedImage();
-
-  if (selectedImage) {
-    obs.showImage(selectedImage);
-  }
+  if (selectedImage) obs.showImage(selectedImage);
 });
-
-let panelInitialized = false;
-
-async function initializePanel() {
-  obsEvents.connect();
-
-  if (!panelInitialized) panelInitialized = true;
-
-  await gallery.loadGallery();
-  await obs.refreshStatus();
-
-  await Promise.allSettled([
-    syncGalleryFromObs(),
-
-    scenes.loadScenes({
-      silent: true,
-      preserveMessage: true,
-    }),
-    audio.loadAudio({
-      silent: true,
-      preserveMessage: true,
-    }),
-    output.loadOutput({
-      silent: true,
-      preserveMessage: true,
-    }),
-  ]);
-}
-
-function stopPanel() {
-  obsEvents.disconnect();
-  output.stopRealtime();
-
-  setObsAvailability(false);
-}
 
 const auth = createAuth({
-  api,
-  onAuthenticated: initializePanel,
-  onLoggedOut: async () => {
-    stopPanel();
-  },
+  authService: services.auth,
+  onAuthenticated: panel.start,
+  onLoggedOut: panel.stop,
 });
 
 window.addEventListener('auth:unauthorized', () => {
-  stopPanel();
+  panel.stop();
   auth.showLogin();
 });
 
-const authenticated = await auth.checkSession();
-if (authenticated) await initializePanel();
+if (await auth.checkSession()) await panel.start();

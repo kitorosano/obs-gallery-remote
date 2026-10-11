@@ -1,5 +1,5 @@
-import { config } from '../constants/config.js';
-import { listImages, resolveImageId } from '../utils/gallery.js';
+import { config } from '../config/config.js';
+import { listImages, resolveImageId } from '../services/gallery.js';
 
 export async function getGallery(_req, res) {
   const images = await listImages(config.galleryRoot);

@@ -20,37 +20,19 @@ function decodeId(id) {
 }
 
 export async function listImages(galleryRoot) {
+  return listImagesFromDirectory(galleryRoot, galleryRoot, true);
+}
+
+async function listImagesFromDirectory(galleryRoot, directory, allowMissing = false) {
   const results = [];
   let entries;
 
   try {
-    entries = await fs.readdir(galleryRoot, { withFileTypes: true });
+    entries = await fs.readdir(directory, { withFileTypes: true });
   } catch (error) {
-    if (error.code === 'ENOENT') return results;
+    if (allowMissing && error.code === 'ENOENT') return results;
     throw error;
   }
-
-  entries.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
-
-  for (const entry of entries) {
-    if (entry.name.startsWith('.')) continue;
-
-    const absolutePath = path.resolve(galleryRoot, entry.name);
-    if (!isInsideGallery(galleryRoot, absolutePath)) continue;
-
-    if (entry.isDirectory()) {
-      results.push(...await listImagesFromDirectory(galleryRoot, absolutePath));
-    } else if (entry.isFile() && ALLOWED_IMAGE_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
-      results.push(await createImageMetadata(galleryRoot, absolutePath));
-    }
-  }
-
-  return results;
-}
-
-async function listImagesFromDirectory(galleryRoot, directory) {
-  const results = [];
-  let entries = await fs.readdir(directory, { withFileTypes: true });
   entries.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
 
   for (const entry of entries) {

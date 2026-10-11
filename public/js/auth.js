@@ -1,4 +1,4 @@
-export function createAuth({ api, onAuthenticated, onLoggedOut }) {
+export function createAuth({ authService, onAuthenticated, onLoggedOut }) {
   const authView = document.querySelector('#auth-view');
   const form = document.querySelector('#login-form');
   const passwordInput = document.querySelector('#login-password');
@@ -28,7 +28,7 @@ export function createAuth({ api, onAuthenticated, onLoggedOut }) {
 
   async function checkSession() {
     try {
-      const result = await api('/api/auth/status');
+      const result = await authService.status();
 
       if (!result.authenticated) {
         showLogin();
@@ -53,12 +53,7 @@ export function createAuth({ api, onAuthenticated, onLoggedOut }) {
     message.textContent = 'Verificando…';
 
     try {
-      await api('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          password,
-        }),
-      });
+      await authService.login(password);
 
       showPanel();
 
@@ -75,9 +70,7 @@ export function createAuth({ api, onAuthenticated, onLoggedOut }) {
 
   async function logout() {
     try {
-      await api('/api/auth/logout', {
-        method: 'POST',
-      });
+      await authService.logout();
     } catch (error) {
       console.warn('No se pudo cerrar la sesión:', error);
     }

@@ -1,21 +1,10 @@
 import { Router } from 'express';
 import { subscribeToObsEvents } from '../controllers/obs-events.controller.js';
-import {
-  connectToObs,
-  getAudioInputs,
-  getCurrentGalleryImage,
-  getObsStatus,
-  getOutputStatus,
-  getScenes,
-  setCurrentScene,
-  setInputMute,
-  setInputVolume,
-  showImage,
-  startRecord,
-  startStream,
-  stopRecord,
-  stopStream,
-} from '../controllers/obs.controller.js';
+import { getAudioInputs, setInputMute, setInputVolume } from '../controllers/obs-audio.controller.js';
+import { connectToObs, getObsStatus } from '../controllers/obs-connection.controller.js';
+import { getCurrentGalleryImage, showImage } from '../controllers/obs-gallery.controller.js';
+import { getOutputStatus, startRecord, startStream, stopRecord, stopStream } from '../controllers/obs-output.controller.js';
+import { getScenes, setCurrentScene } from '../controllers/obs-scenes.controller.js';
 
 const router = Router();
 

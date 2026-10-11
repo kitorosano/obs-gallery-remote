@@ -1,13 +1,12 @@
-export function createScenes({ api, elements, refreshStatus }) {
+import { createMessagePresenter, renderEmptyState } from './ui.js';
+
+export function createScenes({ obsService, elements, refreshStatus }) {
   let scenes = [];
   let currentScene = null;
   let scenesLoaded = false;
   let sceneChangeInProgress = false;
 
-  function setMessage(text = '', type = '') {
-    elements.sceneMessage.textContent = text;
-    elements.sceneMessage.className = `message ${type}`.trim();
-  }
+  const setMessage = createMessagePresenter(elements.sceneMessage);
 
   function render() {
     elements.sceneGrid.replaceChildren();
@@ -17,10 +16,7 @@ export function createScenes({ api, elements, refreshStatus }) {
     }`;
 
     if (!scenes.length) {
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'OBS no devolvió ninguna escena.';
-      elements.sceneGrid.append(empty);
+      renderEmptyState(elements.sceneGrid, 'OBS no devolvió ninguna escena.');
       return;
     }
 
@@ -55,7 +51,7 @@ export function createScenes({ api, elements, refreshStatus }) {
     }
 
     try {
-      const data = await api('/api/obs/scenes');
+      const data = await obsService.scenes();
       scenes = Array.isArray(data.scenes) ? data.scenes : [];
       currentScene = data.currentScene || null;
       scenesLoaded = true;
@@ -68,12 +64,7 @@ export function createScenes({ api, elements, refreshStatus }) {
       return true;
     } catch (error) {
       scenesLoaded = false;
-      elements.sceneGrid.replaceChildren();
-
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'No se pudieron cargar las escenas.';
-      elements.sceneGrid.append(empty);
+      renderEmptyState(elements.sceneGrid, 'No se pudieron cargar las escenas.');
       elements.currentScene.textContent = '—';
       elements.sceneCount.textContent = '';
 
@@ -95,10 +86,7 @@ export function createScenes({ api, elements, refreshStatus }) {
     setMessage(`Cambiando a "${sceneName}"…`);
 
     try {
-      await api('/api/obs/scenes/current', {
-        method: 'POST',
-        body: JSON.stringify({ sceneName }),
-      });
+      await obsService.setScene(sceneName);
 
       const refreshed = await loadScenes({ silent: true, preserveMessage: true });
 

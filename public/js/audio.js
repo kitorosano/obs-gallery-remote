@@ -1,13 +1,12 @@
-export function createAudio({ api, elements, refreshStatus }) {
+import { createMessagePresenter, renderEmptyState } from './ui.js';
+
+export function createAudio({ obsService, elements, refreshStatus }) {
   let inputs = [];
   let audioLoaded = false;
   let changeInProgress = false;
   const volumeChangesInProgress = new Set();
 
-  function setMessage(text = '', type = '') {
-    elements.audioMessage.textContent = text;
-    elements.audioMessage.className = `message ${type}`.trim();
-  }
+  const setMessage = createMessagePresenter(elements.audioMessage);
 
   function formatDb(value) {
     const number = Number(value);
@@ -31,10 +30,7 @@ export function createAudio({ api, elements, refreshStatus }) {
     }`;
 
     if (!inputs.length) {
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'OBS no devolvió ninguna fuente de audio.';
-      elements.audioGrid.append(empty);
+      renderEmptyState(elements.audioGrid, 'OBS no devolvió ninguna fuente de audio.');
       return;
     }
 
@@ -150,7 +146,7 @@ export function createAudio({ api, elements, refreshStatus }) {
     }
 
     try {
-      const data = await api('/api/obs/audio');
+      const data = await obsService.audio();
 
       inputs = Array.isArray(data.inputs) ? data.inputs : [];
 
@@ -166,14 +162,7 @@ export function createAudio({ api, elements, refreshStatus }) {
     } catch (error) {
       audioLoaded = false;
 
-      elements.audioGrid.replaceChildren();
-
-      const empty = document.createElement('p');
-
-      empty.className = 'muted';
-      empty.textContent = 'No se pudieron cargar las fuentes de audio.';
-
-      elements.audioGrid.append(empty);
+      renderEmptyState(elements.audioGrid, 'No se pudieron cargar las fuentes de audio.');
       elements.audioCount.textContent = '';
 
       if (!silent) {
@@ -200,14 +189,7 @@ export function createAudio({ api, elements, refreshStatus }) {
     );
 
     try {
-      const result = await api('/api/obs/audio/mute', {
-        method: 'POST',
-
-        body: JSON.stringify({
-          inputName,
-          muted,
-        }),
-      });
+      const result = await obsService.setMute(inputName, muted);
 
       if (result.muted !== muted) {
         throw new Error(`OBS no confirmó el nuevo estado de "${inputName}".`);
@@ -260,14 +242,7 @@ export function createAudio({ api, elements, refreshStatus }) {
     setMessage(`Ajustando "${inputName}" a ${formatDb(volumeDb)}…`);
 
     try {
-      const result = await api('/api/obs/audio/volume', {
-        method: 'POST',
-
-        body: JSON.stringify({
-          inputName,
-          volumeDb,
-        }),
-      });
+      const result = await obsService.setVolume(inputName, volumeDb);
 
       if (!Number.isFinite(Number(result.volumeDb))) {
         throw new Error('OBS no devolvió un volumen válido.');

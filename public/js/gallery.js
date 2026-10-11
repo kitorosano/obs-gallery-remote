@@ -1,6 +1,8 @@
+import { createMessagePresenter, renderEmptyState } from './ui.js';
+
 const AUTO_SHOW_STORAGE_KEY = 'obs-gallery-auto-show';
 
-export function createGallery({ api, elements, showImage }) {
+export function createGallery({ galleryService, elements, showImage }) {
   let images = [];
   let selectedImage = null;
   let activeCategory = 'Todas';
@@ -8,10 +10,7 @@ export function createGallery({ api, elements, showImage }) {
   elements.autoShow.checked =
     localStorage.getItem(AUTO_SHOW_STORAGE_KEY) === 'true';
 
-  function setMessage(text = '', type = '') {
-    elements.message.textContent = text;
-    elements.message.className = `message ${type}`.trim();
-  }
+  const setMessage = createMessagePresenter(elements.message);
 
   function renderCategories() {
     const categories = [
@@ -76,13 +75,9 @@ export function createGallery({ api, elements, showImage }) {
     }`;
 
     if (!visibleImages.length) {
-      const empty = document.createElement('p');
-
-      empty.className = 'muted';
-      empty.textContent = images.length
+      renderEmptyState(elements.gallery, images.length
         ? 'No hay imágenes que coincidan con el filtro.'
-        : 'No se encontraron imágenes. Copia archivos a la carpeta gallery y actualiza la galería.';
-      elements.gallery.append(empty);
+        : 'No se encontraron imágenes. Copia archivos a la carpeta gallery y actualiza la galería.');
       return;
     }
 
@@ -151,7 +146,7 @@ export function createGallery({ api, elements, showImage }) {
     setMessage('');
 
     try {
-      const data = await api('/api/gallery');
+      const data = await galleryService.list();
       images = data.images;
 
       if (

@@ -1,11 +1,14 @@
 const $ = (selector) => document.querySelector(selector);
 
-export const elements = {
+export const shellElements = {
   app: document.body,
-  
+  status: $('#obs-status'),
+  connectButton: $('#connect'),
+};
+
+export const galleryElements = {
   gallery: $('#gallery'),
   search: $('#search'),
-  status: $('#obs-status'),
   preview: $('#preview'),
   previewPlaceholder: $('#preview-placeholder'),
   selectedName: $('#selected-name'),
@@ -15,37 +18,41 @@ export const elements = {
   categories: $('#categories'),
   imageCount: $('#image-count'),
   refreshButton: $('#refresh'),
-  connectButton: $('#connect'),
+};
 
-  galleryView: $('#gallery-view'),
-
-  scenesView: $('#scenes-view'),
+export const scenesElements = {
   sceneGrid: $('#scene-grid'),
   currentScene: $('#current-scene'),
   sceneCount: $('#scene-count'),
   sceneMessage: $('#scene-message'),
   refreshScenesButton: $('#refresh-scenes'),
+};
 
-  audioView: $('#audio-view'),
+export const audioElements = {
   audioGrid: $('#audio-grid'),
   audioCount: $('#audio-count'),
   audioMessage: $('#audio-message'),
   refreshAudioButton: $('#refresh-audio'),
+};
 
-  outputView: $('#output-view'),
+export const outputElements = {
   outputMessage: $('#output-message'),
   refreshOutputButton: $('#refresh-output'),
-
   streamStatus: $('#stream-status'),
   streamDuration: $('#stream-duration'),
   streamDelayInfo: $('#stream-delay-info'),
   streamDelay: $('#stream-delay'),
   streamTotalTime: $('#stream-total-time'),
   streamButton: $('#stream-button'),
-
   recordStatus: $('#record-status'),
   recordDuration: $('#record-duration'),
   recordButton: $('#record-button'),
+};
 
+export const navigationElements = {
+  galleryView: $('#gallery-view'),
+  scenesView: $('#scenes-view'),
+  audioView: $('#audio-view'),
+  outputView: $('#output-view'),
   navigationButtons: document.querySelectorAll('.nav-button'),
 };

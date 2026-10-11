@@ -1,4 +1,5 @@
 @import url('./css/base.css');
+@import url('./css/components.css');
 @import url('./css/header.css');
 @import url('./css/base-controls.css');
 @import url('./css/navigation.css');
@@ -13,7 +14,7 @@
 @import url('./css/pwa.css');
 @import url('./css/responsive.css');
 
-.obs-disconnected #show-button,
+.obs-disconnected #show,
 .obs-disconnected .scene-button,
 .obs-disconnected .audio-card button,
 .obs-disconnected .audio-card input,

@@ -447,12 +447,13 @@ El backend Express está organizado por responsabilidades:
 
 ```text
 server/
+├── config/
 ├── constants/
 ├── controllers/
 ├── middleware/
+├── obs/
 ├── routes/
-├── services/
-└── utils/
+└── services/
 ```
 
 El frontend utiliza módulos independientes:
@@ -483,6 +484,10 @@ output
 OBS events
 PWA
 ```
+
+`app.js` compone las funcionalidades; `services.js` encapsula los contratos
+HTTP, `panel.js` coordina la sincronización con OBS y cada módulo de interfaz
+recibe únicamente los elementos DOM que necesita.
 
 El navegador nunca se conecta directamente a OBS.
 

@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
 import { SESSION_COOKIE, SESSION_DURATION_MS } from '../constants/auth.js';
-import { config } from '../constants/config.js';
+import { config } from '../config/config.js';
 
 function sign(value) {
   return crypto
