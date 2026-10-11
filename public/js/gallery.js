@@ -6,17 +6,64 @@ export function createGallery({ galleryService, elements, showImage }) {
   let images = [];
   let selectedImage = null;
   let activeCategory = 'Todas';
+  let activeSourceId = '';
 
   elements.autoShow.checked =
     localStorage.getItem(AUTO_SHOW_STORAGE_KEY) === 'true';
 
   const setMessage = createMessagePresenter(elements.message);
 
+  function renderSources() {
+    const sources = new Map();
+
+    for (const image of images) {
+      if (image.sourceId && image.sourceName) {
+        sources.set(image.sourceId, image.sourceName);
+      }
+    }
+
+    const previousSourceId = activeSourceId;
+
+    elements.source.replaceChildren();
+
+    const allOption = document.createElement('option');
+
+    allOption.value = '';
+    allOption.textContent = 'Todas las fuentes';
+
+    elements.source.append(allOption);
+
+    const sortedSources = [...sources.entries()].sort(([, nameA], [, nameB]) =>
+      nameA.localeCompare(nameB, 'es', { sensitivity: 'base' }),
+    );
+
+    for (const [id, name] of sortedSources) {
+      const option = document.createElement('option');
+
+      option.value = id;
+      option.textContent = name;
+
+      elements.source.append(option);
+    }
+
+    activeSourceId = sources.has(previousSourceId) ? previousSourceId : '';
+
+    elements.source.value = activeSourceId;
+  }
+
   function renderCategories() {
+    const sourceImages = activeSourceId
+      ? images.filter((image) => image.sourceId === activeSourceId)
+      : images;
+
     const categories = [
       'Todas',
-      ...new Set(images.map((image) => image.category)),
+      ...new Set(sourceImages.map((image) => image.category)),
     ];
+
+    if (!categories.includes(activeCategory)) {
+      activeCategory = 'Todas';
+    }
 
     elements.categories.replaceChildren();
 
@@ -35,23 +82,23 @@ export function createGallery({ galleryService, elements, showImage }) {
 
       elements.categories.append(button);
     }
-
-    if (!categories.includes(activeCategory)) {
-      activeCategory = 'Todas';
-    }
   }
 
   function filteredImages() {
     const query = elements.search.value.trim().toLocaleLowerCase();
 
     return images.filter((image) => {
+      const sourceMatch = !activeSourceId || image.sourceId === activeSourceId;
+
       const categoryMatch =
         activeCategory === 'Todas' || image.category === activeCategory;
-      const textMatch = `${image.name} ${image.filename} ${image.category}`
-        .toLocaleLowerCase()
-        .includes(query);
 
-      return categoryMatch && textMatch;
+      const textMatch =
+        `${image.name} ${image.filename} ${image.category} ${image.sourceName ?? ''}`
+          .toLocaleLowerCase()
+          .includes(query);
+
+      return sourceMatch && categoryMatch && textMatch;
     });
   }
 
@@ -75,9 +122,12 @@ export function createGallery({ galleryService, elements, showImage }) {
     }`;
 
     if (!visibleImages.length) {
-      renderEmptyState(elements.gallery, images.length
-        ? 'No hay imágenes que coincidan con el filtro.'
-        : 'No se encontraron imágenes. Copia archivos a la carpeta gallery y actualiza la galería.');
+      renderEmptyState(
+        elements.gallery,
+        images.length
+          ? 'No hay imágenes que coincidan con el filtro.'
+          : 'No se encontraron imágenes. Copia archivos a la carpeta gallery y actualiza la galería.',
+      );
       return;
     }
 
@@ -160,6 +210,7 @@ export function createGallery({ galleryService, elements, showImage }) {
         elements.showButton.disabled = true;
       }
 
+      renderSources();
       renderCategories();
       render();
     } catch (error) {
@@ -174,5 +225,11 @@ export function createGallery({ galleryService, elements, showImage }) {
     render,
     selectImageFromObs,
     setMessage,
+    setActiveSource(sourceId) {
+      activeSourceId = sourceId;
+
+      renderCategories();
+      render();
+    },
   };
 }

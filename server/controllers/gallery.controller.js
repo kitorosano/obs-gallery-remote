@@ -1,16 +1,27 @@
-import { config } from '../config/config.js';
+import { listGallerySources } from '../services/gallery-sources.js';
 import { listImages, resolveImageId } from '../services/gallery.js';
 
 export async function getGallery(_req, res) {
-  const images = await listImages(config.galleryRoot);
-  res.json({ count: images.length, images });
+  const sources = await listGallerySources();
+  const images = await listImages(sources);
+
+  res.json({
+    count: images.length,
+    images,
+  });
 }
 
 export async function getGalleryImage(req, res) {
-  const imagePath = await resolveImageId(config.galleryRoot, req.params.id);
+  const sources = await listGallerySources();
+  const imagePath = await resolveImageId(sources, req.params.id);
+
   if (!imagePath) {
-    return res.status(404).json({ error: 'No se encontró esa imagen en la galería autorizada.' });
+    return res.status(404).json({
+      error: 'No se encontró esa imagen en las galerías autorizadas.',
+    });
   }
 
-  res.sendFile(imagePath, { dotfiles: 'deny' });
+  res.sendFile(imagePath, {
+    dotfiles: 'deny',
+  });
 }

@@ -96,12 +96,17 @@
       <!-- GALERÍA -->
       <section id="gallery-view" class="app-view">
         <section class="toolbar">
+          <select id="gallery-source" aria-label="Filtrar por fuente">
+            <option value="">Todas las fuentes</option>
+          </select>
+
           <input
             id="search"
             type="search"
             placeholder="Buscar imágenes…"
             aria-label="Buscar imágenes"
           />
+
           <button id="refresh" class="secondary">Actualizar galería</button>
         </section>
 

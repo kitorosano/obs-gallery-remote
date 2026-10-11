@@ -120,3 +120,15 @@
   margin: 0 0.15rem 0.2rem;
 }
 
+#gallery-source {
+  min-height: 42px;
+  padding: 0 0.75rem;
+
+  background: #111827;
+  color: inherit;
+
+  border: 1px solid #374151;
+  border-radius: 0.6rem;
+
+  font: inherit;
+}

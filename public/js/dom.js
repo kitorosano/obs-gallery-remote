@@ -9,6 +9,7 @@ export const shellElements = {
 export const galleryElements = {
   gallery: $('#gallery'),
   search: $('#search'),
+  source: document.querySelector('#gallery-source'),
   preview: $('#preview'),
   previewPlaceholder: $('#preview-placeholder'),
   selectedName: $('#selected-name'),

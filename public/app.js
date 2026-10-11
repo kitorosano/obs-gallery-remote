@@ -73,10 +73,19 @@ createNavigation({
 });
 
 galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
-scenesElements.refreshScenesButton.addEventListener('click', () => scenes.loadScenes());
-audioElements.refreshAudioButton.addEventListener('click', () => audio.loadAudio());
-outputElements.refreshOutputButton.addEventListener('click', () => output.loadOutput());
+scenesElements.refreshScenesButton.addEventListener('click', () =>
+  scenes.loadScenes(),
+);
+audioElements.refreshAudioButton.addEventListener('click', () =>
+  audio.loadAudio(),
+);
+outputElements.refreshOutputButton.addEventListener('click', () =>
+  output.loadOutput(),
+);
 galleryElements.search.addEventListener('input', gallery.render);
+galleryElements.source.addEventListener('change', () => {
+  gallery.setActiveSource(galleryElements.source.value);
+});
 galleryElements.autoShow.addEventListener('change', () => {
   localStorage.setItem(
     gallery.AUTO_SHOW_STORAGE_KEY,
