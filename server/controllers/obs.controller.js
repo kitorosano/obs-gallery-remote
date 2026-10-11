@@ -1,5 +1,6 @@
 import OBSWebSocket from 'obs-websocket-js';
 import { config } from '../constants/config.js';
+import { broadcastObsEvent } from '../services/obs-events.js';
 import { resolveImageId } from '../utils/gallery.js';
 
 const obs = new OBSWebSocket();
@@ -22,6 +23,39 @@ obs.on('ConnectionClosed', () => {
 obs.on('ConnectionError', (error) => {
   lastObsError = error?.message || 'Error de conexión con OBS.';
   console.error('Error de OBS WebSocket:', lastObsError);
+});
+
+obs.on('CurrentProgramSceneChanged', (event) => {
+  broadcastObsEvent('scene-changed', {
+    sceneName: event.sceneName,
+  });
+});
+obs.on('InputMuteStateChanged', (event) => {
+  broadcastObsEvent('audio-mute-changed', {
+    inputName: event.inputName,
+    muted: event.inputMuted,
+  });
+});
+obs.on('InputVolumeChanged', (event) => {
+  broadcastObsEvent('audio-volume-changed', {
+    inputName: event.inputName,
+    volumeDb: event.inputVolumeDb,
+    volumeMul: event.inputVolumeMul,
+  });
+});
+obs.on('StreamStateChanged', (event) => {
+  broadcastObsEvent('stream-state-changed', {
+    outputActive: event.outputActive,
+
+    outputState: event.outputState,
+  });
+});
+obs.on('RecordStateChanged', (event) => {
+  broadcastObsEvent('record-state-changed', {
+    outputActive: event.outputActive,
+
+    outputState: event.outputState,
+  });
 });
 
 export function getObsStatus(_req, res) {

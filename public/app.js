@@ -3,6 +3,7 @@ import { createAudio } from './js/audio.js';
 import { elements } from './js/dom.js';
 import { createGallery } from './js/gallery.js';
 import { createNavigation } from './js/navigation.js';
+import { createObsEvents } from './js/obs-events.js';
 import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
 import { createScenes } from './js/scenes.js';
@@ -32,6 +33,42 @@ const output = createOutput({
   elements,
   refreshStatus: obs.refreshStatus,
 });
+
+let audioRefreshTimer = null;
+
+function scheduleAudioRefresh() {
+  if (audioRefreshTimer) {
+    window.clearTimeout(audioRefreshTimer);
+  }
+
+  audioRefreshTimer = window.setTimeout(async () => {
+    audioRefreshTimer = null;
+
+    await audio.loadAudio({
+      silent: true,
+      preserveMessage: true,
+    });
+  }, 100);
+}
+
+const obsEvents = createObsEvents({
+  onSceneChanged: async () => {
+    await scenes.loadScenes({
+      silent: true,
+      preserveMessage: true,
+    });
+  },
+  onAudioChanged: () => {
+    scheduleAudioRefresh();
+  },
+  onOutputChanged: async () => {
+    await output.loadOutput({
+      silent: true,
+      preserveMessage: true,
+    });
+  },
+});
+obsEvents.connect();
 
 createNavigation({
   elements,

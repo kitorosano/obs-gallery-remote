@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { subscribeToObsEvents } from '../controllers/obs-events.controller.js';
 import {
   connectToObs,
   getAudioInputs,
@@ -36,5 +37,7 @@ router.post('/stream/stop', stopStream);
 
 router.post('/record/start', startRecord);
 router.post('/record/stop', stopRecord);
+
+router.get('/events', subscribeToObsEvents);
 
 export default router;
