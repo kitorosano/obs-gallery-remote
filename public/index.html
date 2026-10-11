@@ -10,7 +10,34 @@
     <title>OBS Gallery Remote</title>
     <link rel="stylesheet" href="/main.css" />
   </head>
-  <body>
+  <body class="auth-pending">
+    <section id="auth-view" class="auth-view">
+      <div class="auth-card">
+        <p class="eyebrow">CONTROL OBS</p>
+
+        <h1>OBS Gallery Remote</h1>
+
+        <p class="auth-description">
+          Ingresa la contraseña para acceder al panel.
+        </p>
+
+        <form id="login-form">
+          <label for="login-password"> Contraseña </label>
+
+          <input
+            id="login-password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+
+          <button id="login-button" type="submit">Entrar</button>
+        </form>
+
+        <p id="login-message" class="message" role="status"></p>
+      </div>
+    </section>
+
     <header class="topbar">
       <div>
         <p class="eyebrow">CONTROL LOCAL</p>
@@ -22,6 +49,10 @@
           >OBS desconectado</span
         >
         <button id="connect" class="secondary">Conectar con OBS</button>
+
+        <button id="logout" class="secondary" type="button">
+          Cerrar sesión
+        </button>
       </div>
     </header>
 

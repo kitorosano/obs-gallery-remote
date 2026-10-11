@@ -1,4 +1,8 @@
 import {
+  clearLoginAttempts,
+  registerFailedLogin,
+} from '../middleware/login-rate-limit.middleware.js';
+import {
   createSessionToken,
   getSessionCookieName,
   getSessionDurationMs,
@@ -11,11 +15,15 @@ export function login(req, res) {
   const { password } = req.body;
 
   if (!verifyPassword(password)) {
+    registerFailedLogin(req);
+
     return res.status(401).json({
       ok: false,
       error: 'Contraseña incorrecta.',
     });
   }
+
+  clearLoginAttempts(req);
 
   const token = createSessionToken();
 

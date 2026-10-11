@@ -9,6 +9,7 @@
 @import url('./css/scenes.css');
 @import url('./css/audio.css');
 @import url('./css/output.css');
+@import url('./css/auth.css');
 @import url('./css/responsive.css');
 
 .obs-disconnected #show-button,

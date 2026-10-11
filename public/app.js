@@ -1,5 +1,6 @@
 import { api } from './js/api.js';
 import { createAudio } from './js/audio.js';
+import { createAuth } from './js/auth.js';
 import { elements } from './js/dom.js';
 import { createGallery } from './js/gallery.js';
 import { createNavigation } from './js/navigation.js';
@@ -114,7 +115,6 @@ const obsEvents = createObsEvents({
     await syncGalleryFromObs();
   },
 });
-obsEvents.connect();
 
 createNavigation({
   elements,
@@ -187,5 +187,53 @@ elements.showButton.addEventListener('click', () => {
   }
 });
 
-await gallery.loadGallery();
-await obs.refreshStatus();
+let panelInitialized = false;
+
+async function initializePanel() {
+  obsEvents.connect();
+
+  if (!panelInitialized) panelInitialized = true;
+
+  await gallery.loadGallery();
+  await obs.refreshStatus();
+
+  await Promise.allSettled([
+    syncGalleryFromObs(),
+
+    scenes.loadScenes({
+      silent: true,
+      preserveMessage: true,
+    }),
+    audio.loadAudio({
+      silent: true,
+      preserveMessage: true,
+    }),
+    output.loadOutput({
+      silent: true,
+      preserveMessage: true,
+    }),
+  ]);
+}
+
+function stopPanel() {
+  obsEvents.disconnect();
+  output.stopRealtime();
+
+  setObsAvailability(false);
+}
+
+const auth = createAuth({
+  api,
+  onAuthenticated: initializePanel,
+  onLoggedOut: async () => {
+    stopPanel();
+  },
+});
+
+window.addEventListener('auth:unauthorized', () => {
+  stopPanel();
+  auth.showLogin();
+});
+
+const authenticated = await auth.checkSession();
+if (authenticated) await initializePanel();
