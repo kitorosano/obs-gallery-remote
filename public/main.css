@@ -13,6 +13,7 @@
 @import url('./css/output.css');
 @import url('./css/auth.css');
 @import url('./css/pwa.css');
+@import url('./css/program-monitor.css');
 @import url('./css/responsive.css');
 
 .obs-disconnected #show,

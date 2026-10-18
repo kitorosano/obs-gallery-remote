@@ -42,6 +42,9 @@ export function createServices(request) {
       stopStream: () => post('/api/obs/stream/stop'),
       startRecord: () => post('/api/obs/record/start'),
       stopRecord: () => post('/api/obs/record/stop'),
+      program: {
+        screenshot: () => request('/api/obs/program/screenshot'),
+      },
     },
   };
 }

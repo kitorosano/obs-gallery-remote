@@ -32,6 +32,13 @@ export const galleryElements = {
   closeSourcesButton: $('#close-gallery-sources'),
 };
 
+export const programMonitorElements = {
+  root: $('#program-monitor'),
+  image: $('#program-monitor-image'),
+  scene: $('#program-monitor-scene'),
+  placeholder: $('#program-monitor-placeholder'),
+};
+
 export const scenesElements = {
   sceneGrid: $('#scene-grid'),
   currentScene: $('#current-scene'),

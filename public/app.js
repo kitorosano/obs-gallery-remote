@@ -6,6 +6,7 @@ import {
   galleryElements,
   navigationElements,
   outputElements,
+  programMonitorElements,
   scenesElements,
   shellElements,
 } from './js/dom.js';
@@ -15,6 +16,7 @@ import { createNavigation } from './js/navigation.js';
 import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
 import { createPanelCoordinator } from './js/panel.js';
+import { createProgramMonitor } from './js/program-monitor.js';
 import { initializePwa } from './js/pwa.js';
 import { createScenes } from './js/scenes.js';
 import { createServices } from './js/services.js';
@@ -31,6 +33,10 @@ const obs = createObsController({
   obsService: services.obs,
   elements: { ...shellElements, ...galleryElements },
   onConnectionChange: setObsAvailability,
+});
+const programMonitor = createProgramMonitor({
+  programService: services.obs.program,
+  elements: programMonitorElements,
 });
 const gallery = createGallery({
   galleryService: services.gallery,
@@ -164,9 +170,13 @@ galleryElements.showButton.addEventListener('click', () => {
 const auth = createAuth({
   authService: services.auth,
   onAuthenticated: async () => {
-    await Promise.all([panel.start(), gallerySources.load()]);
+    await panel.start();
+    programMonitor.start();
   },
-  onLoggedOut: panel.stop,
+  onLoggedOut: () => {
+    programMonitor.stop();
+    panel.stop();
+  },
 });
 
 window.addEventListener('auth:unauthorized', () => {
@@ -176,4 +186,5 @@ window.addEventListener('auth:unauthorized', () => {
 
 if (await auth.checkSession()) {
   await panel.start();
+  programMonitor.start();
 }
