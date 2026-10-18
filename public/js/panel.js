@@ -10,6 +10,7 @@ export function createPanelCoordinator({
   output,
 }) {
   let audioRefreshTimer = null;
+  let sourcesRefreshTimer = null;
 
   async function syncGalleryFromObs() {
     try {
@@ -63,19 +64,27 @@ export function createPanelCoordinator({
     await Promise.allSettled(tasks);
   }
 
-  function handleSourceVisibilityChanged() {
+  function scheduleSourcesRefresh() {
     if (!sources.isLoaded()) return;
 
-    sources.loadSources({
-      silent: true,
-      preserveMessage: true,
-    });
+    if (sourcesRefreshTimer) {
+      window.clearTimeout(sourcesRefreshTimer);
+    }
+
+    sourcesRefreshTimer = window.setTimeout(() => {
+      sourcesRefreshTimer = null;
+
+      sources.loadSources({
+        silent: true,
+        preserveMessage: true,
+      });
+    }, 100);
   }
 
   const events = createObsEvents({
     onSceneChanged: handleSceneChanged,
     onAudioChanged: scheduleAudioRefresh,
-    onSourceVisibilityChanged: handleSourceVisibilityChanged,
+    onSourceVisibilityChanged: scheduleSourcesRefresh,
     onOutputChanged: () =>
       output.loadOutput({ silent: true, preserveMessage: true }),
     onObsDisconnected: () => obs.refreshStatus(),
@@ -112,6 +121,10 @@ export function createPanelCoordinator({
     if (audioRefreshTimer) {
       window.clearTimeout(audioRefreshTimer);
       audioRefreshTimer = null;
+    }
+    if (sourcesRefreshTimer) {
+      window.clearTimeout(sourcesRefreshTimer);
+      sourcesRefreshTimer = null;
     }
     obs.setAvailability(false);
   }

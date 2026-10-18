@@ -4,15 +4,14 @@ export function createSources({ obsService, elements, refreshStatus }) {
   let sources = [];
   let currentScene = null;
   let sourcesLoaded = false;
+  let sourcesLoadVersion = 0;
 
   const changesInProgress = new Set();
 
   const setMessage = createMessagePresenter(elements.sourcesMessage);
 
   function getSourceType(source) {
-    if (source.isGroup) {
-      return 'Grupo';
-    }
+    if (source.isGroup) return 'Grupo';
 
     const labels = {
       image_source: 'Imagen',
@@ -108,6 +107,8 @@ export function createSources({ obsService, elements, refreshStatus }) {
   }
 
   async function loadSources({ silent = false, preserveMessage = false } = {}) {
+    const loadVersion = ++sourcesLoadVersion;
+
     if (!silent) {
       setMessage('Cargando fuentes…');
     }
@@ -115,10 +116,12 @@ export function createSources({ obsService, elements, refreshStatus }) {
     try {
       const data = await obsService.sources();
 
+      if (loadVersion !== sourcesLoadVersion) {
+        return true;
+      }
+
       sources = Array.isArray(data.sources) ? data.sources : [];
-
       currentScene = data.sceneName || null;
-
       sourcesLoaded = true;
 
       render();
@@ -129,6 +132,10 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
       return true;
     } catch (error) {
+      if (loadVersion !== sourcesLoadVersion) {
+        return true;
+      }
+
       sourcesLoaded = false;
 
       renderEmptyState(
@@ -137,7 +144,6 @@ export function createSources({ obsService, elements, refreshStatus }) {
       );
 
       elements.currentSourcesScene.textContent = '—';
-
       elements.sourcesCount.textContent = '';
 
       if (!silent) {
