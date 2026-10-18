@@ -52,6 +52,17 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     );
   }
 
+  function setSourceVisibility(inputName, visible) {
+    if (visible) {
+      hiddenSources.delete(inputName);
+    } else {
+      hiddenSources.add(inputName);
+    }
+
+    saveHiddenSources();
+    render();
+  }
+
   function render() {
     elements.audioGrid.replaceChildren();
 
@@ -109,15 +120,30 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       const info = document.createElement('div');
       info.className = 'audio-info';
 
+      const infoHeader = document.createElement('div');
+      infoHeader.className = 'audio-info-header';
+
       const name = document.createElement('strong');
       name.className = 'audio-name';
       name.textContent = input.inputName;
+
+      const hideButton = document.createElement('button');
+      hideButton.type = 'button';
+      hideButton.className = 'audio-hide-source';
+      hideButton.textContent = '◉';
+      hideButton.setAttribute('aria-label', `Ocultar ${input.inputName}`);
+      hideButton.title = 'Ocultar fuente';
+      hideButton.addEventListener('click', () => {
+        setSourceVisibility(input.inputName, false);
+      });
+
+      infoHeader.append(name, hideButton);
 
       const status = document.createElement('span');
       status.className = `audio-status${input.muted ? ' muted' : ' active'}`;
       status.textContent = input.muted ? 'SILENCIADO' : 'ACTIVO';
 
-      info.append(name, status);
+      info.append(infoHeader, status);
 
       /*
        * Volumen
@@ -238,16 +264,20 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       switchElement.append(checkbox, track);
       control.append(label, switchElement);
 
-      checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-          hiddenSources.delete(input.inputName);
-        } else {
-          hiddenSources.add(input.inputName);
+      function applyVisibility() {
+        setSourceVisibility(input.inputName, checkbox.checked);
+        label.textContent = checkbox.checked ? 'Visible' : 'Oculta';
+      }
+
+      checkbox.addEventListener('change', applyVisibility);
+      row.addEventListener('click', (event) => {
+        if (event.target.closest('.audio-source-visibility')) {
+          return;
         }
 
-        saveHiddenSources();
-        label.textContent = checkbox.checked ? 'Visible' : 'Oculta';
-        render();
+        checkbox.checked = !checkbox.checked;
+
+        applyVisibility();
       });
 
       row.append(name, control);
