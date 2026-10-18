@@ -101,6 +101,71 @@
   background: #6b7280;
 }
 
+.program-monitor-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+
+  min-width: 0;
+}
+
+.program-monitor-pip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+
+  flex: 0 0 auto;
+
+  background: transparent;
+  color: #9ca3af;
+
+  border: 1px solid #29364d;
+  border-radius: 0.45rem;
+
+  font-size: 1rem;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.program-monitor-pip-button:hover {
+  background: #172033;
+  color: #fff;
+}
+
+.program-monitor-pip-button.is-active {
+  background: #29364d;
+  color: #fff;
+}
+
+.program-monitor.is-pip {
+  position: fixed;
+
+  right: 1rem;
+  bottom: 1rem;
+
+  z-index: 1000;
+
+  width: min(360px, calc(100vw - 2rem));
+
+  margin: 0;
+
+  padding: 0.5rem;
+
+  background: #111827;
+
+  border: 1px solid #3b4a63;
+
+  border-radius: 0.75rem;
+
+  box-shadow: 0 12px 35px rgb(0 0 0 / 45%);
+}
+
 @media (max-width: 600px) {
   .program-monitor {
     padding: 0.5rem;
@@ -111,5 +176,28 @@
 
   .program-monitor-frame {
     border-radius: 0.4rem;
+  }
+
+  .program-monitor.is-pip {
+    right: 0.5rem;
+    bottom: 0.5rem;
+
+    width: min(260px, calc(100vw - 1rem));
+
+    padding: 0.4rem;
+  }
+
+  .program-monitor.is-pip .program-monitor-header {
+    margin-bottom: 0.35rem;
+  }
+
+  .program-monitor.is-pip .program-monitor-title,
+  .program-monitor.is-pip .program-monitor-scene {
+    font-size: 0.68rem;
+  }
+
+  .program-monitor.is-pip .program-monitor-pip-button {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 }
