@@ -9,6 +9,7 @@ import {
   scenesElements,
   shellElements,
 } from './js/dom.js';
+import { createGallerySources } from './js/gallery-sources.js';
 import { createGallery } from './js/gallery.js';
 import { createNavigation } from './js/navigation.js';
 import { createObsController } from './js/obs.js';
@@ -35,6 +36,11 @@ const gallery = createGallery({
   galleryService: services.gallery,
   elements: galleryElements,
   showImage: obs.showImage,
+});
+const gallerySources = createGallerySources({
+  galleryService: services.gallery,
+  elements: galleryElements,
+  onSourcesChanged: gallery.loadGallery,
 });
 const scenes = createScenes({
   obsService: services.obs,
@@ -92,7 +98,44 @@ galleryElements.autoShow.addEventListener('change', () => {
     String(galleryElements.autoShow.checked),
   );
 });
+galleryElements.addSourceButton.addEventListener('click', () => {
+  galleryElements.sourceForm.reset();
+  galleryElements.sourceDialog.showModal();
+  galleryElements.sourceNameInput.focus();
+});
+galleryElements.cancelSourceButton.addEventListener('click', () => {
+  galleryElements.sourceDialog.close();
+});
+galleryElements.sourceForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
+  const submitButton = galleryElements.sourceForm.querySelector(
+    'button[type="submit"]',
+  );
+
+  submitButton.disabled = true;
+
+  try {
+    await gallerySources.addSource({
+      name: galleryElements.sourceNameInput.value.trim(),
+      path: galleryElements.sourcePathInput.value.trim(),
+    });
+
+    galleryElements.sourceDialog.close();
+  } catch (error) {
+    galleryElements.sourcesMessage.textContent = `No se pudo agregar la fuente: ${error.message}`;
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+galleryElements.manageSourcesButton.addEventListener('click', async () => {
+  await gallerySources.load();
+  galleryElements.sourcesDialog.showModal();
+});
+
+galleryElements.closeSourcesButton.addEventListener('click', () => {
+  galleryElements.sourcesDialog.close();
+});
 shellElements.connectButton.addEventListener('click', async () => {
   gallery.setMessage('Conectando con OBS…');
   try {
@@ -113,7 +156,6 @@ shellElements.connectButton.addEventListener('click', async () => {
   }
   await obs.refreshStatus();
 });
-
 galleryElements.showButton.addEventListener('click', () => {
   const selectedImage = gallery.getSelectedImage();
   if (selectedImage) obs.showImage(selectedImage);
@@ -121,7 +163,9 @@ galleryElements.showButton.addEventListener('click', () => {
 
 const auth = createAuth({
   authService: services.auth,
-  onAuthenticated: panel.start,
+  onAuthenticated: async () => {
+    await Promise.all([panel.start(), gallerySources.load()]);
+  },
   onLoggedOut: panel.stop,
 });
 
@@ -130,4 +174,6 @@ window.addEventListener('auth:unauthorized', () => {
   auth.showLogin();
 });
 
-if (await auth.checkSession()) await panel.start();
+if (await auth.checkSession()) {
+  await panel.start();
+}

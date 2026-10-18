@@ -19,6 +19,17 @@ export const galleryElements = {
   categories: $('#categories'),
   imageCount: $('#image-count'),
   refreshButton: $('#refresh'),
+  sourcesList: $('#gallery-sources-list'),
+  sourcesMessage: $('#gallery-sources-message'),
+  addSourceButton: $('#add-gallery-source'),
+  sourceDialog: $('#gallery-source-dialog'),
+  sourceForm: $('#gallery-source-form'),
+  sourceNameInput: $('#gallery-source-name'),
+  sourcePathInput: $('#gallery-source-path'),
+  cancelSourceButton: $('#cancel-gallery-source'),
+  manageSourcesButton: $('#manage-gallery-sources'),
+  sourcesDialog: $('#gallery-sources-dialog'),
+  closeSourcesButton: $('#close-gallery-sources'),
 };
 
 export const scenesElements = {

@@ -1,0 +1,113 @@
+.gallery-sources-dialog {
+  width: min(620px, calc(100vw - 2rem));
+  max-height: min(80vh, 700px);
+
+  padding: 0;
+
+  border: 1px solid #29364d;
+  border-radius: 1rem;
+
+  background: #111827;
+  color: inherit;
+}
+
+.gallery-sources-dialog::backdrop {
+  background: rgb(0 0 0 / 65%);
+}
+
+.gallery-sources-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  padding: 1rem;
+
+  max-height: inherit;
+}
+
+.gallery-sources-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.gallery-sources-dialog-header h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+}
+
+.gallery-sources-list {
+  display: grid;
+  gap: 0.65rem;
+
+  overflow-y: auto;
+}
+
+.gallery-source-card {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 0.75rem 1rem;
+
+  padding: 0.85rem;
+
+  background: #172033;
+
+  border: 1px solid #29364d;
+  border-radius: 0.8rem;
+}
+
+.gallery-source-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  min-width: 0;
+}
+
+.gallery-source-path {
+  font-size: 0.75rem;
+  color: #9ca3af;
+
+  overflow-wrap: anywhere;
+}
+
+.gallery-source-enabled {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+
+  font-size: 0.8rem;
+}
+
+.gallery-source-actions {
+  grid-column: 1 / -1;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .gallery-sources-dialog {
+    width: calc(100vw - 1rem);
+    max-height: 85vh;
+  }
+
+  .gallery-sources-dialog-content {
+    padding: 0.85rem;
+  }
+
+  .gallery-source-card {
+    gap: 0.6rem;
+  }
+
+  .gallery-source-actions button {
+    flex: 1;
+  }
+}

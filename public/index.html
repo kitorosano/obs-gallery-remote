@@ -108,7 +108,46 @@
           />
 
           <button id="refresh" class="secondary">Actualizar galería</button>
+          <button id="manage-gallery-sources" class="secondary" type="button">
+            Gestionar fuentes
+          </button>
         </section>
+
+        <dialog id="gallery-source-dialog">
+          <form id="gallery-source-form">
+            <h2>Agregar fuente</h2>
+
+            <label for="gallery-source-name"> Nombre </label>
+
+            <input
+              id="gallery-source-name"
+              type="text"
+              placeholder="Ej. Cultos"
+              required
+            />
+
+            <label for="gallery-source-path"> Ruta del directorio </label>
+
+            <input
+              id="gallery-source-path"
+              type="text"
+              placeholder="D:\Iglesia\Cultos"
+              required
+            />
+
+            <div class="gallery-source-dialog-actions">
+              <button
+                id="cancel-gallery-source"
+                class="secondary"
+                type="button"
+              >
+                Cancelar
+              </button>
+
+              <button type="submit">Agregar</button>
+            </div>
+          </form>
+        </dialog>
 
         <section class="workspace">
           <div class="gallery-panel">
@@ -348,6 +387,32 @@
         </ol>
 
         <button id="close-ios-install" type="button">Entendido</button>
+      </div>
+    </dialog>
+
+    <dialog id="gallery-sources-dialog" class="gallery-sources-dialog">
+      <div class="gallery-sources-dialog-content">
+        <div class="gallery-sources-dialog-header">
+          <div>
+            <h2>Fuentes de galería</h2>
+            <p class="muted">Administra los directorios disponibles.</p>
+          </div>
+
+          <button
+            id="close-gallery-sources"
+            class="secondary"
+            type="button"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div id="gallery-sources-list" class="gallery-sources-list"></div>
+
+        <p id="gallery-sources-message" class="message" role="status"></p>
+
+        <button id="add-gallery-source" type="button">+ Agregar fuente</button>
       </div>
     </dialog>
 

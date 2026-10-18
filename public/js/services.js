@@ -13,6 +13,17 @@ export function createServices(request) {
     },
     gallery: {
       list: () => request('/api/gallery'),
+      sources: () => request('/api/gallery/sources'),
+      addSource: (source) => post('/api/gallery/sources', source),
+      updateSource: (id, changes) =>
+        request(`/api/gallery/sources/${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          body: JSON.stringify(changes),
+        }),
+      deleteSource: (id) =>
+        request(`/api/gallery/sources/${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+        }),
     },
     obs: {
       status: () => request('/api/obs/status'),
@@ -22,8 +33,10 @@ export function createServices(request) {
       scenes: () => request('/api/obs/scenes'),
       setScene: (sceneName) => post('/api/obs/scenes/current', { sceneName }),
       audio: () => request('/api/obs/audio'),
-      setMute: (inputName, muted) => post('/api/obs/audio/mute', { inputName, muted }),
-      setVolume: (inputName, volumeDb) => post('/api/obs/audio/volume', { inputName, volumeDb }),
+      setMute: (inputName, muted) =>
+        post('/api/obs/audio/mute', { inputName, muted }),
+      setVolume: (inputName, volumeDb) =>
+        post('/api/obs/audio/volume', { inputName, volumeDb }),
       outputs: () => request('/api/obs/output/status'),
       startStream: () => post('/api/obs/stream/start'),
       stopStream: () => post('/api/obs/stream/stop'),
