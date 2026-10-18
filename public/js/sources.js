@@ -233,10 +233,9 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
   return {
     isLoaded: () => sourcesLoaded,
-
     loadSources,
-
     reset: () => {
+      sourcesLoadVersion += 1;
       sourcesLoaded = false;
     },
   };

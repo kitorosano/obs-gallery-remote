@@ -304,6 +304,10 @@ export function createAudio({ obsService, elements, refreshStatus }) {
 
       return true;
     } catch (error) {
+      if (loadVersion !== audioLoadVersion) {
+        return true;
+      }
+
       audioLoaded = false;
 
       renderEmptyState(
@@ -463,6 +467,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     loadAudio,
     renderSourceManager,
     reset: () => {
+      audioLoadVersion += 1;
       audioLoaded = false;
     },
   };

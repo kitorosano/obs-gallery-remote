@@ -5,6 +5,7 @@ export function createScenes({ obsService, elements, refreshStatus }) {
   let currentScene = null;
   let scenesLoaded = false;
   let sceneChangeInProgress = false;
+  let scenesLoadVersion = 0;
 
   const setMessage = createMessagePresenter(elements.sceneMessage);
 
@@ -46,15 +47,25 @@ export function createScenes({ obsService, elements, refreshStatus }) {
   }
 
   async function loadScenes({ silent = false, preserveMessage = false } = {}) {
+    const loadVersion = ++scenesLoadVersion;
+
     if (!silent) {
       setMessage('Cargando escenas…');
     }
 
     try {
       const data = await obsService.scenes();
+
+      if (loadVersion !== scenesLoadVersion) {
+        return true;
+      }
+
       scenes = Array.isArray(data.scenes) ? data.scenes : [];
+
       currentScene = data.currentScene || null;
+
       scenesLoaded = true;
+
       render();
 
       if (!silent && !preserveMessage) {
@@ -63,13 +74,26 @@ export function createScenes({ obsService, elements, refreshStatus }) {
 
       return true;
     } catch (error) {
+      if (loadVersion !== scenesLoadVersion) {
+        return true;
+      }
+
       scenesLoaded = false;
-      renderEmptyState(elements.sceneGrid, 'No se pudieron cargar las escenas.');
+
+      renderEmptyState(
+        elements.sceneGrid,
+        'No se pudieron cargar las escenas.',
+      );
+
       elements.currentScene.textContent = '—';
+
       elements.sceneCount.textContent = '';
 
       if (!silent) {
-        setMessage(`No se pudieron cargar las escenas: ${error.message}`, 'error');
+        setMessage(
+          `No se pudieron cargar las escenas: ${error.message}`,
+          'error',
+        );
       }
 
       return false;
@@ -88,7 +112,10 @@ export function createScenes({ obsService, elements, refreshStatus }) {
     try {
       await obsService.setScene(sceneName);
 
-      const refreshed = await loadScenes({ silent: true, preserveMessage: true });
+      const refreshed = await loadScenes({
+        silent: true,
+        preserveMessage: true,
+      });
 
       if (!refreshed) {
         throw new Error(
@@ -97,7 +124,9 @@ export function createScenes({ obsService, elements, refreshStatus }) {
       }
 
       if (currentScene !== sceneName) {
-        throw new Error(`OBS no confirmó "${sceneName}" como escena en programa.`);
+        throw new Error(
+          `OBS no confirmó "${sceneName}" como escena en programa.`,
+        );
       }
 
       setMessage(`"${currentScene}" está ahora en programa.`, 'success');
@@ -114,6 +143,7 @@ export function createScenes({ obsService, elements, refreshStatus }) {
     isLoaded: () => scenesLoaded,
     loadScenes,
     reset: () => {
+      scenesLoadVersion += 1;
       scenesLoaded = false;
     },
   };
