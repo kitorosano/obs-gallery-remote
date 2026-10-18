@@ -50,6 +50,14 @@ export const scenesElements = {
   refreshScenesButton: $('#refresh-scenes'),
 };
 
+export const sourcesElements = {
+  sourcesGrid: $('#sources-grid'),
+  currentSourcesScene: $('#current-sources-scene'),
+  sourcesCount: $('#sources-count'),
+  sourcesMessage: $('#sources-message'),
+  refreshSourcesButton: $('#refresh-sources'),
+};
+
 export const audioElements = {
   audioGrid: $('#audio-grid'),
   audioCount: $('#audio-count'),
@@ -79,6 +87,7 @@ export const outputElements = {
 export const navigationElements = {
   galleryView: $('#gallery-view'),
   scenesView: $('#scenes-view'),
+  sourcesView: $('#sources-view'),
   audioView: $('#audio-view'),
   outputView: $('#output-view'),
   navigationButtons: document.querySelectorAll('.nav-button'),

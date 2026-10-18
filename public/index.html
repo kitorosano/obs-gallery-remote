@@ -50,12 +50,7 @@
 
     <header class="topbar">
       <div class="topbar-brand">
-
-  <img
-    src="/icons/logo-symbol.png"
-    class="topbar-brand-icon"
-    alt=""
-  />
+        <img src="/icons/logo-symbol.png" class="topbar-brand-icon" alt="" />
 
         <h1>OBS Gallery Remote</h1>
       </div>
@@ -146,6 +141,10 @@
 
         <button class="nav-button" data-view="scenes" aria-pressed="false">
           Escenas
+        </button>
+
+        <button class="nav-button" data-view="sources" aria-pressed="false">
+          Fuentes
         </button>
 
         <button class="nav-button" data-view="audio" aria-pressed="false">
@@ -299,6 +298,35 @@
 
           <p id="scene-message" class="message" role="status"></p>
         </div>
+      </section>
+
+      <!-- FUENTES -->
+      <section id="sources-view" class="view" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">FUENTES DE LA ESCENA</p>
+
+            <h2>Fuentes</h2>
+          </div>
+
+          <button id="refresh-sources" class="secondary" type="button">
+            Actualizar
+          </button>
+        </div>
+
+        <div class="scene-summary">
+          <div>
+            <span>EN PROGRAMA</span>
+
+            <strong id="current-sources-scene"> — </strong>
+          </div>
+
+          <span id="sources-count"></span>
+        </div>
+
+        <p id="sources-message" class="message" aria-live="polite"></p>
+
+        <div id="sources-grid" class="sources-grid"></div>
       </section>
 
       <!-- AUDIO -->

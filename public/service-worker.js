@@ -1,4 +1,4 @@
-const CACHE_NAME = 'obs-gallery-remote-v20';
+const CACHE_NAME = 'obs-gallery-remote-v22';
 
 const APP_SHELL = [
   '/',
@@ -15,6 +15,7 @@ const APP_SHELL = [
   '/js/navigation.js',
   '/js/obs.js',
   '/js/scenes.js',
+  '/js/sources.js',
   '/js/audio.js',
   '/js/output.js',
   '/js/obs-events.js',
@@ -34,6 +35,7 @@ const APP_SHELL = [
   '/css/preview.css',
   '/css/messages.css',
   '/css/scenes.css',
+  '/css/sources.css',
   '/css/audio.css',
   '/css/output.css',
   '/css/auth.css',

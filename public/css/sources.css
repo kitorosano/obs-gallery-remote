@@ -1,0 +1,57 @@
+.sources-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.source-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  padding: 0.85rem 1rem;
+
+  background: #172033;
+
+  border: 1px solid #29364d;
+  border-radius: 0.75rem;
+
+  cursor: pointer;
+}
+
+.source-control-row.disabled {
+  opacity: 0.7;
+}
+
+.source-control-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  min-width: 0;
+
+  gap: 0.2rem;
+}
+
+.source-control-name {
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.source-control-type {
+  color: #94a3b8;
+
+  font-size: 0.78rem;
+}
+
+.source-control-visibility {
+  display: flex;
+  align-items: center;
+
+  gap: 0.6rem;
+
+  flex: 0 0 auto;
+}

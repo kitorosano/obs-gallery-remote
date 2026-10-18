@@ -4,6 +4,9 @@ export function createNavigation({
   loadScenes,
   isScenesLoaded,
 
+  loadSources,
+  isSourcesLoaded,
+
   loadAudio,
   isAudioLoaded,
 
@@ -15,6 +18,7 @@ export function createNavigation({
   function setActiveView(viewName) {
     elements.galleryView.hidden = viewName !== 'gallery';
     elements.scenesView.hidden = viewName !== 'scenes';
+    elements.sourcesView.hidden = viewName !== 'sources';
     elements.audioView.hidden = viewName !== 'audio';
     elements.outputView.hidden = viewName !== 'output';
 
@@ -28,6 +32,10 @@ export function createNavigation({
 
     if (viewName === 'scenes' && !isScenesLoaded()) {
       loadScenes();
+    }
+
+    if (viewName === 'sources' && !isSourcesLoaded()) {
+      loadSources();
     }
 
     if (viewName === 'audio' && !isAudioLoaded()) {

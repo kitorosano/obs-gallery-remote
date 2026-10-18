@@ -28,20 +28,33 @@ export function createServices(request) {
     obs: {
       status: () => request('/api/obs/status'),
       connect: () => post('/api/obs/connect'),
+
       showImage: (imageId) => post('/api/obs/show', { imageId }),
       currentGalleryImage: () => request('/api/obs/gallery-image'),
+
       scenes: () => request('/api/obs/scenes'),
       setScene: (sceneName) => post('/api/obs/scenes/current', { sceneName }),
+
+      sources: () => request('/api/obs/sources'),
+      setSourceVisibility: (sceneName, sceneItemId, enabled) =>
+        post('/api/obs/sources/visibility', {
+          sceneName,
+          sceneItemId,
+          enabled,
+        }),
+
       audio: () => request('/api/obs/audio'),
       setMute: (inputName, muted) =>
         post('/api/obs/audio/mute', { inputName, muted }),
       setVolume: (inputName, volumeDb) =>
         post('/api/obs/audio/volume', { inputName, volumeDb }),
+
       outputs: () => request('/api/obs/output/status'),
       startStream: () => post('/api/obs/stream/start'),
       stopStream: () => post('/api/obs/stream/stop'),
       startRecord: () => post('/api/obs/record/start'),
       stopRecord: () => post('/api/obs/record/stop'),
+
       program: {
         screenshot: () => request('/api/obs/program/screenshot'),
       },

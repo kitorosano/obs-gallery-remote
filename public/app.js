@@ -9,6 +9,7 @@ import {
   programMonitorElements,
   scenesElements,
   shellElements,
+  sourcesElements,
 } from './js/dom.js';
 import { createGallerySources } from './js/gallery-sources.js';
 import { createGallery } from './js/gallery.js';
@@ -21,6 +22,7 @@ import { createProgramMonitor } from './js/program-monitor.js';
 import { initializePwa } from './js/pwa.js';
 import { createScenes } from './js/scenes.js';
 import { createServices } from './js/services.js';
+import { createSources } from './js/sources.js';
 
 initializePwa();
 const services = createServices(api);
@@ -59,6 +61,11 @@ const scenes = createScenes({
   elements: scenesElements,
   refreshStatus: obs.refreshStatus,
 });
+const sources = createSources({
+  obsService: services.obs,
+  elements: sourcesElements,
+  refreshStatus: obs.refreshStatus,
+});
 const audio = createAudio({
   obsService: services.obs,
   elements: audioElements,
@@ -82,6 +89,8 @@ createNavigation({
   elements: navigationElements,
   isScenesLoaded: scenes.isLoaded,
   loadScenes: scenes.loadScenes,
+  isSourcesLoaded: sources.isLoaded,
+  loadSources: sources.loadSources,
   isAudioLoaded: audio.isLoaded,
   loadAudio: audio.loadAudio,
   isOutputLoaded: output.isLoaded,
@@ -93,6 +102,9 @@ createNavigation({
 galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
 scenesElements.refreshScenesButton.addEventListener('click', () =>
   scenes.loadScenes(),
+);
+sourcesElements.refreshSourcesButton.addEventListener('click', () =>
+  sources.loadSources(),
 );
 audioElements.refreshAudioButton.addEventListener('click', () =>
   audio.loadAudio(),
@@ -170,6 +182,7 @@ shellElements.connectButton.addEventListener('click', async () => {
       'success',
     );
     scenes.reset();
+    sources.reset();
     audio.reset();
     output.reset();
     await panel.refreshFeatures();

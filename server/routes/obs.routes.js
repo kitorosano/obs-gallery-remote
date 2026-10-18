@@ -25,6 +25,10 @@ import {
   getScenes,
   setCurrentScene,
 } from '../controllers/obs-scenes.controller.js';
+import {
+  getSources,
+  setVisibility,
+} from '../controllers/obs-sources.controller.js';
 
 const router = Router();
 
@@ -52,5 +56,8 @@ router.post('/record/start', startRecord);
 router.post('/record/stop', stopRecord);
 
 router.get('/events', subscribeToObsEvents);
+
+router.get('/sources', getSources);
+router.post('/sources/visibility', setVisibility);
 
 export default router;
