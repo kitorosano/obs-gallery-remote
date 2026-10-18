@@ -4,7 +4,7 @@ export async function listScenes() {
   const result = await obsClient.call('GetSceneList');
   return {
     currentScene: result.currentProgramSceneName,
-    scenes: result.scenes.map((scene) => scene.sceneName),
+    scenes: result.scenes.map((scene) => scene.sceneName).reverse(),
   };
 }
 
