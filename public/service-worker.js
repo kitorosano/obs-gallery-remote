@@ -1,4 +1,4 @@
-const CACHE_NAME = 'obs-gallery-remote-v13';
+const CACHE_NAME = 'obs-gallery-remote-v14';
 
 const APP_SHELL = [
   '/',

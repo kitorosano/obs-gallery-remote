@@ -91,6 +91,19 @@ scenesElements.refreshScenesButton.addEventListener('click', () =>
 audioElements.refreshAudioButton.addEventListener('click', () =>
   audio.loadAudio(),
 );
+audioElements.manageSourcesButton.addEventListener('click', async () => {
+  if (!audio.isLoaded()) {
+    await audio.loadAudio({
+      silent: true,
+    });
+  }
+  audio.renderSourceManager();
+  audioElements.sourcesDialog.showModal();
+});
+
+audioElements.closeSourcesButton.addEventListener('click', () => {
+  audioElements.sourcesDialog.close();
+});
 outputElements.refreshOutputButton.addEventListener('click', () =>
   output.loadOutput(),
 );

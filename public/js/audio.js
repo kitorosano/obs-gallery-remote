@@ -1,20 +1,19 @@
 import { createMessagePresenter, renderEmptyState } from './ui.js';
 
+const HIDDEN_AUDIO_STORAGE_KEY = 'obs-gallery-remote-hidden-audio';
+
 export function createAudio({ obsService, elements, refreshStatus }) {
   let inputs = [];
   let audioLoaded = false;
   let changeInProgress = false;
   const volumeChangesInProgress = new Set();
+  let hiddenSources = loadHiddenSources();
 
   const setMessage = createMessagePresenter(elements.audioMessage);
 
   function formatDb(value) {
     const number = Number(value);
-
-    if (!Number.isFinite(number)) {
-      return '—';
-    }
-
+    if (!Number.isFinite(number)) return '—';
     return `${number.toFixed(1)} dB`;
   }
 
@@ -22,19 +21,60 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     return Math.min(0, Math.max(-60, Number(value)));
   }
 
+  function loadHiddenSources() {
+    try {
+      const stored = localStorage.getItem(HIDDEN_AUDIO_STORAGE_KEY);
+      if (!stored) return new Set();
+
+      const parsed = JSON.parse(stored);
+      if (!Array.isArray(parsed)) return new Set();
+
+      return new Set(parsed.filter((name) => typeof name === 'string'));
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveHiddenSources() {
+    localStorage.setItem(
+      HIDDEN_AUDIO_STORAGE_KEY,
+      JSON.stringify([...hiddenSources]),
+    );
+  }
+
   function render() {
     elements.audioGrid.replaceChildren();
 
-    elements.audioCount.textContent = `${inputs.length} ${
-      inputs.length === 1 ? 'fuente' : 'fuentes'
-    }`;
+    const visibleInputs = inputs.filter(
+      (input) => !hiddenSources.has(input.inputName),
+    );
 
-    if (!inputs.length) {
-      renderEmptyState(elements.audioGrid, 'OBS no devolvió ninguna fuente de audio.');
+    const hiddenCount = inputs.length - visibleInputs.length;
+
+    elements.manageSourcesButton.textContent =
+      hiddenCount > 0
+        ? `Gestionar fuentes (${hiddenCount} ocultas)`
+        : 'Gestionar fuentes';
+
+    elements.audioCount.textContent =
+      hiddenCount > 0
+        ? `${visibleInputs.length} visibles · ${hiddenCount} ocultas`
+        : `${visibleInputs.length} ${
+            visibleInputs.length === 1 ? 'fuente' : 'fuentes'
+          }`;
+
+    if (!visibleInputs.length) {
+      renderEmptyState(
+        elements.audioGrid,
+        inputs.length
+          ? 'Todas las fuentes de audio están ocultas.'
+          : 'OBS no devolvió ninguna fuente de audio.',
+      );
+
       return;
     }
 
-    for (const input of inputs) {
+    for (const input of visibleInputs) {
       const card = document.createElement('div');
       card.className = `audio-card${input.muted ? ' muted' : ''}`;
 
@@ -74,18 +114,13 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       volumeHeader.append(volumeLabel, volumeValue);
 
       const slider = document.createElement('input');
-
       slider.type = 'range';
       slider.className = 'audio-volume-slider';
-
       slider.min = '-60';
       slider.max = '0';
       slider.step = '0.5';
-
       slider.value = String(clampVolumeDb(input.volumeDb));
-
       slider.setAttribute('aria-label', `Volumen de ${input.inputName}`);
-
       slider.disabled = volumeChangesInProgress.has(input.inputName);
 
       /*
@@ -123,33 +158,84 @@ export function createAudio({ obsService, elements, refreshStatus }) {
        * Mute
        */
       const button = document.createElement('button');
-
       button.className = input.muted ? 'audio-toggle muted' : 'audio-toggle';
-
       button.textContent = input.muted ? 'Activar audio' : 'Silenciar';
-
       button.disabled = changeInProgress;
-
       button.addEventListener('click', () => {
         changeMute(input.inputName, !input.muted);
       });
 
       card.append(info, volumeSection, button);
-
       elements.audioGrid.append(card);
     }
   }
 
-  async function loadAudio({ silent = false, preserveMessage = false } = {}) {
-    if (!silent) {
-      setMessage('Cargando fuentes de audio…');
+  function renderSourceManager() {
+    elements.sourcesList.replaceChildren();
+
+    if (!inputs.length) {
+      renderEmptyState(
+        elements.sourcesList,
+        'No hay fuentes de audio disponibles.',
+      );
+
+      return;
     }
+
+    for (const input of inputs) {
+      const row = document.createElement('div');
+      row.className = 'audio-source-manager-row';
+
+      const name = document.createElement('span');
+      name.className = 'audio-source-manager-name';
+      name.textContent = input.inputName;
+
+      const control = document.createElement('label');
+      control.className = 'audio-source-visibility';
+
+      const label = document.createElement('span');
+
+      const visible = !hiddenSources.has(input.inputName);
+      label.textContent = visible ? 'Visible' : 'Oculta';
+
+      const switchElement = document.createElement('span');
+      switchElement.className = 'switch';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = visible;
+      checkbox.setAttribute('aria-label', `Mostrar ${input.inputName}`);
+
+      const track = document.createElement('span');
+      track.className = 'switch-track';
+      track.setAttribute('aria-hidden', 'true');
+
+      switchElement.append(checkbox, track);
+      control.append(label, switchElement);
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          hiddenSources.delete(input.inputName);
+        } else {
+          hiddenSources.add(input.inputName);
+        }
+
+        saveHiddenSources();
+        label.textContent = checkbox.checked ? 'Visible' : 'Oculta';
+        render();
+      });
+
+      row.append(name, control);
+      elements.sourcesList.append(row);
+    }
+  }
+
+  async function loadAudio({ silent = false, preserveMessage = false } = {}) {
+    if (!silent) setMessage('Cargando fuentes de audio…');
 
     try {
       const data = await obsService.audio();
-
       inputs = Array.isArray(data.inputs) ? data.inputs : [];
-
       audioLoaded = true;
 
       render();
@@ -162,7 +248,10 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     } catch (error) {
       audioLoaded = false;
 
-      renderEmptyState(elements.audioGrid, 'No se pudieron cargar las fuentes de audio.');
+      renderEmptyState(
+        elements.audioGrid,
+        'No se pudieron cargar las fuentes de audio.',
+      );
       elements.audioCount.textContent = '';
 
       if (!silent) {
@@ -177,10 +266,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
   }
 
   async function changeMute(inputName, muted) {
-    if (changeInProgress) {
-      return;
-    }
-
+    if (changeInProgress) return;
     changeInProgress = true;
     render();
 
@@ -299,6 +385,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
   return {
     isLoaded: () => audioLoaded,
     loadAudio,
+    renderSourceManager,
     reset: () => {
       audioLoaded = false;
     },

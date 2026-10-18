@@ -286,7 +286,15 @@
               <h2>Audio</h2>
             </div>
 
-            <button id="refresh-audio" class="secondary">Actualizar</button>
+            <div class="audio-heading-actions">
+              <button id="manage-audio-sources" class="secondary" type="button">
+                Gestionar fuentes
+              </button>
+
+              <button id="refresh-audio" class="secondary" type="button">
+                Actualizar
+              </button>
+            </div>
           </div>
 
           <div class="audio-list-heading">
@@ -453,6 +461,32 @@
         <p id="gallery-sources-message" class="message" role="status"></p>
 
         <button id="add-gallery-source" type="button">+ Agregar fuente</button>
+      </div>
+    </dialog>
+
+    <dialog id="audio-sources-dialog" class="audio-sources-dialog">
+      <div class="audio-sources-dialog-content">
+        <div class="audio-sources-dialog-header">
+          <div>
+            <h2>Fuentes de audio</h2>
+            <p class="muted">Elige qué fuentes quieres mostrar en el panel.</p>
+          </div>
+
+          <button
+            id="close-audio-sources"
+            class="secondary"
+            type="button"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div id="audio-sources-list" class="audio-sources-list"></div>
+
+        <p class="audio-sources-note muted">
+          Las fuentes ocultas continúan funcionando normalmente en OBS.
+        </p>
       </div>
     </dialog>
 
