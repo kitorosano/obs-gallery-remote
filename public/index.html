@@ -49,24 +49,48 @@
     </section>
 
     <header class="topbar">
-      <div>
-        <p class="eyebrow">CONTROL LOCAL</p>
+      <div class="topbar-brand">
+
+  <img
+    src="/icons/logo-symbol.png"
+    class="topbar-brand-icon"
+    alt=""
+  />
+
         <h1>OBS Gallery Remote</h1>
       </div>
 
-      <div class="obs-connection">
-        <span id="obs-status" class="status disconnected"
-          >OBS desconectado</span
-        >
-        <button id="connect" class="secondary">Conectar con OBS</button>
+      <div class="topbar-actions">
+        <span id="obs-status" class="status disconnected">
+          OBS desconectado
+        </span>
 
-        <button id="logout" class="secondary" type="button">
-          Cerrar sesión
-        </button>
+        <div class="topbar-menu">
+          <button
+            id="topbar-menu-button"
+            class="topbar-menu-button secondary"
+            type="button"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+            aria-controls="topbar-menu-dropdown"
+          >
+            ☰
+          </button>
 
-        <button id="install-app" class="secondary" type="button" hidden>
-          Instalar aplicación
-        </button>
+          <div id="topbar-menu-dropdown" class="topbar-menu-dropdown" hidden>
+            <button id="connect" class="secondary" type="button">
+              Conectar con OBS
+            </button>
+
+            <button id="install-app" class="secondary" type="button" hidden>
+              Instalar aplicación
+            </button>
+
+            <button id="logout" class="secondary" type="button">
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 

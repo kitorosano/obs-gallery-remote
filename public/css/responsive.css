@@ -30,23 +30,48 @@
 
 @media (max-width: 460px) {
   .topbar {
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
 
-    flex-direction: column;
+    gap: 0.6rem;
+
+    padding: 0.8rem 0.75rem;
   }
 
-  .obs-connection {
-    width: 100%;
-  }
-
-  .status {
+  .topbar-brand {
     flex: 1;
+
+    min-width: 0;
+  }
+
+  .topbar h1 {
+    overflow: hidden;
+
+    font-size: 0.95rem;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-actions {
+    flex: 0 0 auto;
+
+    gap: 0.4rem;
+  }
+
+  .topbar .status {
+    flex: 0 0 auto;
+
+    padding: 0.4rem 0.55rem;
+
+    font-size: 0.7rem;
 
     text-align: center;
   }
 
-  .obs-connection button {
-    flex: 1;
+  .topbar-menu-button {
+    width: 38px;
+    height: 38px;
   }
 
   .app-nav {

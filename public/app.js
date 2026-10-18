@@ -12,6 +12,7 @@ import {
 } from './js/dom.js';
 import { createGallerySources } from './js/gallery-sources.js';
 import { createGallery } from './js/gallery.js';
+import { createHeader } from './js/header.js';
 import { createNavigation } from './js/navigation.js';
 import { createObsController } from './js/obs.js';
 import { createOutput } from './js/output.js';
@@ -23,6 +24,11 @@ import { createServices } from './js/services.js';
 
 initializePwa();
 const services = createServices(api);
+
+createHeader({
+  menuButton: shellElements.menuButton,
+  menuDropdown: shellElements.menuDropdown,
+});
 
 function setObsAvailability(connected) {
   shellElements.app.classList.toggle('obs-disconnected', !connected);

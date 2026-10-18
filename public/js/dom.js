@@ -4,6 +4,8 @@ export const shellElements = {
   app: document.body,
   status: $('#obs-status'),
   connectButton: $('#connect'),
+  menuButton: $('#topbar-menu-button'),
+  menuDropdown: $('#topbar-menu-dropdown'),
 };
 
 export const galleryElements = {
