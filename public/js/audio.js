@@ -1,13 +1,23 @@
 import { createMessagePresenter, renderEmptyState } from './ui.js';
 
 const HIDDEN_AUDIO_STORAGE_KEY = 'obs-gallery-remote-hidden-audio';
+const CURRENT_SCENE_ONLY_STORAGE_KEY =
+  'obs-gallery-remote-audio-current-scene-only';
 
 export function createAudio({ obsService, elements, refreshStatus }) {
   let inputs = [];
   let audioLoaded = false;
   let changeInProgress = false;
+
   const volumeChangesInProgress = new Set();
+
   let hiddenSources = loadHiddenSources();
+
+  let currentSceneOnly =
+    localStorage.getItem(CURRENT_SCENE_ONLY_STORAGE_KEY) === 'true';
+  elements.currentSceneOnly.checked = currentSceneOnly;
+
+  let audioLoadVersion = 0;
 
   const setMessage = createMessagePresenter(elements.audioMessage);
 
@@ -45,16 +55,26 @@ export function createAudio({ obsService, elements, refreshStatus }) {
   function render() {
     elements.audioGrid.replaceChildren();
 
-    const visibleInputs = inputs.filter(
+    const sceneInputs = currentSceneOnly
+      ? inputs.filter((input) => input.activeInProgram === true)
+      : inputs;
+
+    const totalHiddenCount = inputs.filter((input) =>
+      hiddenSources.has(input.inputName),
+    ).length;
+
+    elements.manageSourcesButton.textContent =
+      totalHiddenCount > 0
+        ? `Gestionar fuentes (${totalHiddenCount} ocultas)`
+        : 'Gestionar fuentes';
+
+    const visibleInputs = sceneInputs.filter(
       (input) => !hiddenSources.has(input.inputName),
     );
 
-    const hiddenCount = inputs.length - visibleInputs.length;
-
-    elements.manageSourcesButton.textContent =
-      hiddenCount > 0
-        ? `Gestionar fuentes (${hiddenCount} ocultas)`
-        : 'Gestionar fuentes';
+    const hiddenCount = sceneInputs.filter((input) =>
+      hiddenSources.has(input.inputName),
+    ).length;
 
     elements.audioCount.textContent =
       hiddenCount > 0
@@ -64,12 +84,17 @@ export function createAudio({ obsService, elements, refreshStatus }) {
           }`;
 
     if (!visibleInputs.length) {
-      renderEmptyState(
-        elements.audioGrid,
-        inputs.length
-          ? 'Todas las fuentes de audio están ocultas.'
-          : 'OBS no devolvió ninguna fuente de audio.',
-      );
+      let message = 'OBS no devolvió ninguna fuente de audio.';
+
+      if (inputs.length) {
+        if (currentSceneOnly && sceneInputs.length === 0) {
+          message = 'La escena actual no tiene fuentes de audio activas.';
+        } else {
+          message = 'Todas las fuentes de audio disponibles están ocultas.';
+        }
+      }
+
+      renderEmptyState(elements.audioGrid, message);
 
       return;
     }
@@ -231,10 +256,13 @@ export function createAudio({ obsService, elements, refreshStatus }) {
   }
 
   async function loadAudio({ silent = false, preserveMessage = false } = {}) {
+    const loadVersion = ++audioLoadVersion;
     if (!silent) setMessage('Cargando fuentes de audio…');
 
     try {
       const data = await obsService.audio();
+      if (loadVersion !== audioLoadVersion) return true;
+
       inputs = Array.isArray(data.inputs) ? data.inputs : [];
       audioLoaded = true;
 
@@ -382,8 +410,26 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     }
   }
 
+  elements.currentSceneOnly.addEventListener('change', async () => {
+    currentSceneOnly = elements.currentSceneOnly.checked;
+
+    localStorage.setItem(
+      CURRENT_SCENE_ONLY_STORAGE_KEY,
+      currentSceneOnly ? 'true' : 'false',
+    );
+
+    if (currentSceneOnly) {
+      await loadAudio({ silent: true });
+      return;
+    }
+
+    render();
+  });
+
   return {
     isLoaded: () => audioLoaded,
+    isCurrentSceneOnly: () => currentSceneOnly,
+
     loadAudio,
     renderSourceManager,
     reset: () => {

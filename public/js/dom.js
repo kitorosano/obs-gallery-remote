@@ -53,6 +53,7 @@ export const audioElements = {
   audioCount: $('#audio-count'),
   audioMessage: $('#audio-message'),
   refreshAudioButton: $('#refresh-audio'),
+  currentSceneOnly: $('#audio-current-scene-only'),
   manageSourcesButton: $('#manage-audio-sources'),
   sourcesDialog: $('#audio-sources-dialog'),
   closeSourcesButton: $('#close-audio-sources'),

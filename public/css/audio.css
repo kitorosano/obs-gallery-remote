@@ -248,6 +248,23 @@
   font-size: 0.75rem;
 }
 
+.audio-scene-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.75rem;
+
+  color: #9ca3af;
+  font-size: 0.85rem;
+
+  cursor: pointer;
+}
+
+.audio-scene-filter:hover {
+  color: inherit;
+}
+
 @media (max-width: 600px) {
   .audio-panel {
     padding: 0.75rem;

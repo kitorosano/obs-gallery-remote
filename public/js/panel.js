@@ -1,13 +1,22 @@
 import { createObsEvents } from './obs-events.js';
 
-export function createPanelCoordinator({ services, obs, gallery, scenes, audio, output }) {
+export function createPanelCoordinator({
+  services,
+  obs,
+  gallery,
+  scenes,
+  audio,
+  output,
+}) {
   let audioRefreshTimer = null;
 
   async function syncGalleryFromObs() {
     try {
       const result = await services.obs.currentGalleryImage();
       if (!result.matched) {
-        gallery.setMessage('OBS está mostrando una imagen externa a la galería.');
+        gallery.setMessage(
+          'OBS está mostrando una imagen externa a la galería.',
+        );
         return;
       }
       gallery.selectImageFromObs(result.imageId);
@@ -24,10 +33,31 @@ export function createPanelCoordinator({ services, obs, gallery, scenes, audio, 
     }, 100);
   }
 
+  async function handleSceneChanged() {
+    const tasks = [
+      scenes.loadScenes({
+        silent: true,
+        preserveMessage: true,
+      }),
+    ];
+
+    if (audio.isLoaded() && audio.isCurrentSceneOnly()) {
+      tasks.push(
+        audio.loadAudio({
+          silent: true,
+          preserveMessage: true,
+        }),
+      );
+    }
+
+    await Promise.allSettled(tasks);
+  }
+
   const events = createObsEvents({
-    onSceneChanged: () => scenes.loadScenes({ silent: true, preserveMessage: true }),
+    onSceneChanged: handleSceneChanged,
     onAudioChanged: scheduleAudioRefresh,
-    onOutputChanged: () => output.loadOutput({ silent: true, preserveMessage: true }),
+    onOutputChanged: () =>
+      output.loadOutput({ silent: true, preserveMessage: true }),
     onObsDisconnected: () => obs.refreshStatus(),
     onGalleryImageChanged: syncGalleryFromObs,
     onObsConnected: async () => {

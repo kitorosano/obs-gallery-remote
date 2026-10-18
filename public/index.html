@@ -300,9 +300,15 @@
           <div class="audio-list-heading">
             <div>
               <h3>Fuentes de audio</h3>
-              <p class="muted">
-                Activa o silencia las fuentes de audio de OBS.
-              </p>
+              <label class="audio-scene-filter" for="audio-current-scene-only">
+                <span>Solo fuentes de la escena actual</span>
+
+                <span class="switch">
+                  <input id="audio-current-scene-only" type="checkbox" />
+
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </label>
             </div>
 
             <span id="audio-count" class="muted"></span>
