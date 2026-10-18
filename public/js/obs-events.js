@@ -1,6 +1,7 @@
 export function createObsEvents({
   onSceneChanged,
   onAudioChanged,
+  onSourceVisibilityChanged,
   onOutputChanged,
   onObsConnected,
   onObsDisconnected,
@@ -26,6 +27,9 @@ export function createObsEvents({
         switch (message.type) {
           case 'scene-changed':
             onSceneChanged?.(message.data);
+            break;
+          case 'source-visibility-changed':
+            onSourceVisibilityChanged?.(message.data);
             break;
           case 'audio-mute-changed':
           case 'audio-volume-changed':

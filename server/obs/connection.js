@@ -116,6 +116,17 @@ obsClient.on('CurrentProgramSceneChanged', ({ sceneName }) => {
   broadcastObsEvent('scene-changed', { sceneName });
 });
 
+obsClient.on(
+  'SceneItemEnableStateChanged',
+  ({ sceneName, sceneItemId, sceneItemEnabled }) => {
+    broadcastObsEvent('source-visibility-changed', {
+      sceneName,
+      sceneItemId,
+      enabled: sceneItemEnabled,
+    });
+  },
+);
+
 obsClient.on('InputSettingsChanged', ({ inputName }) => {
   if (inputName === config.obsImageInput) {
     broadcastObsEvent('gallery-image-changed', { inputName });

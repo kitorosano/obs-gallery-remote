@@ -81,6 +81,7 @@ const panel = createPanelCoordinator({
   obs,
   gallery,
   scenes,
+  sources,
   audio,
   output,
 });

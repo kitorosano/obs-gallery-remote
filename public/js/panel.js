@@ -5,6 +5,7 @@ export function createPanelCoordinator({
   obs,
   gallery,
   scenes,
+  sources,
   audio,
   output,
 }) {
@@ -41,6 +42,15 @@ export function createPanelCoordinator({
       }),
     ];
 
+    if (sources.isLoaded()) {
+      tasks.push(
+        sources.loadSources({
+          silent: true,
+          preserveMessage: true,
+        }),
+      );
+    }
+
     if (audio.isLoaded() && audio.isCurrentSceneOnly()) {
       tasks.push(
         audio.loadAudio({
@@ -53,9 +63,19 @@ export function createPanelCoordinator({
     await Promise.allSettled(tasks);
   }
 
+  function handleSourceVisibilityChanged() {
+    if (!sources.isLoaded()) return;
+
+    sources.loadSources({
+      silent: true,
+      preserveMessage: true,
+    });
+  }
+
   const events = createObsEvents({
     onSceneChanged: handleSceneChanged,
     onAudioChanged: scheduleAudioRefresh,
+    onSourceVisibilityChanged: handleSourceVisibilityChanged,
     onOutputChanged: () =>
       output.loadOutput({ silent: true, preserveMessage: true }),
     onObsDisconnected: () => obs.refreshStatus(),
@@ -70,6 +90,10 @@ export function createPanelCoordinator({
     await Promise.allSettled([
       syncGalleryFromObs(),
       scenes.loadScenes({ silent: true, preserveMessage: true }),
+      sources.loadSources({
+        silent: true,
+        preserveMessage: true,
+      }),
       audio.loadAudio({ silent: true, preserveMessage: true }),
       output.loadOutput({ silent: true, preserveMessage: true }),
     ]);
