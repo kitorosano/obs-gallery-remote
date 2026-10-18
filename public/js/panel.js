@@ -12,6 +12,44 @@ export function createPanelCoordinator({
   let audioRefreshTimer = null;
   let sourcesRefreshTimer = null;
 
+  function clearRefreshTimers() {
+    if (audioRefreshTimer) {
+      window.clearTimeout(audioRefreshTimer);
+
+      audioRefreshTimer = null;
+    }
+
+    if (sourcesRefreshTimer) {
+      window.clearTimeout(sourcesRefreshTimer);
+
+      sourcesRefreshTimer = null;
+    }
+  }
+
+  function resetObsFeatures() {
+    clearRefreshTimers();
+
+    scenes.reset();
+    sources.reset();
+    audio.reset();
+    output.reset();
+  }
+
+  async function handleObsDisconnected() {
+    resetObsFeatures();
+
+    output.stopRealtime();
+
+    await obs.refreshStatus();
+  }
+
+  async function handleObsConnected() {
+    resetObsFeatures();
+
+    await obs.refreshStatus();
+    await refreshFeatures();
+  }
+
   async function syncGalleryFromObs() {
     try {
       const result = await services.obs.currentGalleryImage();
@@ -87,12 +125,9 @@ export function createPanelCoordinator({
     onSourceVisibilityChanged: scheduleSourcesRefresh,
     onOutputChanged: () =>
       output.loadOutput({ silent: true, preserveMessage: true }),
-    onObsDisconnected: () => obs.refreshStatus(),
     onGalleryImageChanged: syncGalleryFromObs,
-    onObsConnected: async () => {
-      await obs.refreshStatus();
-      await refreshFeatures();
-    },
+    onObsDisconnected: handleObsDisconnected,
+    onObsConnected: handleObsConnected,
   });
 
   async function refreshFeatures() {
@@ -117,15 +152,8 @@ export function createPanelCoordinator({
 
   function stop() {
     events.disconnect();
+    resetObsFeatures();
     output.stopRealtime();
-    if (audioRefreshTimer) {
-      window.clearTimeout(audioRefreshTimer);
-      audioRefreshTimer = null;
-    }
-    if (sourcesRefreshTimer) {
-      window.clearTimeout(sourcesRefreshTimer);
-      sourcesRefreshTimer = null;
-    }
     obs.setAvailability(false);
   }
 
