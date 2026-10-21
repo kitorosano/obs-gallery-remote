@@ -11,18 +11,22 @@ export function createPanelCoordinator({
 }) {
   let audioRefreshTimer = null;
   let sourcesRefreshTimer = null;
+  let outputRefreshTimer = null;
 
   function clearRefreshTimers() {
     if (audioRefreshTimer) {
       window.clearTimeout(audioRefreshTimer);
-
       audioRefreshTimer = null;
     }
 
     if (sourcesRefreshTimer) {
       window.clearTimeout(sourcesRefreshTimer);
-
       sourcesRefreshTimer = null;
+    }
+
+    if (outputRefreshTimer) {
+      window.clearTimeout(outputRefreshTimer);
+      outputRefreshTimer = null;
     }
   }
 
@@ -65,14 +69,6 @@ export function createPanelCoordinator({
     }
   }
 
-  function scheduleAudioRefresh() {
-    if (audioRefreshTimer) window.clearTimeout(audioRefreshTimer);
-    audioRefreshTimer = window.setTimeout(() => {
-      audioRefreshTimer = null;
-      audio.loadAudio({ silent: true, preserveMessage: true });
-    }, 100);
-  }
-
   async function handleSceneChanged() {
     const tasks = [
       scenes.loadScenes({
@@ -102,6 +98,14 @@ export function createPanelCoordinator({
     await Promise.allSettled(tasks);
   }
 
+  function scheduleAudioRefresh() {
+    if (audioRefreshTimer) window.clearTimeout(audioRefreshTimer);
+    audioRefreshTimer = window.setTimeout(() => {
+      audioRefreshTimer = null;
+      audio.loadAudio({ silent: true, preserveMessage: true });
+    }, 100);
+  }
+
   function scheduleSourcesRefresh() {
     if (!sources.isLoaded()) return;
 
@@ -119,12 +123,26 @@ export function createPanelCoordinator({
     }, 100);
   }
 
+  function scheduleOutputRefresh() {
+    if (outputRefreshTimer) {
+      window.clearTimeout(outputRefreshTimer);
+    }
+
+    outputRefreshTimer = window.setTimeout(() => {
+      outputRefreshTimer = null;
+
+      output.loadOutput({
+        silent: true,
+        preserveMessage: true,
+      });
+    }, 100);
+  }
+
   const events = createObsEvents({
     onSceneChanged: handleSceneChanged,
     onAudioChanged: scheduleAudioRefresh,
     onSourceVisibilityChanged: scheduleSourcesRefresh,
-    onOutputChanged: () =>
-      output.loadOutput({ silent: true, preserveMessage: true }),
+    onOutputChanged: scheduleOutputRefresh,
     onGalleryImageChanged: syncGalleryFromObs,
     onObsDisconnected: handleObsDisconnected,
     onObsConnected: handleObsConnected,
