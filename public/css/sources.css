@@ -3,6 +3,28 @@
   gap: 0.4rem;
 }
 
+.source-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 0.65rem;
+
+  color: #cbd5e1;
+
+  font-size: 0.82rem;
+
+  cursor: pointer;
+}
+
+.source-filter-row strong {
+  color: #f3f4f6;
+
+  font-weight: 650;
+}
+
 .source-control-row {
   display: flex;
   align-items: center;

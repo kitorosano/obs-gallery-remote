@@ -51,6 +51,7 @@ export const scenesElements = {
 export const sourcesElements = {
   sourcesGrid: $('#source-grid'),
   currentSourcesScene: $('#current-source'),
+  currentSceneOnly: $('#sources-current-scene-only'),
   sourcesCount: $('#source-count'),
   sourcesMessage: $('#source-message'),
 };
@@ -59,6 +60,7 @@ export const audioElements = {
   audioGrid: $('#audio-grid'),
   audioCount: $('#audio-count'),
   audioMessage: $('#audio-message'),
+  currentAudioScene: $('#current-audio-scene'),
   currentSceneOnly: $('#audio-current-scene-only'),
   manageSourcesButton: $('#manage-audio-sources'),
   sourcesDialog: $('#audio-sources-dialog'),

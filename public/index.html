@@ -320,15 +320,24 @@
             </button>
 
             <div id="control-sources-content" class="control-section-content">
-              <div class="control-context">
-                <span class="live-dot"></span>
-                <span>Escena:</span>
-                <strong id="current-source">—</strong>
-              </div>
+              <label class="source-filter-row" for="sources-current-scene-only">
+                <span>
+                  Fuentes de escena:
+                  <strong id="current-source">—</strong>
+                </span>
 
-              <div class="source-list-heading">
-                <h3>Cambiar fuente</h3>
-              </div>
+                <span class="switch">
+                  <input
+                    id="sources-current-scene-only"
+                    type="checkbox"
+                    checked
+                    disabled
+                    aria-label="Mostrar solo fuentes de la escena en programa"
+                  />
+
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </label>
 
               <div id="source-grid" class="source-grid">
                 <p class="muted">Abre esta sección para cargar las fuentes.</p>
@@ -359,13 +368,16 @@
 
             <div id="control-audio-content" class="control-section-content">
               <label class="audio-filter-row" for="audio-current-scene-only">
-                <span>Audio de escena actual</span>
+                <span>
+                  Audios de escena:
+                  <strong id="current-audio-scene">—</strong>
+                </span>
 
                 <span class="switch">
                   <input
                     id="audio-current-scene-only"
                     type="checkbox"
-                    aria-label="Mostrar solo audio de la escena actual"
+                    aria-label="Mostrar solo audio de la escena en programa"
                   />
                   <span class="switch-track" aria-hidden="true"></span>
                 </span>
