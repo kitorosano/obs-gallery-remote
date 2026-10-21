@@ -4,3 +4,5 @@ export const RCP_VERSION = 1
 export const SCREENSHOT_WIDTH = 640;
 export const SCREENSHOT_HEIGHT = 360;
 export const SCREENSHOT_QUALITY = 75;
+
+export const AITUM_VENDOR = 'aitum-stream-suite';

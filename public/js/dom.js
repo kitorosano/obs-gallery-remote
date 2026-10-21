@@ -79,6 +79,8 @@ export const outputElements = {
   streamDelay: $('#stream-delay'),
   streamTotalTime: $('#stream-total-time'),
   streamButton: $('#stream-button'),
+  youtubeStreamStatus: $('#youtube-stream-status'),
+  facebookStreamStatus: $('#facebook-stream-status'),
   recordStatus: $('#record-status'),
   recordDuration: $('#record-duration'),
   recordButton: $('#record-button'),

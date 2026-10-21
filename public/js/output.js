@@ -13,6 +13,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   let state = {
     stream: null,
     record: null,
+    aitumStreams: [],
   };
 
   /*
@@ -100,9 +101,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     const stream = state.stream;
     const record = state.record;
 
-    if (!stream || !record) {
-      return;
-    }
+    if (!stream || !record) return;
 
     /*
      * STREAM
@@ -112,26 +111,46 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     const waitingForDelay =
       stream.active && streamDelayMs > 0 && streamDuration < streamDelayMs;
 
+    const facebookOutput = state.aitumStreams.find(
+      (output) => output.type === 'stream' && output.name === 'Facebook Output',
+    );
+
+    const youtubeActive = stream.active;
+    const facebookActive = facebookOutput?.active === true;
+
+    const allStreamsActive = youtubeActive && facebookActive;
+    const anyStreamActive = youtubeActive || facebookActive;
+
     renderStatus({
       container: elements.streamStatus,
-      active: stream.active,
-      activeText: stream.reconnecting
-        ? 'RECONECTANDO'
-        : waitingForDelay
-          ? 'EN RETRASO'
-          : 'EN VIVO',
+      active: anyStreamActive,
+      activeText: allStreamsActive ? 'EN VIVO' : 'PARCIAL',
       inactiveText: 'FUERA DEL AIRE',
     });
 
-    elements.streamButton.textContent = stream.active
-      ? 'Detener transmisión'
-      : 'Iniciar transmisión';
+    elements.streamButton.textContent = anyStreamActive
+      ? 'Detener transmisiones'
+      : 'Iniciar transmisiones';
 
-    elements.streamButton.className = stream.active
+    elements.streamButton.className = anyStreamActive
       ? 'output-action danger'
       : 'output-action start';
 
     elements.streamButton.disabled = actionInProgress;
+
+    renderStatus({
+      container: elements.youtubeStreamStatus,
+      active: stream.active,
+      activeText: 'EN VIVO',
+      inactiveText: 'DETENIDO',
+    });
+
+    renderStatus({
+      container: elements.facebookStreamStatus,
+      active: facebookOutput?.active === true,
+      activeText: 'EN VIVO',
+      inactiveText: 'DETENIDO',
+    });
 
     /*
      * RECORD
@@ -162,19 +181,20 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     }
 
     try {
-      const data = await obsService.outputs();
+      const [data, aitumData] = await Promise.all([
+        obsService.outputs(),
+        obsService.aitum(),
+      ]);
 
       state = {
         stream: data.stream,
         record: data.record,
+        aitumStreams: aitumData?.outputs?.outputs ?? [],
       };
 
-      /*
-       * Guardamos exactamente cuándo recibimos
-       * este estado de OBS.
-       */
       lastSyncAt = Date.now();
       outputLoaded = true;
+
       render();
 
       if (!silent && !preserveMessage) {
@@ -236,33 +256,37 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     }
   }
 
-  async function toggleStream() {
-    if (!state.stream) {
-      return;
-    }
+  function isAnyStreamActive() {
+    const facebookOutput = state.aitumStreams.find(
+      (output) => output.type === 'stream' && output.name === 'Facebook Output',
+    );
 
-    if (state.stream.active) {
+    return state.stream?.active === true || facebookOutput?.active === true;
+  }
+
+  async function toggleStream() {
+    if (!state.stream) return;
+
+    if (isAnyStreamActive()) {
       const confirmed = window.confirm(
-        '¿Detener la transmisión en vivo?\n\nEsto cortará inmediatamente la emisión desde OBS.',
+        '¿Detener todas las transmisiones en vivo?\n\nEsto detendrá YouTube y Facebook inmediatamente.',
       );
 
-      if (!confirmed) {
-        return;
-      }
+      if (!confirmed) return;
 
       await executeAction({
-        action: obsService.stopStream,
-        workingMessage: 'Deteniendo transmisión…',
-        successMessage: 'La transmisión fue detenida.',
+        action: obsService.stopAllStreams,
+        workingMessage: 'Deteniendo transmisiones…',
+        successMessage: 'Las transmisiones fueron detenidas.',
       });
 
       return;
     }
 
     await executeAction({
-      action: obsService.startStream,
-      workingMessage: 'Iniciando transmisión…',
-      successMessage: 'La transmisión está en vivo.',
+      action: obsService.startAllStreams,
+      workingMessage: 'Iniciando transmisiones…',
+      successMessage: 'Las transmisiones están en vivo.',
     });
   }
 
@@ -348,7 +372,6 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   });
 
   elements.streamButton.addEventListener('click', toggleStream);
-
   elements.recordButton.addEventListener('click', toggleRecord);
 
   return {
@@ -363,6 +386,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       state = {
         stream: null,
         record: null,
+        aitumStreams: [],
       };
     },
   };

@@ -394,8 +394,7 @@
               <div class="output-card-header">
                 <div>
                   <span class="output-type"> STREAMING </span>
-
-                  <h3>Transmisión</h3>
+                  <h3>Transmisiones</h3>
                 </div>
 
                 <span id="stream-status" class="output-status inactive">
@@ -403,28 +402,47 @@
                 </span>
               </div>
 
+              <div class="stream-platforms">
+                <div class="stream-platform-row">
+                  <span>YouTube</span>
+                  <span
+                    id="youtube-stream-status"
+                    class="output-status inactive"
+                  >
+                    —
+                  </span>
+                </div>
+
+                <div class="stream-platform-row">
+                  <span>Facebook</span>
+                  <span
+                    id="facebook-stream-status"
+                    class="output-status inactive"
+                  >
+                    —
+                  </span>
+                </div>
+              </div>
+
               <div class="output-time">
                 <span>TIEMPO DE EMISIÓN</span>
-
                 <strong id="stream-duration"> 00:00:00 </strong>
               </div>
 
               <div id="stream-delay-info" class="stream-delay-info" hidden>
                 <div class="stream-delay-row">
                   <span>RETRASO CONFIGURADO</span>
-
                   <strong id="stream-delay"> — </strong>
                 </div>
 
                 <div class="stream-delay-row">
                   <span>TIEMPO DESDE INICIO</span>
-
                   <strong id="stream-total-time"> — </strong>
                 </div>
               </div>
 
               <button id="stream-button" class="output-action start" disabled>
-                Iniciar transmisión
+                Iniciar transmisiones
               </button>
 
               <p class="output-warning">
@@ -437,7 +455,6 @@
               <div class="output-card-header">
                 <div>
                   <span class="output-type"> GRABACIÓN </span>
-
                   <h3>Grabación</h3>
                 </div>
 
@@ -448,7 +465,6 @@
 
               <div class="output-time">
                 <span>TIEMPO GRABADO</span>
-
                 <strong id="record-duration"> 00:00:00 </strong>
               </div>
 

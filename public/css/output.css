@@ -180,6 +180,35 @@
   white-space: nowrap;
 }
 
+.stream-platforms {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.65rem;
+
+  padding: 0.85rem;
+
+  background: #0b1020;
+
+  border: 1px solid #283247;
+  border-radius: 0.75rem;
+}
+
+.stream-platform-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+}
+
+.stream-platform-row > span:first-child {
+  font-size: 0.85rem;
+
+  font-weight: 650;
+}
+
 @media (max-width: 700px) {
   .output-panel {
     padding: 0.75rem;

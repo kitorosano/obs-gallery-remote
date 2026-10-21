@@ -52,6 +52,11 @@ export function createServices(request) {
       outputs: () => request('/api/obs/output/status'),
       startStream: () => post('/api/obs/stream/start'),
       stopStream: () => post('/api/obs/stream/stop'),
+
+      aitum: () => request('/api/obs/aitum'),
+      startAllStreams: () => post('/api/obs/aitum/streams/start-all'),
+      stopAllStreams: () => post('/api/obs/aitum/streams/stop-all'),
+
       startRecord: () => post('/api/obs/record/start'),
       stopRecord: () => post('/api/obs/record/stop'),
 
