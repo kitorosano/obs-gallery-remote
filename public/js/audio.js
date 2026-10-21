@@ -13,8 +13,11 @@ export function createAudio({ obsService, elements, refreshStatus }) {
 
   let hiddenSources = loadHiddenSources();
 
+  const storedCurrentSceneOnly = localStorage.getItem(
+    CURRENT_SCENE_ONLY_STORAGE_KEY,
+  );
   let currentSceneOnly =
-    localStorage.getItem(CURRENT_SCENE_ONLY_STORAGE_KEY) === 'true';
+    storedCurrentSceneOnly === null ? true : storedCurrentSceneOnly === 'true';
   elements.currentSceneOnly.checked = currentSceneOnly;
 
   let audioLoadVersion = 0;
@@ -130,20 +133,12 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       const hideButton = document.createElement('button');
       hideButton.type = 'button';
       hideButton.className = 'audio-hide-source';
-      hideButton.textContent = '◉';
+      hideButton.textContent = '×';
       hideButton.setAttribute('aria-label', `Ocultar ${input.inputName}`);
       hideButton.title = 'Ocultar fuente';
       hideButton.addEventListener('click', () => {
         setSourceVisibility(input.inputName, false);
       });
-
-      infoHeader.append(name, hideButton);
-
-      const status = document.createElement('span');
-      status.className = `audio-status${input.muted ? ' muted' : ' active'}`;
-      status.textContent = input.muted ? 'SILENCIADO' : 'ACTIVO';
-
-      info.append(infoHeader, status);
 
       /*
        * Volumen
@@ -151,18 +146,12 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       const volumeSection = document.createElement('div');
       volumeSection.className = 'audio-volume';
 
-      const volumeHeader = document.createElement('div');
-      volumeHeader.className = 'audio-volume-header';
-
-      const volumeLabel = document.createElement('span');
-      volumeLabel.className = 'audio-volume-label';
-      volumeLabel.textContent = 'VOLUMEN';
-
       const volumeValue = document.createElement('strong');
       volumeValue.className = 'audio-volume-value';
       volumeValue.textContent = formatDb(input.volumeDb);
 
-      volumeHeader.append(volumeLabel, volumeValue);
+      infoHeader.append(name, volumeValue, hideButton);
+      info.append(infoHeader);
 
       const slider = document.createElement('input');
       slider.type = 'range';
@@ -192,31 +181,32 @@ export function createAudio({ obsService, elements, refreshStatus }) {
         changeVolume(input.inputName, Number(slider.value));
       });
 
-      const scale = document.createElement('div');
-      scale.className = 'audio-volume-scale';
-
-      const min = document.createElement('span');
-      min.textContent = '-60 dB';
-
-      const max = document.createElement('span');
-      max.textContent = '0 dB';
-
-      scale.append(min, max);
-
-      volumeSection.append(volumeHeader, slider, scale);
+      volumeSection.append(slider);
 
       /*
        * Mute
        */
       const button = document.createElement('button');
       button.className = input.muted ? 'audio-toggle muted' : 'audio-toggle';
-      button.textContent = input.muted ? 'Activar audio' : 'Silenciar';
+      button.textContent = input.muted ? '🔇' : '🔊';
+      button.setAttribute(
+        'aria-label',
+        input.muted
+          ? `Activar audio de ${input.inputName}`
+          : `Silenciar ${input.inputName}`,
+      );
+      button.title = input.muted ? 'Activar audio' : 'Silenciar';
       button.disabled = changeInProgress;
       button.addEventListener('click', () => {
         changeMute(input.inputName, !input.muted);
       });
 
-      card.append(info, volumeSection, button);
+      const controls = document.createElement('div');
+      controls.className = 'audio-controls';
+
+      controls.append(volumeSection, button);
+      card.append(info, controls);
+
       elements.audioGrid.append(card);
     }
   }

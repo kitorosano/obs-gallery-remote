@@ -388,36 +388,17 @@
 
             <div id="control-audio-content" class="control-section-content">
               <div class="audio-panel">
-                <div class="audio-heading-actions">
-                  <button
-                    id="manage-audio-sources"
-                    class="secondary"
-                    type="button"
-                  >
-                    Gestionar fuentes
-                  </button>
+                <div class="audio-filter-row">
+                  <span>Audio de escena actual</span>
 
-                  <button id="refresh-audio" class="secondary" type="button">
-                    Actualizar
-                  </button>
-                </div>
-
-                <div class="audio-list-heading">
-                  <div>
-                    <h3>Fuentes de audio</h3>
-                    <label
-                      class="audio-scene-filter"
-                      for="audio-current-scene-only"
-                    >
-                      <span>Solo fuentes de la escena actual</span>
-
-                      <span class="switch">
-                        <input id="audio-current-scene-only" type="checkbox" />
-
-                        <span class="switch-track" aria-hidden="true"></span>
-                      </span>
-                    </label>
-                  </div>
+                  <span class="switch">
+                    <input
+                      id="audio-current-scene-only"
+                      type="checkbox"
+                      aria-label="Mostrar solo audio de la escena actual"
+                    />
+                    <span class="switch-track" aria-hidden="true"></span>
+                  </span>
                 </div>
 
                 <div id="audio-grid" class="audio-grid">
@@ -427,6 +408,24 @@
                 </div>
 
                 <p id="audio-message" class="message" role="status"></p>
+
+                <div class="audio-secondary-actions">
+                  <button
+                    id="manage-audio-sources"
+                    class="control-secondary-action"
+                    type="button"
+                  >
+                    Gestionar fuentes
+                  </button>
+
+                  <button
+                    id="refresh-audio"
+                    class="control-secondary-action"
+                    type="button"
+                  >
+                    Actualizar audio
+                  </button>
+                </div>
               </div>
             </div>
           </section>

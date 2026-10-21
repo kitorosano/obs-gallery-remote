@@ -1,176 +1,106 @@
-.audio-heading h2 {
-  margin: 0;
-}
-
-.audio-list-heading {
+.audio-filter-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
+
   gap: 1rem;
 
-  margin-top: 1.2rem;
-  margin-bottom: 0.8rem;
-}
+  margin-bottom: 0.65rem;
 
-.audio-list-heading h3 {
-  font-size: 0.9rem;
-  margin: 0 0 0.25rem;
-}
+  color: #cbd5e1;
 
-.audio-list-heading p {
-  margin: 0;
+  font-size: 0.82rem;
 }
 
 .audio-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 0.75rem;
+
+  grid-template-columns: 1fr;
+
+  gap: 0.45rem;
 }
 
 .audio-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 130px;
-  padding: 1rem;
+
+  min-height: 0;
+
+  gap: 0.55rem;
+
+  padding: 0.7rem 0.75rem;
+
   background: #172033;
+
   border: 1px solid #374151;
-  border-radius: 0.9rem;
+  border-radius: 0.65rem;
 }
 
 .audio-card.muted {
   background: #1f1b25;
   border-color: #4b3743;
+
+  opacity: 0.75;
 }
 
 .audio-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
+  display: block;
 }
 
 .audio-info-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-
-  gap: 0.75rem;
 
   width: 100%;
-}
 
-.audio-hide-source {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  flex: 0 0 auto;
-
-  width: 32px;
-  height: 32px;
-  min-height: 0;
-
-  padding: 0;
-
-  color: #9ca3af;
-  background: transparent;
-
-  border: 1px solid #374151;
-  border-radius: 0.5rem;
-
-  font-size: 0.85rem;
-  line-height: 1;
-
-  cursor: pointer;
-}
-
-.audio-hide-source:hover {
-  color: #f3f4f6;
-  background: #29364d;
+  gap: 0.6rem;
 }
 
 .audio-name {
-  font-size: 1rem;
-  overflow-wrap: anywhere;
-}
-
-.audio-status {
-  display: inline-flex;
-  padding: 0.3rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.65rem;
-  font-weight: 750;
-  letter-spacing: 0.07em;
-}
-
-.audio-status.active {
-  color: #a7f3d0;
-  background: #064e3b;
-}
-
-.audio-status.muted {
-  color: #fecdd3;
-  background: #3f1d2a;
-}
-
-.audio-toggle {
-  width: 100%;
-  min-height: 48px;
-  background: #b91c1c;
-  border-color: #dc2626;
-}
-
-.audio-toggle.muted {
-  background: #047857;
-  border-color: #059669;
-}
-
-.audio-volume {
-  display: flex;
-  flex-direction: column;
-
-  gap: 0.55rem;
-
-  padding: 0.75rem 0;
-
-  border-top: 1px solid #283247;
-  border-bottom: 1px solid #283247;
-}
-
-.audio-volume-header {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 1rem;
-}
-
-.audio-volume-label {
-  font-size: 0.68rem;
-
-  font-weight: 750;
-
-  letter-spacing: 0.08em;
-
-  color: #9ca3af;
-}
-
-.audio-volume-value {
-  font-size: 0.9rem;
-
-  font-variant-numeric: tabular-nums;
-
-  color: #f3f4f6;
-}
-
-.audio-volume-slider {
-  width: 100%;
+  flex: 1;
 
   min-width: 0;
 
+  font-size: 0.88rem;
+  font-weight: 650;
+
+  overflow-wrap: anywhere;
+}
+
+.audio-volume-value {
+  flex: 0 0 auto;
+
+  color: #cbd5e1;
+
+  font-size: 0.78rem;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-controls {
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+}
+
+.audio-volume {
+  flex: 1;
+
+  min-width: 0;
+
+  padding: 0;
+
+  border: 0;
+}
+
+.audio-volume-slider {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
   padding: 0;
 
   cursor: pointer;
@@ -178,167 +108,66 @@
   accent-color: #2563eb;
 }
 
-.audio-volume-slider:disabled {
-  cursor: wait;
-
-  opacity: 0.65;
-}
-
-.audio-volume-scale {
-  display: flex;
-
-  justify-content: space-between;
-
-  font-size: 0.65rem;
-
-  color: #6b7280;
-
-  font-variant-numeric: tabular-nums;
-}
-
-.audio-heading-actions {
-  display: flex;
+.audio-toggle {
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.audio-sources-dialog {
-  width: min(520px, calc(100vw - 2rem));
-
-  max-height: 80vh;
-
-  padding: 0;
-
-  color: inherit;
-  background: #111827;
-
-  border: 1px solid #374151;
-  border-radius: 0.9rem;
-}
-
-.audio-sources-dialog::backdrop {
-  background: rgb(0 0 0 / 65%);
-}
-
-.audio-sources-dialog-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  padding: 1rem;
-
-  max-height: inherit;
-}
-
-.audio-sources-dialog-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.audio-sources-dialog-header h2 {
-  margin: 0 0 0.25rem;
-}
-
-.audio-sources-list {
-  display: grid;
-  gap: 0.5rem;
-
-  overflow-y: auto;
-}
-
-.audio-source-manager-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 1rem;
-
-  padding: 0.8rem;
-
-  background: #172033;
-
-  border: 1px solid #374151;
-  border-radius: 0.7rem;
-
-  cursor: pointer;
-}
-
-.audio-source-manager-row:hover {
-  background: #1d2940;
-}
-
-.audio-source-manager-row:active {
-  background: #24314a;
-}
-
-.audio-source-manager-name {
-  min-width: 0;
-
-  font-weight: 600;
-
-  overflow-wrap: anywhere;
-}
-
-.audio-source-visibility {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
 
   flex: 0 0 auto;
 
-  color: #9ca3af;
-  font-size: 0.8rem;
+  width: 42px;
+  height: 42px;
+  min-height: 0;
+
+  padding: 0;
+
+  background: #263248;
+
+  border: 1px solid #3b4961;
+  border-radius: 0.6rem;
+
+  font-size: 1rem;
 }
 
-.audio-sources-note {
-  margin: 0;
+.audio-toggle.muted {
+  background: #3f1d2a;
 
-  font-size: 0.75rem;
+  border-color: #7f1d1d;
 }
 
-.audio-scene-filter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.audio-hide-source {
+  flex: 0 0 auto;
 
-  gap: 0.75rem;
+  width: 28px;
+  height: 28px;
+  min-height: 0;
 
-  color: #9ca3af;
-  font-size: 0.85rem;
+  padding: 0;
 
-  cursor: pointer;
+  background: transparent;
+  color: #64748b;
+
+  border: 0;
+
+  font-size: 1.1rem;
 }
 
-.audio-scene-filter:hover {
-  color: inherit;
+.audio-secondary-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 0.45rem;
+
+  margin-top: 0.65rem;
+}
+
+.audio-secondary-actions .control-secondary-action {
+  margin-top: 0;
 }
 
 @media (max-width: 600px) {
-  .audio-panel {
-    padding: 0.75rem;
-  }
-
-  .audio-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .audio-card {
-    min-height: 120px;
-  }
-
-  .audio-toggle {
-    min-height: 52px;
-  }
-
   .audio-volume-slider {
     min-height: 32px;
-  }
-
-  .audio-heading-actions {
-    flex-wrap: wrap;
-    justify-content: flex-end;
   }
 
   .audio-sources-dialog {
