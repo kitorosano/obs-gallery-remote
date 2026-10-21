@@ -227,7 +227,10 @@ Incluye:
 
 ### Estrategia de caché
 
-El Service Worker solo cachea recursos estáticos de la app. Las APIs nunca se cachean:
+El Service Worker solo cachea recursos estáticos de la app. Cuando hay conexión,
+estos recursos usan una estrategia **network-first**: se obtiene la versión
+actual del servidor y se actualiza la caché automáticamente. Si no hay conexión,
+se utiliza la última versión cacheada. Las APIs nunca se cachean:
 
 ```text
 /api/*

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'obs-gallery-remote-v50';
+const CACHE_NAME = 'obs-gallery-remote';
 
 const APP_SHELL = [
   '/',
@@ -86,11 +86,30 @@ self.addEventListener('fetch', (event) => {
   // Las APIs nunca deben pasar por caché.
   if (url.pathname.startsWith('/api/')) return;
 
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
+  const isAppShellAsset = APP_SHELL.includes(url.pathname);
 
-      return fetch(request);
-    }),
+  event.respondWith(
+    fetch(request, { cache: 'no-store' })
+      .then((response) => {
+        if (isAppShellAsset && response.ok) {
+          const responseToCache = response.clone();
+
+          return caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(request, responseToCache))
+            .catch((error) => {
+              console.error('No se pudo actualizar la caché:', error);
+            })
+            .then(() => response);
+        }
+
+        return response;
+      })
+      .catch(async (error) => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+
+        throw error;
+      }),
   );
 });
