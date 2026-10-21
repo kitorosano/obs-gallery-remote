@@ -1,99 +1,130 @@
 # OBS Gallery Remote
 
-Panel web móvil para controlar OBS Studio de forma remota, con especial enfoque en el manejo de imágenes durante transmisiones en vivo.
+Panel web móvil para controlar OBS Studio desde un teléfono o tablet, con foco en la gestión de imágenes durante transmisiones en vivo.
 
-La aplicación utiliza **Node.js + Express** como backend y se comunica con OBS mediante **obs-websocket**. El frontend está diseñado principalmente para teléfonos y puede instalarse como **PWA**.
-
-El acceso remoto se realiza de forma privada mediante **Tailscale**, sin exponer OBS WebSocket ni el servidor Node directamente a Internet.
+La aplicación combina **Node.js + Express** con **obs-websocket** para ofrecer un panel ligero, accesible desde la red local o desde un tailnet privado mediante **Tailscale**. El frontend está pensado para uso táctil y puede instalarse como **PWA**.
 
 ---
 
-## Funcionalidades actuales
+## Qué ha cambiado recientemente
 
-### Galería de imágenes
+El proyecto ya no depende exclusivamente de una única carpeta `gallery/` ni de una configuración fija. Ahora incluye:
 
-- Listado de imágenes disponibles.
-- Soporte para JPG, JPEG, PNG, WEBP, BMP y GIF.
-- Organización mediante subdirectorios/categorías.
-- Búsqueda de imágenes.
-- Vista previa antes de enviar a OBS.
-- Selección visual de la imagen actual.
-- Botón **Mostrar en OBS**.
-- Modo **Auto Show** para enviar automáticamente una imagen al seleccionarla.
-- Sincronización bidireccional:
-  - si la imagen cambia desde el panel, OBS se actualiza;
-  - si la fuente cambia directamente desde OBS, el panel actualiza su selección.
-- La aplicación utiliza una fuente de imagen dedicada de OBS:
-  - `OBS_GALLERY_REMOTE`
-
-Actualmente las imágenes se leen desde el directorio `gallery/`.
-
-> Está planificada una evolución de este sistema para permitir múltiples directorios externos configurables. Ver [Roadmap](#roadmap).
+- gestión de múltiples fuentes de galería configurables;
+- almacenamiento local persistente de fuentes en `data/gallery-sources.json`;
+- panel para añadir, activar/desactivar, renombrar y eliminar fuentes;
+- vista unificada de imágenes de todas las fuentes activas;
+- soporte de monitor de programa con vista previa en directo;
+- integración con Aitum Stream Suite para gestionar salidas adicionales;
+- control de visibilidad de fuentes dentro de OBS;
+- mejoras en la sincronización y en la UX del panel móvil.
 
 ---
 
-### Escenas
+## Estado actual del proyecto
 
-- Obtención de escenas desde OBS.
-- Cambio de escena de programa desde el teléfono.
-- Sincronización automática cuando la escena cambia directamente desde OBS.
-- OBS se mantiene como fuente de verdad del estado.
+OBS Gallery Remote funciona como panel móvil de control real para OBS, con las siguientes capacidades principales:
 
----
+### Galería multimedia
+
+- listado de imágenes desde una o múltiples carpetas;
+- soporte para `JPG`, `JPEG`, `PNG`, `WEBP`, `BMP` y `GIF`;
+- organización por carpetas y categorías;
+- búsqueda por nombre o ruta relativa;
+- vista previa antes de mostrar en pantalla;
+- selección visual de la imagen actual;
+- botón **Mostrar en OBS**;
+- modo **Auto Show** para enviar automáticamente la imagen seleccionada;
+- sincronización con el estado de OBS;
+- uso de la fuente de imagen dedicada `OBS_GALLERY_REMOTE`.
+
+### Fuentes de galería
+
+La galería ya admite múltiples directorios de imágenes configurados por el usuario.
+
+El flujo actual es:
+
+- se guarda una lista local en `data/gallery-sources.json`;
+- cada fuente tiene `id`, `name`, `path` y `enabled`;
+- el panel puede añadir nuevas rutas, renombrarlas, activar/desactivar o eliminarla;
+- solo las fuentes habilitadas forman el índice global de imágenes.
+
+Ejemplo del archivo de configuración:
+
+```json
+{
+  "sources": [
+    {
+      "id": "default",
+      "name": "Galería local",
+      "path": "C:/Ruta/Proyecto/gallery",
+      "enabled": true
+    }
+  ]
+}
+```
+
+La carpeta `GALLERY_ROOT` sigue siendo un valor útil como fuente por defecto, pero ya no es el único mecanismo disponible.
+
+### Escenas y fuentes de OBS
+
+- listado de escenas desde OBS;
+- cambio de escena actual desde el teléfono;
+- actualización automática cuando OBS cambia la escena;
+- listado de fuentes del programa y control de visibilidad;
+- sincronización con el estado real de OBS.
 
 ### Audio
 
-- Listado de fuentes de audio.
-- Mute / unmute.
-- Control de volumen.
-- Volumen expresado en dB.
-- Sincronización automática ante cambios realizados directamente desde OBS.
+- listado de fuentes de audio;
+- mute / unmute;
+- control de volumen en dB;
+- sincronización automática ante cambios desde OBS;
+- ajuste de volumen con confirmación final para evitar tráfico innecesario.
 
-El slider no envía solicitudes por cada píxel recorrido: el cambio se confirma al finalizar la interacción para evitar tráfico innecesario hacia OBS.
-
----
-
-### Emisión y grabación
+### Emisión, grabación y delay
 
 Control independiente de:
 
-- Streaming.
-- Grabación.
+- streaming principal;
+- grabación;
+- salidas adicionales gestionadas por Aitum;
+- `stream delay` configurado en OBS.
 
 La interfaz muestra:
 
 - estado actual;
 - tiempo de emisión;
 - tiempo de grabación;
-- Stream Delay configurado.
+- retraso configurado;
+- tiempo estimado desde el inicio de la transmisión.
 
-También existen confirmaciones antes de detener una transmisión o grabación para evitar acciones accidentales durante un evento en vivo.
+### Monitor de programa
 
----
+Se incluye un monitor con vista previa de la escena actual en vivo:
 
-### Stream Delay
+- captura del programa actual desde OBS;
+- actualización periódica;
+- modo PiP para mantener la vista pequeña sobre el panel;
+- refleja el contenido que está en emisión en ese momento.
 
-El proyecto contempla el retraso configurado en OBS.
+### Aitum Stream Suite
 
-Puede configurarse mediante:
+El proyecto incluye integración con **Aitum Stream Suite** cuando está disponible en OBS.
 
-```dotenv
-OBS_STREAM_DELAY_SECONDS=10
-```
+Actualmente se exponen endpoints para consultar y controlar salidas adicionales:
 
-El panel distingue entre:
+- `GET /api/obs/aitum`
+- `POST /api/obs/aitum/streams/start-all`
+- `POST /api/obs/aitum/streams/stop-all`
 
-- **Tiempo de emisión:** duración reportada por OBS WebSocket.
-- **Retraso configurado:** Stream Delay.
-- **Tiempo desde inicio:** duración aproximada desde que se inició físicamente la transmisión.
+Esto permite gestionar salidas secundarias desde el mismo panel cuando el plugin de OBS lo expone mediante vendor requests.
 
 ---
 
 ## Sincronización en tiempo real
 
-El backend mantiene una conexión WebSocket con OBS.
-
-El frontend recibe cambios mediante **Server-Sent Events (SSE)**:
+El backend mantiene una conexión con OBS y expone cambios al frontend mediante **Server-Sent Events (SSE)**.
 
 ```text
 OBS
@@ -107,81 +138,75 @@ Node / Express
 PWA / navegador
 ```
 
-Actualmente se sincronizan eventos relacionados con:
+Los eventos sincronizados incluyen:
 
-- conexión/desconexión de OBS;
+- estado de conexión de OBS;
 - escena actual;
-- mute de audio;
+- estado de audio;
 - volumen;
-- streaming;
-- grabación;
-- imagen utilizada por `OBS_GALLERY_REMOTE`.
+- emisión/recording;
+- imagen utilizada por `OBS_GALLERY_REMOTE`;
+- cambios de visibilidad de fuentes;
+- estado del monitor de programa.
 
-El endpoint SSE es:
+Endpoint principal:
 
 ```text
 GET /api/obs/events
 ```
 
-La conexión incluye heartbeat periódico y el navegador puede reconectarse automáticamente.
+La conexión incluye heartbeat y reconexión automática del cliente.
 
 ---
 
-## Reconexión automática a OBS
+## Reconexión automática y robustez
 
-El backend intenta conectarse automáticamente a OBS al iniciar.
+El backend intenta conectar con OBS al arrancar y reintenta automáticamente si la conexión se pierde.
 
-Si OBS todavía no está abierto o se cierra durante el funcionamiento:
+Cuando OBS se desconecta:
 
-1. el backend detecta la desconexión;
-2. el frontend pasa al estado OBS desconectado;
-3. los controles que dependen de OBS quedan temporalmente deshabilitados;
-4. el backend intenta reconectarse automáticamente;
-5. cuando OBS vuelve a estar disponible, el panel sincroniza nuevamente sus estados.
+1. el panel pasa a estado desconectado;
+2. los controles dependientes de OBS quedan deshabilitados;
+3. el sistema reintenta la conexión;
+4. cuando OBS vuelve, se sincronizan los estados nuevamente.
 
-Esto permite iniciar el servidor Node antes que OBS y también cerrar/reabrir OBS sin reiniciar la aplicación.
+Esto permite iniciar Node antes que OBS y no reiniciar la app si OBS se cierra o reinicia.
 
 ---
 
-## Autenticación
+## Autenticación y seguridad
 
-El panel está protegido mediante contraseña.
+El panel está protegido con usuario/contraseña por sesión.
 
-La configuración se realiza en `.env`:
+Configuración mínima en `.env`:
 
 ```dotenv
 PANEL_PASSWORD=change_me
-SESSION_SECRET=change_me
+SESSION_SECRET=change_me_with_a_long_random_secret
 ```
 
-La implementación utiliza:
+La implementación usa:
 
 - cookie de sesión firmada;
 - `HttpOnly`;
 - `SameSite=Strict`;
 - duración de sesión de 7 días;
 - validación HMAC SHA-256;
-- comparación segura mediante `timingSafeEqual`;
-- protección server-side de las APIs;
-- rate limiting del login.
+- comparación segura por `timingSafeEqual`;
+- rate limiting de login;
+- protección server-side de las APIs.
 
-No se utiliza:
-
-- base de datos;
-- Redis;
-- almacenamiento externo de sesiones.
+No se usa base de datos ni Redis para sesiones.
 
 ### Rate limiting
 
-Los intentos fallidos de inicio de sesión se controlan en memoria.
-
-Actualmente:
+Los intentos fallidos de login se controlan en memoria:
 
 ```text
 5 intentos / 5 minutos / IP
 ```
 
-Después del límite, el backend responde con `429 Too Many Requests`.
+Tras exceder el límite, el backend responde con `429 Too Many Requests`.
 
 ---
 
@@ -192,27 +217,23 @@ OBS Gallery Remote puede instalarse como una **Progressive Web App**.
 Incluye:
 
 - `manifest.webmanifest`;
-- iconos 192×192;
-- iconos 512×512;
+- iconos 192×192 y 512×512;
 - iconos maskable;
 - modo `standalone`;
-- metadatos para iOS;
+- soporte para iOS;
 - Service Worker;
 - caché del app shell;
-- experiencia de instalación para navegadores compatibles;
-- instrucciones específicas para iPhone/iPad.
+- instalación desde navegadores compatibles.
 
 ### Estrategia de caché
 
-El Service Worker solamente almacena recursos estáticos de la aplicación.
-
-Por diseño, las APIs nunca se cachean:
+El Service Worker solo cachea recursos estáticos de la app. Las APIs nunca se cachean:
 
 ```text
 /api/*
 ```
 
-Esto incluye:
+Incluye también:
 
 ```text
 /api/obs/*
@@ -221,15 +242,15 @@ Esto incluye:
 /api/obs/events
 ```
 
-De esta forma nunca se presenta como actual un estado antiguo de OBS.
+Esto evita mostrar estados antiguos de OBS en el navegador.
 
 ---
 
 ## Acceso remoto seguro con Tailscale
 
-La configuración recomendada utiliza **Tailscale Serve**.
+La configuración recomendada sigue siendo **Tailscale Serve**.
 
-La arquitectura de producción es:
+Arquitectura sugerida:
 
 ```text
 Teléfono / PWA
@@ -253,106 +274,24 @@ OBS Studio
 Esto permite:
 
 - HTTPS válido para la PWA;
-- acceso desde el teléfono;
-- acceso remoto fuera de la LAN;
-- mantener el panel dentro del tailnet;
+- acceso desde fuera de la LAN;
+- mantener la app y OBS dentro del tailnet;
 - no abrir puertos del router;
-- no exponer OBS WebSocket;
-- no instalar Nginx o Caddy;
-- no gestionar certificados TLS manualmente.
-
-Se utiliza **Tailscale Serve**, no Funnel.
-
-Por tanto, el panel permanece privado para dispositivos autorizados en el tailnet.
-
-### MagicDNS
-
-MagicDNS debe estar habilitado para acceder mediante el hostname proporcionado por Tailscale:
-
-```text
-https://<nombre-pc>.<tailnet>.ts.net
-```
-
-### Tailscale Serve
-
-Con el backend funcionando en el puerto `3000`:
-
-```powershell
-tailscale serve --bg 3000
-```
-
-Para comprobar la configuración:
-
-```powershell
-tailscale serve status
-```
-
-El resultado esperado es similar a:
-
-```text
-https://<hostname>.<tailnet>.ts.net (tailnet only)
-|-- / proxy http://127.0.0.1:3000
-```
+- no exponer OBS WebSocket directamente.
 
 ---
 
-## Seguridad
+## Instalación
 
-La configuración recomendada es:
-
-```dotenv
-HOST=127.0.0.1
-PORT=3000
-
-OBS_HOST=127.0.0.1
-OBS_PORT=4455
-```
-
-Esto significa que ni Node ni OBS WebSocket necesitan escuchar directamente conexiones provenientes de la LAN.
-
-El flujo de acceso remoto es:
-
-```text
-Teléfono
-   │
-   │ Tailscale
-   ▼
-HTTPS :443
-   │
-   ▼
-Tailscale Serve
-   │
-   ▼
-Node :3000
-   │
-   ▼
-OBS :4455
-```
-
-Además existen dos capas independientes de acceso:
-
-1. el dispositivo debe pertenecer al tailnet autorizado;
-2. el usuario debe autenticarse en OBS Gallery Remote.
-
-No se recomienda exponer los puertos `3000` o `4455` mediante port forwarding.
-
----
-
-# Instalación
-
-## Requisitos
+### Requisitos
 
 - Windows 10 o superior.
 - OBS Studio 28+.
 - Node.js LTS.
 - obs-websocket habilitado.
-- Tailscale para acceso remoto/PWA desde otros dispositivos.
+- Tailscale para acceso remoto desde otros dispositivos.
 
-OBS Studio incluye obs-websocket de forma integrada en versiones modernas.
-
----
-
-## 1. Configurar OBS
+### 1. Configurar OBS
 
 En OBS:
 
@@ -360,9 +299,9 @@ En OBS:
 
 Configura:
 
-- servidor WebSocket habilitado;
+- WebSocket habilitado;
 - autenticación habilitada;
-- puerto, normalmente `4455`;
+- puerto `4455` (o el que prefieras);
 - contraseña segura.
 
 Crea además una fuente de tipo **Imagen** llamada exactamente:
@@ -371,36 +310,23 @@ Crea además una fuente de tipo **Imagen** llamada exactamente:
 OBS_GALLERY_REMOTE
 ```
 
-Esta fuente está dedicada al proyecto.
+Esta fuente sigue siendo la fuente de trabajo principal para la galería.
 
----
-
-## 2. Instalar el proyecto
-
-Clona el repositorio:
+### 2. Clonar e instalar
 
 ```powershell
 git clone https://github.com/kitorosano/obs-gallery-remote.git
 cd obs-gallery-remote
-```
-
-Instala las dependencias:
-
-```powershell
 npm install
 ```
 
----
-
-## 3. Configurar `.env`
-
-Copia:
+### 3. Configurar `.env`
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Configura como mínimo:
+Configuración recomendada:
 
 ```dotenv
 HOST=127.0.0.1
@@ -413,105 +339,66 @@ OBS_PORT=4455
 OBS_PASSWORD=replace_me
 
 OBS_IMAGE_INPUT=OBS_GALLERY_REMOTE
-OBS_STREAM_DELAY_SECONDS=10
+OBS_STREAM_DELAY_SECONDS=0
 
 PANEL_PASSWORD=replace_me
 SESSION_SECRET=replace_with_a_long_random_secret
 ```
 
-No publiques `.env` ni almacenes allí credenciales reales dentro del repositorio.
+> `GALLERY_ROOT` se conserva como origen por defecto, pero hoy la app permite definir varias fuentes desde el propio panel y almacenarlas localmente.
 
----
-
-## 4. Ejecutar
-
-Con OBS disponible:
+### 4. Ejecutar
 
 ```powershell
 npm start
 ```
 
-Desde el propio PC:
+Abrir en navegador:
 
 ```text
 http://127.0.0.1:3000
 ```
 
-Para acceso desde otro dispositivo se recomienda Tailscale Serve en lugar de exponer directamente el puerto `3000`.
+Para acceso remoto, se recomienda usar **Tailscale Serve** en lugar de publicar el puerto `3000` directamente.
 
 ---
 
-# Arquitectura del proyecto
-
-El backend Express está organizado por responsabilidades:
+## Estructura del proyecto
 
 ```text
-server/
-├── config/
-├── constants/
-├── controllers/
-├── middleware/
-├── obs/
-├── routes/
-└── services/
+obs-gallery-remote/
+├── data/
+│   └── gallery-sources.json
+├── gallery/
+├── public/
+│   ├── app.js
+│   ├── index.html
+│   ├── manifest.webmanifest
+│   ├── service-worker.js
+│   ├── css/
+│   └── js/
+├── server/
+│   ├── config/
+│   ├── constants/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── obs/
+│   ├── routes/
+│   ├── services/
+│   └── index.js
+├── .env.example
+├── package.json
+├── run.bat
+└── README.md
 ```
 
-El frontend utiliza módulos independientes:
-
-```text
-public/
-├── app.js
-├── index.html
-├── main.css
-├── manifest.webmanifest
-├── service-worker.js
-│
-├── icons/
-├── css/
-└── js/
-```
-
-Entre los módulos frontend se encuentran responsabilidades para:
-
-```text
-auth
-gallery
-navigation
-OBS
-scenes
-audio
-output
-OBS events
-PWA
-```
-
-`app.js` compone las funcionalidades; `services.js` encapsula los contratos
-HTTP, `panel.js` coordina la sincronización con OBS y cada módulo de interfaz
-recibe únicamente los elementos DOM que necesita.
-
-El navegador nunca se conecta directamente a OBS.
-
-Toda interacción sigue:
-
-```text
-Frontend
-   │
-   │ REST / SSE
-   ▼
-Node / Express
-   │
-   │ obs-websocket
-   ▼
-OBS
-```
-
-Esto mantiene credenciales y lógica sensible fuera del cliente.
+La carpeta `data/` guarda la configuración persistente de fuentes de galería.
 
 ---
 
-# API
+## API relevante
 
-## Autenticación
+### Autenticación
 
 ```text
 GET  /api/auth/status
@@ -519,225 +406,92 @@ POST /api/auth/login
 POST /api/auth/logout
 ```
 
-## Galería
+### Galería
 
 ```text
-GET /api/gallery
-GET /api/gallery/:id/file
+GET  /api/gallery
+GET  /api/gallery/:id/file
+GET  /api/gallery/sources
+POST /api/gallery/sources
+PATCH /api/gallery/sources/:id
+DELETE /api/gallery/sources/:id
 ```
 
-## OBS
+### OBS
 
 ```text
 GET  /api/obs/status
+POST /api/obs/connect
 POST /api/obs/show
 GET  /api/obs/gallery-image
-```
+GET  /api/obs/program/screenshot
 
-## Escenas
-
-```text
 GET  /api/obs/scenes
 POST /api/obs/scenes/current
-```
 
-## Audio
+GET  /api/obs/sources
+POST /api/obs/sources/visibility
 
-```text
 GET  /api/obs/audio
 POST /api/obs/audio/mute
 POST /api/obs/audio/volume
-```
 
-## Emisión
-
-```text
 GET  /api/obs/output/status
-
-POST /api/obs/stream/start
-POST /api/obs/stream/stop
-
 POST /api/obs/record/start
 POST /api/obs/record/stop
+
+GET  /api/obs/aitum
+POST /api/obs/aitum/streams/start-all
+POST /api/obs/aitum/streams/stop-all
+
+GET  /api/obs/events
 ```
 
-## Eventos
-
-```text
-GET /api/obs/events
-```
-
-Los endpoints de OBS y Gallery requieren autenticación.
+Todos los endpoints de OBS y Gallery requieren autenticación.
 
 ---
 
-# Principios de diseño
+## Principios de diseño
 
-El proyecto sigue algunas reglas importantes:
-
-- OBS es la fuente de verdad para su estado.
-- Después de una mutación importante se vuelve a consultar o sincronizar el estado.
-- El navegador nunca recibe las credenciales de OBS.
+- OBS es la fuente de verdad del estado.
+- Las mutaciones importantes se validan con una sincronización posterior.
+- El navegador no recibe credenciales de OBS.
 - OBS WebSocket permanece local.
-- Las APIs dinámicas no se almacenan en el Service Worker.
-- Los controles destructivos durante una transmisión requieren confirmación.
-- Se evita generar tráfico innecesario hacia OBS.
-- La interfaz debe ser cómoda para operación táctil desde un teléfono.
-- El backend debe mantenerse liviano para no competir con OBS por CPU o RAM.
+- Las APIs dinámicas no se cachean en el Service Worker.
+- Los controles destructivos deben solicitar confirmación.
+- Se evita tráfico innecesario hacia OBS.
+- La UI está pensada para operar cómodamente desde un teléfono.
+- El backend se mantiene ligero para no competir con OBS por CPU/RAM.
 
 ---
 
-# Roadmap
+## Próximas mejoras y trabajo pendiente
 
-## Gallery Multi-Source
+El proyecto ya está operativo para producción en muchos casos de uso de control móvil, pero aún hay margen para mejorar:
 
-La siguiente evolución importante del proyecto será eliminar la dependencia de una única carpeta `gallery/`.
-
-El objetivo es permitir configurar desde el panel **uno o varios directorios de imágenes del PC**, incluso cuando estén fuera del proyecto.
-
-Ejemplo:
-
-```text
-D:\Iglesia\Cultos
-D:\Iglesia\Jovenes
-E:\Recursos\Imagenes
-```
-
-Node accederá directamente a esos directorios. Las imágenes no serán copiadas ni movidas.
-
-### Fuentes de galería
-
-Cada directorio será tratado como una fuente independiente:
-
-```text
-Galerías
-
-✓ Cultos
-  D:\Iglesia\Cultos
-
-✓ Jóvenes
-  D:\Iglesia\Jovenes
-
-✓ Recursos
-  E:\Recursos\Imagenes
-```
-
-Cada fuente tendrá, como mínimo:
-
-```text
-id
-nombre
-ruta
-enabled
-```
-
-La configuración podrá persistirse localmente sin necesidad de una base de datos.
-
-### Galería unificada
-
-Las fuentes activas formarán un único índice de imágenes.
-
-El usuario podrá:
-
-- buscar entre todas las imágenes;
-- seleccionar una fuente específica;
-- filtrar resultados;
-- continuar utilizando categorías/subdirectorios;
-- visualizar previews;
-- enviar cualquier imagen válida a `OBS_GALLERY_REMOTE`.
-
-El frontend trabajará con identificadores lógicos y no con rutas arbitrarias del filesystem.
-
-Ejemplo:
-
-```json
-{
-  "id": "cultos:anuncios/bautismos.png",
-  "sourceId": "cultos",
-  "name": "bautismos.png",
-  "category": "Anuncios"
-}
-```
-
-La ruta física será resuelta exclusivamente por el backend.
-
-### Administración desde el frontend
-
-Está previsto poder:
-
-- agregar fuentes;
-- eliminar fuentes;
-- activar/desactivar fuentes;
-- asignar nombres descriptivos;
-- visualizar las rutas configuradas.
-
-### Explorador de directorios
-
-Como el navegador del teléfono no puede abrir directamente el selector de carpetas de Windows, se plantea implementar un explorador seguro servido por Node.
-
-Conceptualmente:
-
-```text
-Seleccionar directorio
-
-Este equipo
-├── C:\
-├── D:\
-│   ├── Iglesia
-│   │   ├── Cultos
-│   │   ├── Jóvenes
-│   │   └── Multimedia
-│   └── Recursos
-└── E:\
-```
-
-El teléfono únicamente navegará la estructura permitida; Node será quien consulte el filesystem.
-
-La implementación deberá impedir path traversal y evitar que los endpoints puedan utilizarse para leer archivos arbitrarios del PC.
+- explorador de directorios más amigable para seleccionar carpetas desde el móvil;
+- edición avanzada de fuentes con validación más estricta;
+- mejor manejo de errores para rutas inaccesibles o no válidas;
+- mejoras visuales en la galería y en el monitor de programa;
+- más indicadores de imagen activa y filtros avanzados;
+- integración extra con otros plugins de OBS cuando expongan APIs estables.
 
 ---
 
-## Otras mejoras posibles
+## Estado final
 
-- Navegación anterior / siguiente.
-- Indicador más destacado de imagen actualmente al aire.
-- Favoritos.
-- Historial de imágenes utilizadas.
-- Detección automática de cambios en directorios.
-- Transiciones.
-- Preview de Program de OBS.
-- Integraciones adicionales con plugins de OBS cuando dispongan de APIs estables.
+OBS Gallery Remote ya es un panel operativo para:
 
----
+- galería multi-fuente;
+- escenas;
+- audio;
+- streaming;
+- grabación;
+- monitor de programa;
+- sincronización en tiempo real;
+- reconexión automática;
+- autenticación;
+- PWA;
+- acceso privado usando Tailscale.
 
-## Aitum Multistream
-
-Se investigó la integración con **Aitum Multistream 1.0.8** para controlar una salida secundaria, por ejemplo Facebook, además del streaming principal de OBS.
-
-La versión utilizada actualmente no expone el vendor WebSocket necesario para realizar esta integración de forma robusta desde obs-websocket.
-
-Por este motivo no se implementó automatización mediante clicks, teclado u otros mecanismos frágiles.
-
-La integración puede reconsiderarse cuando Aitum exponga una API estable compatible con obs-websocket.
-
----
-
-# Estado actual
-
-OBS Gallery Remote ya funciona como panel móvil para operación real de OBS, incluyendo:
-
-```text
-Galería
-Escenas
-Audio
-Streaming
-Grabación
-Sincronización en tiempo real
-Reconexión automática
-Autenticación
-PWA
-HTTPS
-Acceso privado mediante Tailscale
-```
-
-La siguiente área principal de desarrollo es **Gallery Multi-Source**.
+La evolución principal ya está implementada: la galería ya no es un único directorio fijo, sino un conjunto de fuentes configurables y gestionables desde la propia aplicación.
