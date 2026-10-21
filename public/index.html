@@ -293,21 +293,9 @@
 
             <div id="control-scenes-content" class="control-section-content">
               <div class="scenes-panel">
-                <button id="refresh-scenes" class="secondary">
-                  Actualizar
-                </button>
-
-                <div class="program-card">
-                  <span class="program-label">
-                    <span class="live-dot"></span>
-                    EN PROGRAMA
-                  </span>
-
+                <div class="control-context scene-context">
+                  <span class="live-dot"></span>
                   <strong id="current-scene">—</strong>
-                </div>
-
-                <div class="scene-list-heading">
-                  <h3>Cambiar escena</h3>
                 </div>
 
                 <div id="scene-grid" class="scene-grid">
@@ -317,6 +305,14 @@
                 </div>
 
                 <p id="scene-message" class="message" role="status"></p>
+
+                <button
+                  id="refresh-scenes"
+                  class="control-secondary-action"
+                  type="button"
+                >
+                  Actualizar escenas
+                </button>
               </div>
             </div>
           </section>
