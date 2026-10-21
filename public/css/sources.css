@@ -34,13 +34,12 @@
 .source-control-name {
   display: block;
 
-  overflow: hidden;
-
   font-size: 0.9rem;
   font-weight: 600;
 
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+
+  overflow-wrap: anywhere;
 }
 
 .source-control-visibility {
