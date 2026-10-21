@@ -97,9 +97,7 @@
   }
 
   .gallery-panel,
-  .preview-panel,
-  .scenes-panel,
-  .sources-panel {
+  .preview-panel {
     padding: 0.75rem;
   }
 

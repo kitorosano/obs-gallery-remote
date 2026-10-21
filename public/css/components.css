@@ -1,8 +1,5 @@
 .gallery-panel,
 .preview-panel,
-.scenes-panel,
-.sources-panel,
-.audio-panel,
 .output-panel {
   min-width: 0;
   padding: 1rem;
@@ -11,9 +8,6 @@
   background: var(--color-surface);
 }
 
-.scenes-panel,
-.sources-panel,
-.audio-panel,
 .output-panel {
   max-width: 1000px;
   margin: 0 auto;
