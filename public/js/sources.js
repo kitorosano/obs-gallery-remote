@@ -143,7 +143,7 @@ export function createSources({ obsService, elements, refreshStatus }) {
         setPanelSourceVisibility(source, false);
       });
 
-      info.append(name, hideButton);
+      info.append(name);
 
       const control = document.createElement('label');
       control.className = 'source-control-visibility';
@@ -183,7 +183,7 @@ export function createSources({ obsService, elements, refreshStatus }) {
         changeVisibility(source, checkbox.checked);
       });
 
-      row.append(info, control);
+      row.append(info, hideButton, control);
 
       elements.sourcesGrid.append(row);
     }

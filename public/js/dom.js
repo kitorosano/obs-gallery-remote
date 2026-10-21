@@ -53,7 +53,7 @@ export const sourcesElements = {
   sourcesCount: $('#source-count'),
   sourcesMessage: $('#source-message'),
   currentSourcesScene: $('#source-current-scene'),
-  currentSceneOnly: $('#sources-current-scene-only'),
+  currentSceneOnly: $('#source-current-scene-only'),
 
   manageSourcesButton: $('#manage-obs-sources'),
   sourcesDialog: $('#obs-sources-dialog'),
