@@ -129,23 +129,9 @@ export function createSources({ obsService, elements, refreshStatus }) {
       name.className = 'source-control-name';
       name.textContent = source.sourceName;
 
-      const hideButton = document.createElement('button');
-      hideButton.type = 'button';
-      hideButton.className = 'source-hide-button';
-      hideButton.textContent = '×';
-      hideButton.setAttribute(
-        'aria-label',
-        `Ocultar ${source.sourceName} del panel`,
-      );
-      hideButton.title = 'Ocultar del panel';
-      hideButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        setPanelSourceVisibility(source, false);
-      });
-
       info.append(name);
 
-      const control = document.createElement('label');
+      const control = document.createElement('div');
       control.className = 'source-control-visibility';
 
       const switchElement = document.createElement('span');
@@ -167,23 +153,33 @@ export function createSources({ obsService, elements, refreshStatus }) {
       switchElement.append(checkbox, track);
       control.append(switchElement);
 
+      const hideButton = document.createElement('button');
+      hideButton.type = 'button';
+      hideButton.className = 'source-hide-button';
+      hideButton.textContent = '×';
+      hideButton.setAttribute(
+        'aria-label',
+        `Ocultar ${source.sourceName} del panel`,
+      );
+      hideButton.title = 'Ocultar del panel';
+      hideButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setPanelSourceVisibility(source, false);
+      });
+
       checkbox.addEventListener('change', () => {
         changeVisibility(source, checkbox.checked);
       });
 
-      row.addEventListener('click', (event) => {
-        if (event.target.closest('.source-control-visibility')) {
-          return;
-        }
-        if (checkbox.disabled) {
-          return;
-        }
+      info.addEventListener('click', () => {
+        if (checkbox.disabled) return;
 
         checkbox.checked = !checkbox.checked;
         changeVisibility(source, checkbox.checked);
       });
 
-      row.append(info, hideButton, control);
+      row.append(info, control, hideButton);
 
       elements.sourcesGrid.append(row);
     }

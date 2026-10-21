@@ -40,7 +40,7 @@
   border: 1px solid #29364d;
   border-radius: 0.65rem;
 
-  cursor: pointer;
+  cursor: default;
 }
 
 .source-control-row.disabled {
@@ -49,8 +49,8 @@
 
 .source-control-info {
   flex: 1;
-
   min-width: 0;
+  cursor: pointer;
 }
 
 .source-control-name {
@@ -69,18 +69,23 @@
   align-items: center;
 
   flex: 0 0 auto;
+
+  position: relative;
+  z-index: 1;
 }
 
 .source-hide-button {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  flex: 0 0 auto;
+  flex: 0 0 24px;
 
-  width: 28px;
-  height: 28px;
-  min-height: 0;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
 
   padding: 0;
 
@@ -89,9 +94,11 @@
 
   border: 0;
 
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  line-height: 1;
 
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .source-hide-button:hover {
