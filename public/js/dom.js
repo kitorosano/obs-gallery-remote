@@ -51,10 +51,10 @@ export const scenesElements = {
 };
 
 export const sourcesElements = {
-  sourcesGrid: $('#sources-grid'),
-  currentSourcesScene: $('#current-sources-scene'),
-  sourcesCount: $('#sources-count'),
-  sourcesMessage: $('#sources-message'),
+  sourcesGrid: $('#source-grid'),
+  currentSourcesScene: $('#current-source'),
+  sourcesCount: $('#source-count'),
+  sourcesMessage: $('#source-message'),
   refreshSourcesButton: $('#refresh-sources'),
 };
 

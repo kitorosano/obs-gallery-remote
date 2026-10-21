@@ -301,32 +301,39 @@
       </section>
 
       <!-- FUENTES -->
-      <section id="sources-view" class="view" hidden>
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">FUENTES DE LA ESCENA</p>
+      <section id="sources-view" class="app-view" hidden>
+        <div class="sources-panel">
+          <div class="section-heading sources-heading">
+            <div>
+              <p class="eyebrow">CONTROL OBS</p>
+              <h2>Fuentes</h2>
+            </div>
 
-            <h2>Fuentes</h2>
+            <button id="refresh-sources" class="secondary" type="button">
+              Actualizar
+            </button>
           </div>
 
-          <button id="refresh-sources" class="secondary" type="button">
-            Actualizar
-          </button>
-        </div>
+          <div class="program-card">
+            <span class="program-label">
+              <span class="live-dot"></span>
+              EN PROGRAMA
+            </span>
 
-        <div class="scene-summary">
-          <div>
-            <span>EN PROGRAMA</span>
-
-            <strong id="current-sources-scene"> — </strong>
+            <strong id="current-source"> — </strong>
           </div>
 
-          <span id="sources-count"></span>
+          <div class="source-list-heading">
+            <h3>Cambiar fuente</h3>
+            <span id="source-count" class="muted"></span>
+          </div>
+
+          <div id="source-grid" class="source-grid">
+            <p class="muted">Abre esta sección para cargar las fuentes.</p>
+          </div>
+
+          <p id="source-message" class="message" aria-live="polite"></p>
         </div>
-
-        <p id="sources-message" class="message" aria-live="polite"></p>
-
-        <div id="sources-grid" class="sources-grid"></div>
       </section>
 
       <!-- AUDIO -->

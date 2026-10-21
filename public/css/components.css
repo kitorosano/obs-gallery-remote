@@ -1,6 +1,7 @@
 .gallery-panel,
 .preview-panel,
 .scenes-panel,
+.sources-panel,
 .audio-panel,
 .output-panel {
   min-width: 0;
@@ -11,6 +12,7 @@
 }
 
 .scenes-panel,
+.sources-panel,
 .audio-panel,
 .output-panel {
   max-width: 1000px;

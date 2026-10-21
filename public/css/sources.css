@@ -1,4 +1,31 @@
-.sources-grid {
+#current-source {
+  font-size: clamp(1.25rem, 4vw, 1.8rem);
+
+  overflow-wrap: anywhere;
+}
+
+.sources-heading h2 {
+  margin: 0;
+}
+
+.source-list-heading {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 1rem;
+
+  margin-bottom: 0.75rem;
+}
+
+.source-list-heading h3 {
+  font-size: 0.9rem;
+
+  margin: 0;
+}
+
+.source-grid {
   display: grid;
   gap: 0.65rem;
 }
