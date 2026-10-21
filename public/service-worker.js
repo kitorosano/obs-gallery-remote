@@ -1,4 +1,4 @@
-const CACHE_NAME = 'obs-gallery-remote-v41';
+const CACHE_NAME = 'obs-gallery-remote-v43';
 
 const APP_SHELL = [
   '/',
@@ -47,6 +47,7 @@ const APP_SHELL = [
   '/icons/icon-512.png',
   '/icons/icon-maskable-192.png',
   '/icons/icon-maskable-512.png',
+  '/icons/logo-symbol.png',
 ];
 
 self.addEventListener('install', (event) => {
