@@ -50,18 +50,24 @@ export const scenesElements = {
 
 export const sourcesElements = {
   sourcesGrid: $('#source-grid'),
-  currentSourcesScene: $('#current-source'),
-  currentSceneOnly: $('#sources-current-scene-only'),
   sourcesCount: $('#source-count'),
   sourcesMessage: $('#source-message'),
+  currentSourcesScene: $('#source-current-scene'),
+  currentSceneOnly: $('#sources-current-scene-only'),
+
+  manageSourcesButton: $('#manage-obs-sources'),
+  sourcesDialog: $('#obs-sources-dialog'),
+  closeSourcesButton: $('#close-obs-sources'),
+  sourcesList: $('#obs-sources-list'),
 };
 
 export const audioElements = {
   audioGrid: $('#audio-grid'),
   audioCount: $('#audio-count'),
   audioMessage: $('#audio-message'),
-  currentAudioScene: $('#current-audio-scene'),
+  currentAudioScene: $('#audio-current-scene'),
   currentSceneOnly: $('#audio-current-scene-only'),
+
   manageSourcesButton: $('#manage-audio-sources'),
   sourcesDialog: $('#audio-sources-dialog'),
   closeSourcesButton: $('#close-audio-sources'),

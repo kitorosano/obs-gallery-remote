@@ -320,18 +320,16 @@
             </button>
 
             <div id="control-sources-content" class="control-section-content">
-              <label class="source-filter-row" for="sources-current-scene-only">
+              <label class="source-filter-row" for="source-current-scene-only">
                 <span>
-                  Fuentes de escena:
-                  <strong id="current-source">—</strong>
+                  Solo fuentes de:
+                  <strong id="source-current-scene">—</strong>
                 </span>
 
                 <span class="switch">
                   <input
-                    id="sources-current-scene-only"
+                    id="source-current-scene-only"
                     type="checkbox"
-                    checked
-                    disabled
                     aria-label="Mostrar solo fuentes de la escena en programa"
                   />
 
@@ -344,6 +342,16 @@
               </div>
 
               <p id="source-message" class="message" aria-live="polite"></p>
+
+              <div class="audio-secondary-actions">
+                <button
+                  id="manage-obs-sources"
+                  class="control-secondary-action"
+                  type="button"
+                >
+                  Gestionar fuentes
+                </button>
+              </div>
             </div>
           </section>
 
@@ -369,8 +377,8 @@
             <div id="control-audio-content" class="control-section-content">
               <label class="audio-filter-row" for="audio-current-scene-only">
                 <span>
-                  Audios de escena:
-                  <strong id="current-audio-scene">—</strong>
+                  Solo audios de:
+                  <strong id="audio-current-scene">—</strong>
                 </span>
 
                 <span class="switch">
@@ -544,6 +552,32 @@
         <p id="gallery-sources-message" class="message" role="status"></p>
 
         <button id="add-gallery-source" type="button">+ Agregar fuente</button>
+      </div>
+    </dialog>
+
+    <dialog id="obs-sources-dialog" class="audio-sources-dialog">
+      <div class="audio-sources-dialog-content">
+        <div class="audio-sources-dialog-header">
+          <div>
+            <h2>Fuentes de OBS</h2>
+            <p class="muted">Elige qué fuentes quieres mostrar en el panel.</p>
+          </div>
+
+          <button
+            id="close-obs-sources"
+            class="secondary"
+            type="button"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div id="obs-sources-list" class="audio-sources-list"></div>
+
+        <p class="audio-sources-note muted">
+          Las fuentes ocultas continúan funcionando normalmente en OBS.
+        </p>
       </div>
     </dialog>
 

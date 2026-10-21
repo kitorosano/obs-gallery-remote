@@ -1,5 +1,7 @@
 import { createMessagePresenter, renderEmptyState } from './ui.js';
 
+const HIDDEN_SOURCES_STORAGE_KEY = 'obs-gallery-remote-hidden-sources';
+
 const CURRENT_SCENE_ONLY_STORAGE_KEY =
   'obs-gallery-remote-sources-current-scene-only';
 
@@ -11,48 +13,112 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
   const changesInProgress = new Set();
 
+  let hiddenSources = loadHiddenSources();
+
   const storedCurrentSceneOnly = localStorage.getItem(
     CURRENT_SCENE_ONLY_STORAGE_KEY,
   );
-
   let currentSceneOnly =
     storedCurrentSceneOnly === null ? true : storedCurrentSceneOnly === 'true';
-
   elements.currentSceneOnly.checked = currentSceneOnly;
-  elements.currentSceneOnly.disabled = false;
 
   const setMessage = createMessagePresenter(elements.sourcesMessage);
+
+  function loadHiddenSources() {
+    try {
+      const stored = localStorage.getItem(HIDDEN_SOURCES_STORAGE_KEY);
+
+      if (!stored) {
+        return new Set();
+      }
+
+      const parsed = JSON.parse(stored);
+
+      if (!Array.isArray(parsed)) {
+        return new Set();
+      }
+
+      return new Set(parsed.filter((key) => typeof key === 'string'));
+    } catch {
+      return new Set();
+    }
+  }
+
+  function saveHiddenSources() {
+    localStorage.setItem(
+      HIDDEN_SOURCES_STORAGE_KEY,
+      JSON.stringify([...hiddenSources]),
+    );
+  }
 
   function getSourceKey(source) {
     return `${source.sceneName}:${source.sceneItemId}`;
   }
 
+  function setPanelSourceVisibility(source, visible) {
+    const sourceKey = getSourceKey(source);
+
+    if (visible) {
+      hiddenSources.delete(sourceKey);
+    } else {
+      hiddenSources.add(sourceKey);
+    }
+
+    saveHiddenSources();
+    render();
+  }
+
   function render() {
     elements.sourcesGrid.replaceChildren();
 
-    const displayedSources = currentSceneOnly
-      ? sources.filter((source) => source.activeInProgram === true)
+    const sceneSources = currentSceneOnly
+      ? sources.filter((source) => source.sceneName === currentScene)
       : sources;
+
+    const hiddenCount = sceneSources.filter((source) =>
+      hiddenSources.has(getSourceKey(source)),
+    ).length;
+
+    const visibleSources = sceneSources.filter(
+      (source) => !hiddenSources.has(getSourceKey(source)),
+    );
+
+    const totalHiddenCount = sources.filter((source) =>
+      hiddenSources.has(getSourceKey(source)),
+    ).length;
 
     elements.currentSourcesScene.textContent =
       currentScene || 'Sin información';
 
-    elements.sourcesCount.textContent = `${displayedSources.length} ${
-      displayedSources.length === 1 ? 'fuente' : 'fuentes'
-    }`;
+    elements.manageSourcesButton.textContent =
+      totalHiddenCount > 0
+        ? `Gestionar fuentes (${totalHiddenCount} ocultas)`
+        : 'Gestionar fuentes';
 
-    if (!displayedSources.length) {
-      renderEmptyState(
-        elements.sourcesGrid,
-        currentSceneOnly
-          ? 'La escena actual no tiene fuentes.'
-          : 'No hay fuentes disponibles.',
-      );
+    elements.sourcesCount.textContent =
+      hiddenCount > 0
+        ? `${visibleSources.length} visibles · ${hiddenCount} ocultas`
+        : `${visibleSources.length} ${
+            visibleSources.length === 1 ? 'fuente' : 'fuentes'
+          }`;
+
+    if (!visibleSources.length) {
+      let message = 'OBS no devolvió ninguna fuente.';
+
+      if (sources.length) {
+        if (currentSceneOnly && sceneSources.length === 0) {
+          message = 'La escena actual no tiene fuentes.';
+        } else {
+          message = 'Todas las fuentes disponibles están ocultas.';
+        }
+      }
+
+      renderEmptyState(elements.sourcesGrid, message);
 
       return;
     }
 
-    for (const source of displayedSources) {
+    for (const source of visibleSources) {
       const row = document.createElement('div');
       row.className = `source-control-row${source.enabled ? '' : ' disabled'}`;
 
@@ -63,7 +129,21 @@ export function createSources({ obsService, elements, refreshStatus }) {
       name.className = 'source-control-name';
       name.textContent = source.sourceName;
 
-      info.append(name);
+      const hideButton = document.createElement('button');
+      hideButton.type = 'button';
+      hideButton.className = 'source-hide-button';
+      hideButton.textContent = '×';
+      hideButton.setAttribute(
+        'aria-label',
+        `Ocultar ${source.sourceName} del panel`,
+      );
+      hideButton.title = 'Ocultar del panel';
+      hideButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setPanelSourceVisibility(source, false);
+      });
+
+      info.append(name, hideButton);
 
       const control = document.createElement('label');
       control.className = 'source-control-visibility';
@@ -106,6 +186,70 @@ export function createSources({ obsService, elements, refreshStatus }) {
       row.append(info, control);
 
       elements.sourcesGrid.append(row);
+    }
+  }
+
+  function renderSourceManager() {
+    elements.sourcesList.replaceChildren();
+
+    if (!sources.length) {
+      renderEmptyState(elements.sourcesList, 'No hay fuentes disponibles.');
+
+      return;
+    }
+
+    for (const source of sources) {
+      const row = document.createElement('div');
+      row.className = 'audio-source-manager-row';
+
+      const name = document.createElement('span');
+      name.className = 'audio-source-manager-name';
+      name.textContent = `${source.sourceName} · ${source.sceneName}`;
+
+      const control = document.createElement('label');
+      control.className = 'audio-source-visibility';
+
+      const label = document.createElement('span');
+      const visible = !hiddenSources.has(getSourceKey(source));
+      label.textContent = visible ? 'Visible' : 'Oculta';
+
+      const switchElement = document.createElement('span');
+      switchElement.className = 'switch';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = visible;
+      checkbox.setAttribute(
+        'aria-label',
+        `Mostrar ${source.sourceName} de ${source.sceneName}`,
+      );
+
+      const track = document.createElement('span');
+      track.className = 'switch-track';
+      track.setAttribute('aria-hidden', 'true');
+
+      switchElement.append(checkbox, track);
+      control.append(label, switchElement);
+
+      function applyVisibility() {
+        setPanelSourceVisibility(source, checkbox.checked);
+
+        label.textContent = checkbox.checked ? 'Visible' : 'Oculta';
+      }
+
+      checkbox.addEventListener('change', applyVisibility);
+
+      row.addEventListener('click', (event) => {
+        if (event.target.closest('.audio-source-visibility')) {
+          return;
+        }
+
+        checkbox.checked = !checkbox.checked;
+        applyVisibility();
+      });
+
+      row.append(name, control);
+      elements.sourcesList.append(row);
     }
   }
 
@@ -248,7 +392,10 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
   return {
     isLoaded: () => sourcesLoaded,
+    isCurrentSceneOnly: () => currentSceneOnly,
+
     loadSources,
+    renderSourceManager,
     reset: () => {
       sourcesLoadVersion += 1;
       sourcesLoaded = false;

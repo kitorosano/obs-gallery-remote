@@ -107,6 +107,19 @@ createNavigation({
 });
 
 galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
+sourcesElements.manageSourcesButton.addEventListener('click', async () => {
+  if (!sources.isLoaded()) {
+    await sources.loadSources({
+      silent: true,
+    });
+  }
+
+  sources.renderSourceManager();
+  sourcesElements.sourcesDialog.showModal();
+});
+sourcesElements.closeSourcesButton.addEventListener('click', () => {
+  sourcesElements.sourcesDialog.close();
+});
 audioElements.manageSourcesButton.addEventListener('click', async () => {
   if (!audio.isLoaded()) {
     await audio.loadAudio({

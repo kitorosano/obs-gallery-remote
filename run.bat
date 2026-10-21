@@ -48,7 +48,7 @@ echo ========================================
 echo.
 
 REM Forzamos CMD para evitar script-shell=bash
-call npm --script-shell="%ComSpec%" start
+call npm --script-shell="%ComSpec%" run dev
 
 REM =========================================
 REM Si Node termina, mantener ventana abierta

@@ -77,7 +77,7 @@ export function createPanelCoordinator({
       }),
     ];
 
-    if (sources.isLoaded()) {
+    if (sources.isLoaded() && sources.isCurrentSceneOnly()) {
       tasks.push(
         sources.loadSources({
           silent: true,

@@ -216,10 +216,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     elements.sourcesList.replaceChildren();
 
     if (!inputs.length) {
-      renderEmptyState(
-        elements.sourcesList,
-        'No hay audios disponibles.',
-      );
+      renderEmptyState(elements.sourcesList, 'No hay audios disponibles.');
 
       return;
     }
@@ -236,7 +233,6 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       control.className = 'audio-source-visibility';
 
       const label = document.createElement('span');
-
       const visible = !hiddenSources.has(input.inputName);
       label.textContent = visible ? 'Visible' : 'Oculta';
 
@@ -306,10 +302,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       elements.currentAudioScene.textContent = '—';
       audioLoaded = false;
 
-      renderEmptyState(
-        elements.audioGrid,
-        'No se pudieron cargar los audios.',
-      );
+      renderEmptyState(elements.audioGrid, 'No se pudieron cargar los audios.');
       elements.audioCount.textContent = '';
 
       if (!silent) {
@@ -447,11 +440,6 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       CURRENT_SCENE_ONLY_STORAGE_KEY,
       currentSceneOnly ? 'true' : 'false',
     );
-
-    if (currentSceneOnly) {
-      await loadAudio({ silent: true });
-      return;
-    }
 
     render();
   });

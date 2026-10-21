@@ -65,7 +65,6 @@ export async function listAllSources() {
           inputKind: item.inputKind ?? null,
           enabled: item.sceneItemEnabled,
           isGroup: item.isGroup ?? false,
-          activeInProgram: sceneName === currentSceneName,
         });
       }
     } catch {

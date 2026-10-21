@@ -152,6 +152,12 @@
   border: 0;
 
   font-size: 1.1rem;
+
+  cursor: pointer;
+}
+
+.audio-hide-source:hover {
+  color: #cbd5e1;
 }
 
 .audio-secondary-actions {
