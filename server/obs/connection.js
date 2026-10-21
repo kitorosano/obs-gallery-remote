@@ -1,5 +1,9 @@
 import { config } from '../config/config.js';
-import { RCP_VERSION, RECONNECT_DELAY_MS } from '../constants/obs.js';
+import {
+  AITUM_VENDOR,
+  RCP_VERSION,
+  RECONNECT_DELAY_MS,
+} from '../constants/obs.js';
 import { broadcastObsEvent } from '../services/obs-events.js';
 import { obsClient } from './client.js';
 
@@ -151,4 +155,12 @@ obsClient.on('StreamStateChanged', ({ outputActive, outputState }) => {
 
 obsClient.on('RecordStateChanged', ({ outputActive, outputState }) => {
   broadcastObsEvent('record-state-changed', { outputActive, outputState });
+});
+
+obsClient.on('VendorEvent', ({ vendorName, eventType }) => {
+  if (vendorName !== AITUM_VENDOR) return;
+
+  if (eventType === 'start_output' || eventType === 'stop_output') {
+    broadcastObsEvent('aitum-output-changed');
+  }
 });

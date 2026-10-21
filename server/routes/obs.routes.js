@@ -21,9 +21,7 @@ import {
 import {
   getOutputStatus,
   startRecord,
-  startStream,
   stopRecord,
-  stopStream,
 } from '../controllers/obs-output.controller.js';
 import { getProgramPreview } from '../controllers/obs-program.controller.js';
 import {

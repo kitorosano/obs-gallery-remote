@@ -37,6 +37,7 @@ export function createObsEvents({
             break;
           case 'stream-state-changed':
           case 'record-state-changed':
+          case 'aitum-output-changed':
             onOutputChanged?.(message.data);
             break;
           case 'obs-connected':
