@@ -1,8 +1,10 @@
 import { api } from './js/api.js';
 import { createAudio } from './js/audio.js';
 import { createAuth } from './js/auth.js';
+import { createControl } from './js/control.js';
 import {
   audioElements,
+  controlElements,
   galleryElements,
   navigationElements,
   outputElements,
@@ -71,6 +73,10 @@ const audio = createAudio({
   elements: audioElements,
   refreshStatus: obs.refreshStatus,
 });
+const control = createControl({
+  root: controlElements.root,
+});
+control.init();
 const output = createOutput({
   obsService: services.obs,
   elements: { ...outputElements, outputView: navigationElements.outputView },

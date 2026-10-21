@@ -70,6 +70,10 @@ export const audioElements = {
   sourcesList: $('#audio-sources-list'),
 };
 
+export const controlElements = {
+  root: $('#control-view'),
+};
+
 export const outputElements = {
   outputMessage: $('#output-message'),
   refreshOutputButton: $('#refresh-output'),

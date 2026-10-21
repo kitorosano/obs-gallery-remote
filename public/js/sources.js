@@ -10,22 +10,6 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
   const setMessage = createMessagePresenter(elements.sourcesMessage);
 
-  function getSourceType(source) {
-    if (source.isGroup) return 'Grupo';
-
-    const labels = {
-      image_source: 'Imagen',
-      ffmpeg_source: 'Multimedia',
-      browser_source: 'Navegador',
-      window_capture: 'Captura de ventana',
-      monitor_capture: 'Captura de pantalla',
-      game_capture: 'Captura de juego',
-      dshow_input: 'Dispositivo de captura',
-    };
-
-    return labels[source.inputKind] || source.inputKind || 'Fuente';
-  }
-
   function render() {
     elements.sourcesGrid.replaceChildren();
 
@@ -56,17 +40,10 @@ export function createSources({ obsService, elements, refreshStatus }) {
       name.className = 'source-control-name';
       name.textContent = source.sourceName;
 
-      const type = document.createElement('span');
-      type.className = 'source-control-type';
-      type.textContent = getSourceType(source);
-
-      info.append(name, type);
+      info.append(name);
 
       const control = document.createElement('label');
       control.className = 'source-control-visibility';
-
-      const label = document.createElement('span');
-      label.textContent = source.enabled ? 'Visible' : 'Oculta';
 
       const switchElement = document.createElement('span');
       switchElement.className = 'switch';
@@ -75,14 +52,17 @@ export function createSources({ obsService, elements, refreshStatus }) {
       checkbox.type = 'checkbox';
       checkbox.checked = source.enabled;
       checkbox.disabled = changesInProgress.has(source.sceneItemId);
-      checkbox.setAttribute('aria-label', `Mostrar ${source.sourceName}`);
+      checkbox.setAttribute(
+        'aria-label',
+        `${source.enabled ? 'Ocultar' : 'Mostrar'} ${source.sourceName}`,
+      );
 
       const track = document.createElement('span');
       track.className = 'switch-track';
       track.setAttribute('aria-hidden', 'true');
 
       switchElement.append(checkbox, track);
-      control.append(label, switchElement);
+      control.append(switchElement);
 
       checkbox.addEventListener('change', () => {
         changeVisibility(source, checkbox.checked);

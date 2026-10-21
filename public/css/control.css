@@ -1,0 +1,105 @@
+.control-panel {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.control-heading {
+  margin-bottom: 0.25rem;
+}
+
+.control-section {
+  overflow: hidden;
+
+  border: 1px solid #283247;
+  border-radius: 0.85rem;
+
+  background: #111827;
+}
+
+.control-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  padding: 0.9rem 1rem;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  color: #f3f4f6;
+
+  text-align: left;
+}
+
+.control-section-title {
+  display: flex;
+  align-items: center;
+
+  gap: 0.65rem;
+
+  font-weight: 700;
+}
+
+.control-section-chevron {
+  display: inline-block;
+
+  transition: transform 160ms ease;
+}
+
+.control-section-toggle[aria-expanded='false'] .control-section-chevron {
+  transform: rotate(-90deg);
+}
+
+.control-section-count {
+  color: #94a3b8;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.control-section-content {
+  padding: 0 0.85rem 0.85rem;
+}
+
+.control-section-content[hidden] {
+  display: none;
+}
+
+.control-context {
+  display: flex;
+  align-items: center;
+
+  gap: 0.4rem;
+
+  margin-bottom: 0.65rem;
+
+  color: #94a3b8;
+
+  font-size: 0.78rem;
+}
+
+.control-context strong {
+  overflow: hidden;
+
+  color: #e5e7eb;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.control-secondary-action {
+  width: 100%;
+
+  margin-top: 0.65rem;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  border-color: #29364d;
+
+  font-size: 0.8rem;
+}
