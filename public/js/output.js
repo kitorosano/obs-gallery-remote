@@ -40,10 +40,23 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return baseDuration + elapsed;
   }
 
-  function getFacebookOutput() {
-    return state.aitumStreams.find(
-      (output) => output.type === 'stream' && output.name === 'Facebook Output',
-    );
+  function getAdditionalStreams() {
+    return state.aitumStreams.filter((output) => output.type === 'stream');
+  }
+
+  function getStreamStates() {
+    return [
+      {
+        name: 'YouTube',
+        active: state.stream?.active === true,
+        builtIn: true,
+      },
+      ...getAdditionalStreams().map((output) => ({
+        name: output.name,
+        active: output.active === true,
+        builtIn: false,
+      })),
+    ];
   }
 
   function renderStatus({ container, active, activeText, inactiveText }) {
@@ -112,13 +125,13 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     /*
      * STREAM
      */
-    const facebookOutput = getFacebookOutput();
+    const streams = getStreamStates();
+    renderStreamPlatforms(streams);
 
-    const youtubeActive = stream.active;
-    const facebookActive = facebookOutput?.active === true;
+    const allStreamsActive =
+      streams.length > 0 && streams.every((stream) => stream.active);
 
-    const allStreamsActive = youtubeActive && facebookActive;
-    const anyStreamActive = youtubeActive || facebookActive;
+    const anyStreamActive = streams.some((stream) => stream.active);
 
     renderStatus({
       container: elements.streamStatus,
@@ -136,20 +149,6 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       : 'output-action start';
 
     elements.streamButton.disabled = actionInProgress;
-
-    renderStatus({
-      container: elements.youtubeStreamStatus,
-      active: stream.active,
-      activeText: 'EN VIVO',
-      inactiveText: 'DETENIDO',
-    });
-
-    renderStatus({
-      container: elements.facebookStreamStatus,
-      active: facebookOutput?.active === true,
-      activeText: 'EN VIVO',
-      inactiveText: 'DETENIDO',
-    });
 
     /*
      * RECORD
@@ -172,6 +171,31 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     elements.recordButton.disabled = actionInProgress;
 
     renderTimers();
+  }
+
+  function renderStreamPlatforms(streams) {
+    elements.streamPlatforms.replaceChildren();
+
+    for (const stream of streams) {
+      const row = document.createElement('div');
+      row.className = 'stream-platform-row';
+
+      const name = document.createElement('span');
+      name.textContent = stream.name;
+
+      const status = document.createElement('span');
+
+      renderStatus({
+        container: status,
+        active: stream.active,
+        activeText: 'EN VIVO',
+        inactiveText: 'DETENIDO',
+      });
+
+      row.append(name, status);
+
+      elements.streamPlatforms.append(row);
+    }
   }
 
   async function loadOutput({ silent = false, preserveMessage = false } = {}) {
@@ -256,8 +280,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   }
 
   function isAnyStreamActive() {
-    const facebookOutput = getFacebookOutput();
-    return state.stream?.active === true || facebookOutput?.active === true;
+    return getStreamStates().some((stream) => stream.active);
   }
 
   async function toggleStream() {
@@ -265,7 +288,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
     if (isAnyStreamActive()) {
       const confirmed = window.confirm(
-        '¿Detener todas las transmisiones en vivo?\n\nEsto detendrá YouTube y Facebook inmediatamente.',
+        '¿Detener todas las transmisiones en vivo?\n\nEsto detendrá todas las salidas de streaming inmediatamente.',
       );
 
       if (!confirmed) return;
