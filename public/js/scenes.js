@@ -11,7 +11,6 @@ export function createScenes({ obsService, elements, refreshStatus }) {
 
   function render() {
     elements.sceneGrid.replaceChildren();
-    elements.currentScene.textContent = currentScene || 'Sin información';
     elements.sceneCount.textContent = `${scenes.length} ${
       scenes.length === 1 ? 'escena' : 'escenas'
     }`;
@@ -84,8 +83,6 @@ export function createScenes({ obsService, elements, refreshStatus }) {
         elements.sceneGrid,
         'No se pudieron cargar las escenas.',
       );
-
-      elements.currentScene.textContent = '—';
 
       elements.sceneCount.textContent = '';
 

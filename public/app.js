@@ -107,15 +107,6 @@ createNavigation({
 });
 
 galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
-scenesElements.refreshScenesButton.addEventListener('click', () =>
-  scenes.loadScenes(),
-);
-sourcesElements.refreshSourcesButton.addEventListener('click', () =>
-  sources.loadSources(),
-);
-audioElements.refreshAudioButton.addEventListener('click', () =>
-  audio.loadAudio(),
-);
 audioElements.manageSourcesButton.addEventListener('click', async () => {
   if (!audio.isLoaded()) {
     await audio.loadAudio({

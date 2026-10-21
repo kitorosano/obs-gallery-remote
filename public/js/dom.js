@@ -44,10 +44,8 @@ export const programMonitorElements = {
 
 export const scenesElements = {
   sceneGrid: $('#scene-grid'),
-  currentScene: $('#current-scene'),
   sceneCount: $('#scene-count'),
   sceneMessage: $('#scene-message'),
-  refreshScenesButton: $('#refresh-scenes'),
 };
 
 export const sourcesElements = {
@@ -55,14 +53,12 @@ export const sourcesElements = {
   currentSourcesScene: $('#current-source'),
   sourcesCount: $('#source-count'),
   sourcesMessage: $('#source-message'),
-  refreshSourcesButton: $('#refresh-sources'),
 };
 
 export const audioElements = {
   audioGrid: $('#audio-grid'),
   audioCount: $('#audio-count'),
   audioMessage: $('#audio-message'),
-  refreshAudioButton: $('#refresh-audio'),
   currentSceneOnly: $('#audio-current-scene-only'),
   manageSourcesButton: $('#manage-audio-sources'),
   sourcesDialog: $('#audio-sources-dialog'),
