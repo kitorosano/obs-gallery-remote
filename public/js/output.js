@@ -40,6 +40,12 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return baseDuration + elapsed;
   }
 
+  function getFacebookOutput() {
+    return state.aitumStreams.find(
+      (output) => output.type === 'stream' && output.name === 'Facebook Output',
+    );
+  }
+
   function renderStatus({ container, active, activeText, inactiveText }) {
     container.className = `output-status ${active ? 'active' : 'inactive'}`;
 
@@ -106,14 +112,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     /*
      * STREAM
      */
-    const streamDuration = getEstimatedDuration(stream);
-    const streamDelayMs = (Number(stream.delaySeconds) || 0) * 1000;
-    const waitingForDelay =
-      stream.active && streamDelayMs > 0 && streamDuration < streamDelayMs;
-
-    const facebookOutput = state.aitumStreams.find(
-      (output) => output.type === 'stream' && output.name === 'Facebook Output',
-    );
+    const facebookOutput = getFacebookOutput();
 
     const youtubeActive = stream.active;
     const facebookActive = facebookOutput?.active === true;
@@ -257,10 +256,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   }
 
   function isAnyStreamActive() {
-    const facebookOutput = state.aitumStreams.find(
-      (output) => output.type === 'stream' && output.name === 'Facebook Output',
-    );
-
+    const facebookOutput = getFacebookOutput();
     return state.stream?.active === true || facebookOutput?.active === true;
   }
 

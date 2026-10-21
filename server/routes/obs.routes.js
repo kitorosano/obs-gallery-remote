@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import {
   getAitumInfo,
-  getObsOutputList,
   startAllAitumStreams,
   stopAllAitumStreams,
 } from '../controllers/obs-aitum.controller.js';
@@ -54,14 +53,9 @@ router.post('/audio/mute', setInputMute);
 router.post('/audio/volume', setInputVolume);
 
 router.get('/output/status', getOutputStatus);
-
-router.post('/stream/start', startStream);
-router.post('/stream/stop', stopStream);
-
 router.get('/aitum', getAitumInfo);
 router.post('/aitum/streams/start-all', startAllAitumStreams);
 router.post('/aitum/streams/stop-all', stopAllAitumStreams);
-router.get('/aitum/debug/obs-outputs', getObsOutputList);
 
 router.post('/record/start', startRecord);
 router.post('/record/stop', stopRecord);

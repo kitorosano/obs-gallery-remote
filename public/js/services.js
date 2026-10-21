@@ -50,8 +50,6 @@ export function createServices(request) {
         post('/api/obs/audio/volume', { inputName, volumeDb }),
 
       outputs: () => request('/api/obs/output/status'),
-      startStream: () => post('/api/obs/stream/start'),
-      stopStream: () => post('/api/obs/stream/stop'),
 
       aitum: () => request('/api/obs/aitum'),
       startAllStreams: () => post('/api/obs/aitum/streams/start-all'),

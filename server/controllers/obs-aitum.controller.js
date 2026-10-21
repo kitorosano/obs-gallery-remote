@@ -1,4 +1,3 @@
-import { obsClient } from '../obs/client.js';
 import {
   getOutputs,
   getVersion,
@@ -16,7 +15,7 @@ export async function getAitumInfo(req, res) {
       outputs,
     });
   } catch (error) {
-    console.error('Error consultando Aitum Multistream:', error);
+    console.error('Error consultando Aitum Stream Suite:', error);
 
     res.status(502).json({
       available: false,
@@ -58,20 +57,5 @@ export async function stopAllAitumStreams(req, res, next) {
     res.json(result);
   } catch (error) {
     next(error);
-  }
-}
-
-export async function getObsOutputList(req, res) {
-  try {
-    const result = await obsClient.call('GetOutputList');
-
-    res.json(result);
-  } catch (error) {
-    console.error('Error consultando outputs de OBS:', error);
-
-    res.status(502).json({
-      success: false,
-      error: error.message,
-    });
   }
 }
