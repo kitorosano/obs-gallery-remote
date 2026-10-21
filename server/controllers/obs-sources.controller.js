@@ -1,5 +1,5 @@
 import {
-  listProgramSources,
+  listAllSources,
   setSourceVisibility,
 } from '../services/obs-sources.js';
 
@@ -11,7 +11,7 @@ export async function getSources(_req, res) {
   try {
     return res.json({
       ok: true,
-      ...(await listProgramSources()),
+      ...(await listAllSources()),
     });
   } catch (error) {
     return sendObsError(

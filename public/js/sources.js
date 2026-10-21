@@ -1,5 +1,8 @@
 import { createMessagePresenter, renderEmptyState } from './ui.js';
 
+const CURRENT_SCENE_ONLY_STORAGE_KEY =
+  'obs-gallery-remote-sources-current-scene-only';
+
 export function createSources({ obsService, elements, refreshStatus }) {
   let sources = [];
   let currentScene = null;
@@ -8,28 +11,48 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
   const changesInProgress = new Set();
 
+  const storedCurrentSceneOnly = localStorage.getItem(
+    CURRENT_SCENE_ONLY_STORAGE_KEY,
+  );
+
+  let currentSceneOnly =
+    storedCurrentSceneOnly === null ? true : storedCurrentSceneOnly === 'true';
+
+  elements.currentSceneOnly.checked = currentSceneOnly;
+  elements.currentSceneOnly.disabled = false;
+
   const setMessage = createMessagePresenter(elements.sourcesMessage);
+
+  function getSourceKey(source) {
+    return `${source.sceneName}:${source.sceneItemId}`;
+  }
 
   function render() {
     elements.sourcesGrid.replaceChildren();
 
+    const displayedSources = currentSceneOnly
+      ? sources.filter((source) => source.activeInProgram === true)
+      : sources;
+
     elements.currentSourcesScene.textContent =
       currentScene || 'Sin información';
 
-    elements.sourcesCount.textContent = `${sources.length} ${
-      sources.length === 1 ? 'fuente' : 'fuentes'
+    elements.sourcesCount.textContent = `${displayedSources.length} ${
+      displayedSources.length === 1 ? 'fuente' : 'fuentes'
     }`;
 
-    if (!sources.length) {
+    if (!displayedSources.length) {
       renderEmptyState(
         elements.sourcesGrid,
-        'La escena actual no tiene fuentes.',
+        currentSceneOnly
+          ? 'La escena actual no tiene fuentes.'
+          : 'No hay fuentes disponibles.',
       );
 
       return;
     }
 
-    for (const source of sources) {
+    for (const source of displayedSources) {
       const row = document.createElement('div');
       row.className = `source-control-row${source.enabled ? '' : ' disabled'}`;
 
@@ -51,7 +74,7 @@ export function createSources({ obsService, elements, refreshStatus }) {
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.checked = source.enabled;
-      checkbox.disabled = changesInProgress.has(source.sceneItemId);
+      checkbox.disabled = changesInProgress.has(getSourceKey(source));
       checkbox.setAttribute(
         'aria-label',
         `${source.enabled ? 'Ocultar' : 'Mostrar'} ${source.sourceName}`,
@@ -138,11 +161,10 @@ export function createSources({ obsService, elements, refreshStatus }) {
   }
 
   async function changeVisibility(source, enabled) {
-    if (changesInProgress.has(source.sceneItemId)) {
-      return;
-    }
+    const sourceKey = getSourceKey(source);
+    if (changesInProgress.has(sourceKey)) return;
 
-    changesInProgress.add(source.sceneItemId);
+    changesInProgress.add(sourceKey);
 
     render();
 
@@ -154,7 +176,7 @@ export function createSources({ obsService, elements, refreshStatus }) {
 
     try {
       const result = await obsService.setSourceVisibility(
-        currentScene,
+        source.sceneName,
         source.sceneItemId,
         enabled,
       );
@@ -177,7 +199,9 @@ export function createSources({ obsService, elements, refreshStatus }) {
       }
 
       const confirmedSource = sources.find(
-        (item) => item.sceneItemId === source.sceneItemId,
+        (item) =>
+          item.sceneName === source.sceneName &&
+          item.sceneItemId === source.sceneItemId,
       );
 
       if (!confirmedSource || confirmedSource.enabled !== enabled) {
@@ -203,13 +227,24 @@ export function createSources({ obsService, elements, refreshStatus }) {
         preserveMessage: true,
       });
     } finally {
-      changesInProgress.delete(source.sceneItemId);
+      changesInProgress.delete(sourceKey);
 
       render();
 
       await refreshStatus();
     }
   }
+
+  elements.currentSceneOnly.addEventListener('change', () => {
+    currentSceneOnly = elements.currentSceneOnly.checked;
+
+    localStorage.setItem(
+      CURRENT_SCENE_ONLY_STORAGE_KEY,
+      currentSceneOnly ? 'true' : 'false',
+    );
+
+    render();
+  });
 
   return {
     isLoaded: () => sourcesLoaded,

@@ -28,7 +28,10 @@ export async function listAudioInputs() {
     }
   }
 
-  return audioInputs;
+  return {
+    sceneName: currentProgramSceneName,
+    inputs: audioInputs,
+  };
 }
 
 export async function changeInputMute(inputName, muted) {
