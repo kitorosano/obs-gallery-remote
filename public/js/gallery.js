@@ -153,7 +153,51 @@ export function createGallery({ galleryService, elements, showImage }) {
       category.textContent = image.category;
 
       tile.append(imageElement, name, category);
-      tile.addEventListener('click', () => selectImage(image));
+
+      let longPressTimer = null;
+      let longPressActive = false;
+
+      const startLongPress = (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) {
+          return;
+        }
+
+        longPressActive = false;
+
+        longPressTimer = window.setTimeout(() => {
+          longPressActive = true;
+          tile.classList.add('long-press-preview');
+        }, 400);
+      };
+
+      const endLongPress = () => {
+        if (longPressTimer !== null) {
+          window.clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+
+        if (longPressActive) {
+          tile.classList.remove('long-press-preview');
+        }
+      };
+
+      tile.addEventListener('pointerdown', startLongPress);
+      tile.addEventListener('pointerup', endLongPress);
+      tile.addEventListener('pointercancel', endLongPress);
+      tile.addEventListener('pointerleave', endLongPress);
+      tile.addEventListener('click', (event) => {
+        if (longPressActive) {
+          event.preventDefault();
+          longPressActive = false;
+          return;
+        }
+
+        selectImage(image);
+      });
+      tile.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+      });
+
       elements.gallery.append(tile);
     }
   }

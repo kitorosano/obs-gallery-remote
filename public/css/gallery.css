@@ -77,6 +77,9 @@
   border-radius: 0.8rem;
 
   min-width: 0;
+
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
 }
 
 .tile.selected {
@@ -118,6 +121,48 @@
   color: #9ca3af;
 
   margin: 0 0.15rem 0.2rem;
+}
+
+.tile.long-press-preview {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+
+  width: min(82vw, 360px);
+
+  z-index: 100;
+
+  padding: 0.65rem;
+
+  transform: translate(-50%, -50%) scale(1);
+
+  box-shadow: 0 20px 60px #000000aa;
+
+  pointer-events: none;
+}
+
+.tile.long-press-preview img {
+  width: 100%;
+  height: auto;
+
+  max-height: 60vh;
+
+  object-fit: contain;
+}
+
+.tile.long-press-preview .filename {
+  margin-top: 0.55rem;
+
+  font-size: 0.9rem;
+
+  white-space: normal;
+}
+
+.tile.long-press-preview .category-label {
+  font-size: 0.75rem;
+
+  white-space: normal;
 }
 
 #gallery-source {

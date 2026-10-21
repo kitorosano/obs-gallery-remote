@@ -102,7 +102,42 @@
   }
 
   .gallery-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .tile {
+    padding: 0.3rem;
+    border-radius: 0.6rem;
+  }
+
+  .tile.selected {
+    padding: calc(0.3rem - 1px);
+  }
+
+  .tile img {
+    height: 72px;
+    border-radius: 0.35rem;
+  }
+
+  .tile .filename {
+    margin: 0.35rem 0.1rem 0.1rem;
+
+    font-size: 0.7rem;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tile .category-label {
+    margin: 0 0.1rem 0.1rem;
+
+    font-size: 0.6rem;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .scene-grid {
