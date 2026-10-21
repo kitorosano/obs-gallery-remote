@@ -17,29 +17,28 @@ export function createNavigation({
 }) {
   function setActiveView(viewName) {
     elements.galleryView.hidden = viewName !== 'gallery';
-    elements.scenesView.hidden = viewName !== 'scenes';
-    elements.sourcesView.hidden = viewName !== 'sources';
-    elements.audioView.hidden = viewName !== 'audio';
+    elements.controlView.hidden = viewName !== 'control';
     elements.outputView.hidden = viewName !== 'output';
 
     elements.navigationButtons.forEach((button) => {
       const active = button.dataset.view === viewName;
 
       button.classList.toggle('active', active);
-
       button.setAttribute('aria-pressed', String(active));
     });
 
-    if (viewName === 'scenes' && !isScenesLoaded()) {
-      loadScenes();
-    }
+    if (viewName === 'control') {
+      if (!isScenesLoaded()) {
+        loadScenes();
+      }
 
-    if (viewName === 'sources' && !isSourcesLoaded()) {
-      loadSources();
-    }
+      if (!isSourcesLoaded()) {
+        loadSources();
+      }
 
-    if (viewName === 'audio' && !isAudioLoaded()) {
-      loadAudio();
+      if (!isAudioLoaded()) {
+        loadAudio();
+      }
     }
 
     if (viewName === 'output') {

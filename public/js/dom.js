@@ -87,9 +87,7 @@ export const outputElements = {
 
 export const navigationElements = {
   galleryView: $('#gallery-view'),
-  scenesView: $('#scenes-view'),
-  sourcesView: $('#sources-view'),
-  audioView: $('#audio-view'),
+  controlView: $('#control-view'),
   outputView: $('#output-view'),
   navigationButtons: document.querySelectorAll('.nav-button'),
 };

@@ -137,23 +137,18 @@
           data-view="gallery"
           aria-pressed="true"
         >
-          Galería
+          <span class="nav-icon" aria-hidden="true">▦</span>
+          <span>Galería</span>
         </button>
 
-        <button class="nav-button" data-view="scenes" aria-pressed="false">
-          Escenas
-        </button>
-
-        <button class="nav-button" data-view="sources" aria-pressed="false">
-          Fuentes
-        </button>
-
-        <button class="nav-button" data-view="audio" aria-pressed="false">
-          Audio
+        <button class="nav-button" data-view="control" aria-pressed="false">
+          <span class="nav-icon" aria-hidden="true">◉</span>
+          <span>Control</span>
         </button>
 
         <button class="nav-button" data-view="output" aria-pressed="false">
-          Emisión
+          <span class="nav-icon" aria-hidden="true">●</span>
+          <span>Emisión</span>
         </button>
       </nav>
 
@@ -267,120 +262,141 @@
         </section>
       </section>
 
-      <!-- ESCENAS -->
-      <section id="scenes-view" class="app-view" hidden>
-        <div class="scenes-panel">
-          <div class="section-heading scenes-heading">
+      <!-- CONTROL -->
+      <section id="control-view" class="app-view" hidden>
+        <div class="control-panel">
+          <div class="section-heading control-heading">
             <div>
               <p class="eyebrow">CONTROL OBS</p>
-              <h2>Escenas</h2>
-            </div>
-
-            <button id="refresh-scenes" class="secondary">Actualizar</button>
-          </div>
-
-          <div class="program-card">
-            <span class="program-label">
-              <span class="live-dot"></span>
-              EN PROGRAMA
-            </span>
-
-            <strong id="current-scene">—</strong>
-          </div>
-
-          <div class="scene-list-heading">
-            <h3>Cambiar escena</h3>
-            <span id="scene-count" class="muted"></span>
-          </div>
-
-          <div id="scene-grid" class="scene-grid">
-            <p class="muted">Abre esta sección para cargar las escenas.</p>
-          </div>
-
-          <p id="scene-message" class="message" role="status"></p>
-        </div>
-      </section>
-
-      <!-- FUENTES -->
-      <section id="sources-view" class="app-view" hidden>
-        <div class="sources-panel">
-          <div class="section-heading sources-heading">
-            <div>
-              <p class="eyebrow">CONTROL OBS</p>
-              <h2>Fuentes</h2>
-            </div>
-
-            <button id="refresh-sources" class="secondary" type="button">
-              Actualizar
-            </button>
-          </div>
-
-          <div class="program-card">
-            <span class="program-label">
-              <span class="live-dot"></span>
-              EN PROGRAMA
-            </span>
-
-            <strong id="current-source"> — </strong>
-          </div>
-
-          <div class="source-list-heading">
-            <h3>Cambiar fuente</h3>
-            <span id="source-count" class="muted"></span>
-          </div>
-
-          <div id="source-grid" class="source-grid">
-            <p class="muted">Abre esta sección para cargar las fuentes.</p>
-          </div>
-
-          <p id="source-message" class="message" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <!-- AUDIO -->
-      <section id="audio-view" class="app-view" hidden>
-        <div class="audio-panel">
-          <div class="section-heading audio-heading">
-            <div>
-              <p class="eyebrow">CONTROL OBS</p>
-              <h2>Audio</h2>
-            </div>
-
-            <div class="audio-heading-actions">
-              <button id="manage-audio-sources" class="secondary" type="button">
-                Gestionar fuentes
-              </button>
-
-              <button id="refresh-audio" class="secondary" type="button">
-                Actualizar
-              </button>
+              <h2>Control</h2>
             </div>
           </div>
 
-          <div class="audio-list-heading">
-            <div>
-              <h3>Fuentes de audio</h3>
-              <label class="audio-scene-filter" for="audio-current-scene-only">
-                <span>Solo fuentes de la escena actual</span>
+          <!-- ESCENAS -->
+          <section class="control-section control-scenes">
+            <div class="scenes-panel">
+              <div class="section-heading scenes-heading">
+                <div>
+                  <p class="eyebrow">CONTROL OBS</p>
+                  <h2>Escenas</h2>
+                </div>
 
-                <span class="switch">
-                  <input id="audio-current-scene-only" type="checkbox" />
+                <button id="refresh-scenes" class="secondary">
+                  Actualizar
+                </button>
+              </div>
 
-                  <span class="switch-track" aria-hidden="true"></span>
+              <div class="program-card">
+                <span class="program-label">
+                  <span class="live-dot"></span>
+                  EN PROGRAMA
                 </span>
-              </label>
+
+                <strong id="current-scene">—</strong>
+              </div>
+
+              <div class="scene-list-heading">
+                <h3>Cambiar escena</h3>
+                <span id="scene-count" class="muted"></span>
+              </div>
+
+              <div id="scene-grid" class="scene-grid">
+                <p class="muted">Abre esta sección para cargar las escenas.</p>
+              </div>
+
+              <p id="scene-message" class="message" role="status"></p>
             </div>
+          </section>
 
-            <span id="audio-count" class="muted"></span>
-          </div>
+          <!-- FUENTES -->
+          <section class="control-section control-sources">
+            <div class="sources-panel">
+              <div class="section-heading sources-heading">
+                <div>
+                  <p class="eyebrow">CONTROL OBS</p>
+                  <h2>Fuentes</h2>
+                </div>
 
-          <div id="audio-grid" class="audio-grid">
-            <p class="muted">
-              Abre esta sección para cargar las fuentes de audio.
-            </p>
-          </div>
+                <button id="refresh-sources" class="secondary" type="button">
+                  Actualizar
+                </button>
+              </div>
 
-          <p id="audio-message" class="message" role="status"></p>
+              <div class="program-card">
+                <span class="program-label">
+                  <span class="live-dot"></span>
+                  EN PROGRAMA
+                </span>
+
+                <strong id="current-source"> — </strong>
+              </div>
+
+              <div class="source-list-heading">
+                <h3>Cambiar fuente</h3>
+                <span id="source-count" class="muted"></span>
+              </div>
+
+              <div id="source-grid" class="source-grid">
+                <p class="muted">Abre esta sección para cargar las fuentes.</p>
+              </div>
+
+              <p id="source-message" class="message" aria-live="polite"></p>
+            </div>
+          </section>
+
+          <!-- AUDIO -->
+          <section class="control-section control-audio">
+            <div class="audio-panel">
+              <div class="section-heading audio-heading">
+                <div>
+                  <p class="eyebrow">CONTROL OBS</p>
+                  <h2>Audio</h2>
+                </div>
+
+                <div class="audio-heading-actions">
+                  <button
+                    id="manage-audio-sources"
+                    class="secondary"
+                    type="button"
+                  >
+                    Gestionar fuentes
+                  </button>
+
+                  <button id="refresh-audio" class="secondary" type="button">
+                    Actualizar
+                  </button>
+                </div>
+              </div>
+
+              <div class="audio-list-heading">
+                <div>
+                  <h3>Fuentes de audio</h3>
+                  <label
+                    class="audio-scene-filter"
+                    for="audio-current-scene-only"
+                  >
+                    <span>Solo fuentes de la escena actual</span>
+
+                    <span class="switch">
+                      <input id="audio-current-scene-only" type="checkbox" />
+
+                      <span class="switch-track" aria-hidden="true"></span>
+                    </span>
+                  </label>
+                </div>
+
+                <span id="audio-count" class="muted"></span>
+              </div>
+
+              <div id="audio-grid" class="audio-grid">
+                <p class="muted">
+                  Abre esta sección para cargar las fuentes de audio.
+                </p>
+              </div>
+
+              <p id="audio-message" class="message" role="status"></p>
+            </div>
+          </section>
         </div>
       </section>
 

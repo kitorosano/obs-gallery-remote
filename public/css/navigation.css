@@ -39,3 +39,50 @@
   display: none;
 }
 
+@media (max-width: 700px) {
+  .app-nav {
+    position: fixed;
+    z-index: 100;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0.4rem 0.6rem calc(0.4rem + env(safe-area-inset-bottom));
+
+    gap: 0.35rem;
+
+    border: 0;
+    border-top: 1px solid #283247;
+    border-radius: 0;
+
+    background: #111827;
+  }
+
+  .nav-button {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 0;
+
+    gap: 0.15rem;
+    padding: 0.45rem 0.25rem;
+
+    font-size: 0.75rem;
+  }
+
+  .nav-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  main {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+}
