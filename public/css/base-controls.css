@@ -18,7 +18,7 @@ button {
   padding: 0.75rem 0.9rem;
 }
 
-input {
+input:not([type='checkbox']):not([type='radio']) {
   background: #111827;
   color: #f9fafb;
 
@@ -47,4 +47,3 @@ button:disabled {
   background: #1f2937;
   border-color: #374151;
 }
-
