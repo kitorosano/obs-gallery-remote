@@ -1,10 +1,113 @@
 const REFRESH_INTERVAL_MS = 1000;
 const PIP_STORAGE_KEY = 'obs-gallery-remote-program-pip';
+const PIP_POSITION_STORAGE_KEY = 'obs-gallery-remote-program-pip-position';
 
 export function createProgramMonitor({ programService, elements }) {
   let running = false;
   let timeoutId = null;
+
   let pipEnabled = false;
+  let pipPosition =
+    localStorage.getItem(PIP_POSITION_STORAGE_KEY) || 'bottom-right';
+
+  let dragPointerId = null;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+  let dragging = false;
+
+  function renderPipPosition() {
+    elements.root.dataset.pipPosition = pipPosition;
+  }
+
+  function savePipPosition(position) {
+    pipPosition = position;
+    localStorage.setItem(PIP_POSITION_STORAGE_KEY, position);
+    renderPipPosition();
+  }
+
+  function startDrag(event) {
+    if (!pipEnabled) return;
+
+    if (event.target.closest('button')) return;
+
+    const rect = elements.root.getBoundingClientRect();
+
+    dragPointerId = event.pointerId;
+    dragOffsetX = event.clientX - rect.left;
+    dragOffsetY = event.clientY - rect.top;
+    dragging = true;
+
+    elements.root.setPointerCapture(event.pointerId);
+
+    elements.root.classList.add('is-dragging');
+
+    elements.root.style.left = `${rect.left}px`;
+    elements.root.style.top = `${rect.top}px`;
+    elements.root.style.right = 'auto';
+    elements.root.style.bottom = 'auto';
+  }
+
+  function moveDrag(event) {
+    if (!dragging || event.pointerId !== dragPointerId) return;
+
+    const rect = elements.root.getBoundingClientRect();
+
+    const maxLeft = window.innerWidth - rect.width;
+    const maxTop = window.innerHeight - rect.height;
+
+    const left = Math.max(0, Math.min(event.clientX - dragOffsetX, maxLeft));
+
+    const top = Math.max(0, Math.min(event.clientY - dragOffsetY, maxTop));
+
+    elements.root.style.left = `${left}px`;
+    elements.root.style.top = `${top}px`;
+  }
+
+  function endDrag(event) {
+    if (!dragging || event.pointerId !== dragPointerId) return;
+
+    const first = elements.root.getBoundingClientRect();
+
+    const centerX = first.left + first.width / 2;
+    const centerY = first.top + first.height / 2;
+
+    const horizontal = centerX < window.innerWidth / 2 ? 'left' : 'right';
+    const vertical = centerY < window.innerHeight / 2 ? 'top' : 'bottom';
+
+    const newPosition = `${vertical}-${horizontal}`;
+
+    elements.root.classList.remove('is-dragging');
+
+    dragging = false;
+    dragPointerId = null;
+
+    savePipPosition(newPosition);
+
+    elements.root.style.left = '';
+    elements.root.style.top = '';
+    elements.root.style.right = '';
+    elements.root.style.bottom = '';
+
+    const last = elements.root.getBoundingClientRect();
+
+    const deltaX = first.left - last.left;
+    const deltaY = first.top - last.top;
+
+    elements.root.animate(
+      [
+        {
+          transform: `translate(${deltaX}px, ${deltaY}px)`,
+        },
+        {
+          transform: 'translate(0, 0)',
+        },
+      ],
+      {
+        duration: 280,
+        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+    );
+  }
 
   async function updateFrame() {
     timeoutId = null;
@@ -56,10 +159,46 @@ export function createProgramMonitor({ programService, elements }) {
     elements.pipButton.title = pipEnabled ? 'Volver a vista fija' : 'Modo PiP';
   }
 
-  function setPip(enabled) {
+  function animatePipChange(enabled) {
+    const first = elements.root.getBoundingClientRect();
+
     pipEnabled = enabled;
+
     localStorage.setItem(PIP_STORAGE_KEY, enabled ? 'true' : 'false');
+
     renderPipState();
+
+    const last = elements.root.getBoundingClientRect();
+
+    const deltaX = first.left - last.left;
+    const deltaY = first.top - last.top;
+
+    const scaleX = first.width / last.width;
+    const scaleY = first.height / last.height;
+
+    elements.root.animate(
+      [
+        {
+          transformOrigin: 'top left',
+          transform: `
+          translate(${deltaX}px, ${deltaY}px)
+          scale(${scaleX}, ${scaleY})
+        `,
+        },
+        {
+          transformOrigin: 'top left',
+          transform: 'none',
+        },
+      ],
+      {
+        duration: 320,
+        easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+    );
+  }
+
+  function setPip(enabled) {
+    animatePipChange(enabled);
   }
 
   function togglePip() {
@@ -67,6 +206,8 @@ export function createProgramMonitor({ programService, elements }) {
   }
 
   pipEnabled = localStorage.getItem(PIP_STORAGE_KEY) === 'true';
+
+  renderPipPosition();
   renderPipState();
 
   document.addEventListener('visibilitychange', () => {
@@ -84,6 +225,11 @@ export function createProgramMonitor({ programService, elements }) {
   });
 
   elements.pipButton.addEventListener('click', togglePip);
+
+  elements.root.addEventListener('pointerdown', startDrag);
+  elements.root.addEventListener('pointermove', moveDrag);
+  elements.root.addEventListener('pointerup', endDrag);
+  elements.root.addEventListener('pointercancel', endDrag);
 
   return {
     start,
