@@ -154,11 +154,7 @@
 
       <!-- GALERÍA -->
       <section id="gallery-view" class="app-view">
-        <section class="toolbar">
-          <select id="gallery-source" aria-label="Filtrar por fuente">
-            <option value="">Todas las fuentes</option>
-          </select>
-
+        <section class="gallery-toolbar">
           <input
             id="search"
             type="search"
@@ -166,10 +162,33 @@
             aria-label="Buscar imágenes"
           />
 
-          <button id="refresh" class="secondary">Actualizar galería</button>
-          <button id="manage-gallery-sources" class="secondary" type="button">
-            Gestionar fuentes
-          </button>
+          <details class="gallery-toolbar-options">
+            <summary>Más opciones</summary>
+
+            <div class="gallery-toolbar-options-content">
+              <label class="gallery-toolbar-field">
+                <span>Fuente</span>
+
+                <select id="gallery-source" aria-label="Filtrar por fuente">
+                  <option value="">Todas las fuentes</option>
+                </select>
+              </label>
+
+              <div class="gallery-toolbar-actions">
+                <button id="refresh" class="secondary" type="button">
+                  Actualizar galería
+                </button>
+
+                <button
+                  id="manage-gallery-sources"
+                  class="secondary"
+                  type="button"
+                >
+                  Gestionar fuentes
+                </button>
+              </div>
+            </div>
+          </details>
         </section>
 
         <dialog id="gallery-source-dialog">

@@ -5,10 +5,6 @@
     grid-template-columns: 1fr;
   }
 
-  .preview-panel {
-    order: -1;
-  }
-
   .preview-frame {
     min-height: 170px;
 
@@ -99,6 +95,31 @@
   .gallery-panel,
   .preview-panel {
     padding: 0.75rem;
+  }
+
+  .preview-panel {
+    margin-top: 0;
+  }
+
+  .preview-panel h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .preview-frame {
+    min-height: 120px;
+    max-height: 180px;
+  }
+
+  .selected-name {
+    margin: 0.6rem 0;
+  }
+
+  .auto-show-option {
+    margin-top: 0.6rem;
+  }
+
+  #auto-show-note {
+    display: none;
   }
 
   .gallery-grid {
