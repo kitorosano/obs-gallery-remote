@@ -214,11 +214,165 @@
     padding: 0.75rem;
   }
 
+  .output-heading .eyebrow {
+    display: none;
+  }
+
+  .output-heading {
+    align-items: center;
+  }
+
+  .output-heading h2 {
+    font-size: 1rem;
+  }
+
+  .output-heading #refresh-output {
+    padding: 0.45rem 0.7rem;
+    min-height: 0;
+
+    font-size: 0.75rem;
+  }
+
   .output-grid {
     grid-template-columns: 1fr;
+
+    gap: 0.65rem;
+
+    margin-top: 0.75rem;
+  }
+
+  .output-card {
+    gap: 0.65rem;
+
+    padding: 0.75rem;
+
+    border-radius: 0.7rem;
+  }
+
+  .output-type {
+    display: none;
+  }
+
+  .output-card-header {
+    align-items: center;
+
+    gap: 0.5rem;
+  }
+
+  .output-card-header h3 {
+    margin: 0;
+
+    font-size: 0.95rem;
+  }
+
+  .output-status {
+    padding: 0.3rem 0.5rem;
+
+    font-size: 0.6rem;
+  }
+
+  .stream-platforms {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 0.4rem;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 0;
+  }
+
+  .stream-platform-row {
+    min-width: 0;
+
+    gap: 0.35rem;
+
+    padding: 0.4rem 0.5rem;
+
+    background: #0b1020;
+
+    border: 1px solid #283247;
+    border-radius: 0.5rem;
+  }
+
+  .stream-platform-row > span:first-child {
+    min-width: 0;
+
+    font-size: 0.72rem;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stream-platform-row .output-status {
+    padding: 0;
+
+    background: transparent;
+
+    font-size: 0;
+  }
+
+  .stream-platform-row .output-status::before {
+    content: '';
+
+    display: block;
+
+    width: 0.55rem;
+    height: 0.55rem;
+
+    border-radius: 50%;
+
+    background: #6b7280;
+  }
+
+  .stream-platform-row .output-status.active::before {
+    background: #ef4444;
+  }
+
+  .output-time {
+    padding: 0.55rem 0.65rem;
+
+    gap: 0.15rem;
+
+    border-radius: 0.55rem;
+  }
+
+  .output-time span {
+    font-size: 0.55rem;
+  }
+
+  .output-time strong {
+    font-size: 1.35rem;
+  }
+
+  .stream-delay-info {
+    gap: 0.4rem;
+
+    padding: 0.55rem 0.65rem;
+
+    border-radius: 0.55rem;
+  }
+
+  .stream-delay-row span {
+    font-size: 0.55rem;
+  }
+
+  .stream-delay-row strong {
+    font-size: 0.8rem;
   }
 
   .output-action {
-    min-height: 56px;
+    min-height: 44px;
+
+    padding: 0.6rem;
+
+    font-size: 0.82rem;
+  }
+
+  .output-warning {
+    display: none;
   }
 }

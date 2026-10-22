@@ -82,6 +82,70 @@
     line-height: 1;
   }
 
+  .nav-output-status {
+    transition:
+      color 0.2s ease,
+      filter 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  /* OBS desconectado / estado todavía desconocido */
+  .nav-output-status.unknown {
+    color: #6b7280;
+
+    opacity: 0.55;
+
+    filter: none;
+  }
+
+  /* OBS conectado, pero sin transmitir */
+  .nav-output-status.offline {
+    color: #9ca3af;
+
+    opacity: 1;
+
+    filter: none;
+  }
+
+  /* Algunas transmisiones activas, pero no todas */
+  .nav-output-status.partial {
+    color: #f59e0b;
+
+    opacity: 1;
+
+    filter: drop-shadow(0 0 3px rgb(245 158 11 / 45%));
+  }
+
+  /* Todas las transmisiones activas */
+  .nav-output-status.live {
+    color: #ef4444;
+
+    opacity: 1;
+
+    filter: drop-shadow(0 0 4px rgb(239 68 68 / 70%));
+
+    animation: nav-output-live-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes nav-output-live-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.6;
+      transform: scale(0.88);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-output-status.live {
+      animation: none;
+    }
+  }
+
   main {
     padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }

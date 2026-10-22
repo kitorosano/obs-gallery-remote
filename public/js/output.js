@@ -116,6 +116,27 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     );
   }
 
+  function renderNavOutputStatus({ allStreamsActive, anyStreamActive }) {
+    let status = 'offline';
+    let label = 'Fuera del aire';
+
+    if (allStreamsActive) {
+      status = 'live';
+      label = 'En vivo';
+    } else if (anyStreamActive) {
+      status = 'partial';
+      label = 'Transmisión parcial';
+    }
+
+    elements.navOutputStatus.className = `nav-icon nav-output-status ${status}`;
+
+    const navButton = elements.navOutputStatus.closest('.nav-button');
+
+    if (navButton) {
+      navButton.title = label;
+    }
+  }
+
   function render() {
     const stream = state.stream;
     const record = state.record;
@@ -132,6 +153,11 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       streams.length > 0 && streams.every((stream) => stream.active);
 
     const anyStreamActive = streams.some((stream) => stream.active);
+
+    renderNavOutputStatus({
+      allStreamsActive,
+      anyStreamActive,
+    });
 
     renderStatus({
       container: elements.streamStatus,
@@ -407,6 +433,13 @@ export function createOutput({ obsService, elements, refreshStatus }) {
         record: null,
         aitumStreams: [],
       };
+
+      elements.navOutputStatus.className = 'nav-icon nav-output-status unknown';
+
+      const navButton = elements.navOutputStatus.closest('.nav-button');
+      if (navButton) {
+        navButton.title = 'Estado de emisión desconocido';
+      }
     },
   };
 }

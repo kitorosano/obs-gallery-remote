@@ -80,6 +80,9 @@ export const controlElements = {
 
 export const outputElements = {
   outputMessage: $('#output-message'),
+  
+  navOutputStatus: $('#nav-output-status'),
+
   refreshOutputButton: $('#refresh-output'),
   streamStatus: $('#stream-status'),
   streamDuration: $('#stream-duration'),
@@ -88,6 +91,7 @@ export const outputElements = {
   streamTotalTime: $('#stream-total-time'),
   streamButton: $('#stream-button'),
   streamPlatforms: $('#stream-platforms'),
+  
   recordStatus: $('#record-status'),
   recordDuration: $('#record-duration'),
   recordButton: $('#record-button'),
