@@ -3,9 +3,12 @@ import { createMessagePresenter, formatDuration } from './ui.js';
 export function createOutput({ obsService, elements, refreshStatus }) {
   const SYNC_INTERVAL_MS = 3000;
   const TIMER_INTERVAL_MS = 1000;
+  const STREAM_TRANSITION_POLL_MS = 500;
+  const STREAM_TRANSITION_TIMEOUT_MS = 120000;
 
   let outputLoaded = false;
   let actionInProgress = false;
+  let streamTransition = null;
 
   let syncInterval = null;
   let timerInterval = null;
@@ -23,6 +26,15 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   let lastSyncAt = null;
 
   const setMessage = createMessagePresenter(elements.outputMessage);
+
+  async function waitForStreamDelay() {
+    const delaySeconds = Number(state.stream?.delaySeconds) || 0;
+    if (delaySeconds <= 0) return;
+
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, delaySeconds * 1000);
+    });
+  }
 
   function getEstimatedDuration(output) {
     if (!output?.active) {
@@ -154,27 +166,45 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
     const anyStreamActive = streams.some((stream) => stream.active);
 
+    const streamStarting = streamTransition === 'starting';
+    const streamStopping = streamTransition === 'stopping';
+
     renderNavOutputStatus({
       allStreamsActive,
       anyStreamActive,
     });
 
-    renderStatus({
-      container: elements.streamStatus,
-      active: anyStreamActive,
-      activeText: allStreamsActive ? 'EN VIVO' : 'PARCIAL',
-      inactiveText: 'FUERA DEL AIRE',
-    });
+    if (streamStarting) {
+      elements.streamStatus.className = 'output-status pending';
+      elements.streamStatus.textContent = 'INICIANDO';
+    } else if (streamStopping) {
+      elements.streamStatus.className = 'output-status pending';
+      elements.streamStatus.textContent = 'DETENIENDO';
+    } else {
+      renderStatus({
+        container: elements.streamStatus,
+        active: anyStreamActive,
+        activeText: allStreamsActive ? 'EN VIVO' : 'PARCIAL',
+        inactiveText: 'FUERA DEL AIRE',
+      });
+    }
 
-    elements.streamButton.textContent = anyStreamActive
-      ? 'Detener transmisiones'
-      : 'Iniciar transmisiones';
+    if (streamStarting) {
+      elements.streamButton.textContent = 'Iniciando…';
+    } else if (streamStopping) {
+      elements.streamButton.textContent = 'Deteniendo…';
+    } else {
+      elements.streamButton.textContent = anyStreamActive
+        ? 'Detener transmisiones'
+        : 'Iniciar transmisiones';
+    }
 
     elements.streamButton.className = anyStreamActive
       ? 'output-action danger'
       : 'output-action start';
 
-    elements.streamButton.disabled = actionInProgress;
+    elements.streamButton.disabled =
+      actionInProgress || streamTransition !== null;
 
     /*
      * RECORD
@@ -309,6 +339,31 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return getStreamStates().some((stream) => stream.active);
   }
 
+  async function waitForStreamsToStop() {
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < STREAM_TRANSITION_TIMEOUT_MS) {
+      const refreshed = await loadOutput({
+        silent: true,
+        preserveMessage: true,
+      });
+
+      if (!refreshed) {
+        throw new Error('No se pudo confirmar el estado de las transmisiones.');
+      }
+
+      if (!isAnyStreamActive()) return;
+
+      await new Promise((resolve) => {
+        window.setTimeout(resolve, STREAM_TRANSITION_POLL_MS);
+      });
+    }
+
+    throw new Error(
+      'Las transmisiones siguen activas después del tiempo de espera.',
+    );
+  }
+
   async function toggleStream() {
     if (!state.stream) return;
 
@@ -316,23 +371,59 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       const confirmed = window.confirm(
         '¿Detener todas las transmisiones en vivo?\n\nEsto detendrá todas las salidas de streaming inmediatamente.',
       );
-
       if (!confirmed) return;
 
-      await executeAction({
-        action: obsService.stopAllStreams,
-        workingMessage: 'Deteniendo transmisiones…',
-        successMessage: 'Las transmisiones fueron detenidas.',
-      });
+      streamTransition = 'stopping';
+      render();
+
+      try {
+        await executeAction({
+          action: obsService.stopAllStreams,
+          workingMessage: 'Deteniendo transmisiones…',
+          successMessage: 'Esperando a que finalicen las transmisiones…',
+        });
+
+        await waitForStreamsToStop();
+
+        setMessage('Las transmisiones fueron detenidas.', 'success');
+      } catch (error) {
+        setMessage(
+          `No se pudo confirmar la detención: ${error.message}`,
+          'error',
+        );
+      } finally {
+        streamTransition = null;
+
+        await loadOutput({
+          silent: true,
+          preserveMessage: true,
+        });
+
+        render();
+      }
 
       return;
     }
+
+    streamTransition = 'starting';
+    render();
 
     await executeAction({
       action: obsService.startAllStreams,
       workingMessage: 'Iniciando transmisiones…',
       successMessage: 'Las transmisiones están en vivo.',
     });
+
+    await waitForStreamDelay();
+
+    streamTransition = null;
+
+    await loadOutput({
+      silent: true,
+      preserveMessage: true,
+    });
+
+    render();
   }
 
   async function toggleRecord() {

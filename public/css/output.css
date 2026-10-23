@@ -78,6 +78,11 @@
   background: var(--color-surface-soft);
 }
 
+.output-status.pending {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 18%, transparent);
+}
+
 .output-time {
   display: flex;
 
