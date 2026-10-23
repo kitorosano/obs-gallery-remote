@@ -94,19 +94,17 @@ const panel = createPanelCoordinator({
 
 createNavigation({
   elements: navigationElements,
-  isScenesLoaded: scenes.isLoaded,
+
+  loadGallery: gallery.loadGallery,
   loadScenes: scenes.loadScenes,
-  isSourcesLoaded: sources.isLoaded,
   loadSources: sources.loadSources,
-  isAudioLoaded: audio.isLoaded,
   loadAudio: audio.loadAudio,
-  isOutputLoaded: output.isLoaded,
   loadOutput: output.loadOutput,
+
   startOutputRealtime: output.startRealtime,
   stopOutputRealtime: output.stopRealtime,
 });
 
-galleryElements.refreshButton.addEventListener('click', gallery.loadGallery);
 sourcesElements.manageSourcesButton.addEventListener('click', async () => {
   if (!sources.isLoaded()) {
     await sources.loadSources({
@@ -133,9 +131,6 @@ audioElements.manageSourcesButton.addEventListener('click', async () => {
 audioElements.closeSourcesButton.addEventListener('click', () => {
   audioElements.sourcesDialog.close();
 });
-outputElements.refreshOutputButton.addEventListener('click', () =>
-  output.loadOutput(),
-);
 galleryElements.search.addEventListener('input', gallery.render);
 galleryElements.source.addEventListener('change', () => {
   gallery.setActiveSource(galleryElements.source.value);

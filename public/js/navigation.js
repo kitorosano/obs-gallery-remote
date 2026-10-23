@@ -1,21 +1,16 @@
 export function createNavigation({
   elements,
 
+  loadGallery,
   loadScenes,
-  isScenesLoaded,
-
   loadSources,
-  isSourcesLoaded,
-
   loadAudio,
-  isAudioLoaded,
-
   loadOutput,
-  isOutputLoaded,
+
   startOutputRealtime,
   stopOutputRealtime,
 }) {
-  function setActiveView(viewName) {
+  async function setActiveView(viewName) {
     elements.galleryView.hidden = viewName !== 'gallery';
     elements.controlView.hidden = viewName !== 'control';
     elements.outputView.hidden = viewName !== 'output';
@@ -27,34 +22,25 @@ export function createNavigation({
       button.setAttribute('aria-pressed', String(active));
     });
 
+    if (viewName === 'gallery') {
+      await loadGallery();
+    }
+
     if (viewName === 'control') {
-      if (!isScenesLoaded()) {
-        loadScenes();
-      }
-
-      if (!isSourcesLoaded()) {
-        loadSources();
-      }
-
-      if (!isAudioLoaded()) {
-        loadAudio();
-      }
+      await Promise.all([loadScenes(), loadSources(), loadAudio()]);
     }
 
     if (viewName === 'output') {
       startOutputRealtime();
-
-      if (!isOutputLoaded()) {
-        loadOutput();
-      }
+      await loadOutput();
     } else {
       stopOutputRealtime();
     }
   }
 
   elements.navigationButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      setActiveView(button.dataset.view);
+    button.addEventListener('click', async () => {
+      await setActiveView(button.dataset.view);
     });
   });
 
