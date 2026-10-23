@@ -53,8 +53,10 @@
 }
 
 body.auth-pending > .topbar,
+body.auth-pending > .program-monitor,
 body.auth-pending > main,
 body.auth-required > .topbar,
+body.auth-required > .program-monitor,
 body.auth-required > main {
   display: none;
 }
