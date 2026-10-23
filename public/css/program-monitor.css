@@ -5,9 +5,9 @@
   margin: 0 auto;
   padding: 0.75rem;
 
-  background: #111827;
+  background: var(--color-surface);
 
-  border: 1px solid #29364d;
+  border: 1px solid var(--color-border-soft);
   border-radius: 0.8rem;
 }
 
@@ -38,13 +38,13 @@
 
   border-radius: 50%;
 
-  background: #ef4444;
+  background: var(--color-danger);
 }
 
 .program-monitor-scene {
   min-width: 0;
 
-  color: #9ca3af;
+  color: var(--color-muted);
   font-size: 0.78rem;
 
   overflow: hidden;
@@ -88,7 +88,7 @@
 
   padding: 1rem;
 
-  color: #9ca3af;
+  color: var(--color-muted);
   font-size: 0.8rem;
   text-align: center;
 }
@@ -98,7 +98,7 @@
 }
 
 .program-monitor.is-disconnected .program-monitor-live-dot {
-  background: #6b7280;
+  background: var(--color-muted);
 }
 
 .program-monitor-header-actions {
@@ -122,9 +122,9 @@
   flex: 0 0 auto;
 
   background: transparent;
-  color: #9ca3af;
+  color: var(--color-muted);
 
-  border: 1px solid #29364d;
+  border: 1px solid var(--color-border-soft);
   border-radius: 0.45rem;
 
   font-size: 1rem;
@@ -134,13 +134,13 @@
 }
 
 .program-monitor-pip-button:hover {
-  background: #172033;
-  color: #fff;
+  background: var(--color-surface-raised);
+  color: var(--color-text);
 }
 
 .program-monitor-pip-button.is-active {
-  background: #29364d;
-  color: #fff;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
 }
 
 .program-monitor.is-pip {
@@ -154,13 +154,13 @@
 
   padding: 0.5rem;
 
-  background: #111827;
+  background: var(--color-surface);
 
-  border: 1px solid #3b4a63;
+  border: 1px solid var(--color-control-border);
 
   border-radius: 0.75rem;
 
-  box-shadow: 0 12px 35px rgb(0 0 0 / 45%);
+  box-shadow: 0 12px 35px var(--color-shadow);
 }
 
 .program-monitor.is-pip[data-pip-position='top-left'] {
@@ -225,13 +225,13 @@
   }
 
   .program-monitor.is-pip[data-pip-position='bottom-left'] {
-    bottom: 0.5rem;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
     left: 0.5rem;
   }
 
   .program-monitor.is-pip[data-pip-position='bottom-right'] {
     right: 0.5rem;
-    bottom: 0.5rem;
+    bottom: calc(4.75rem + env(safe-area-inset-bottom));
   }
 
   .program-monitor.is-pip .program-monitor-header {

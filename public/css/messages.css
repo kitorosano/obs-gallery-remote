@@ -9,14 +9,13 @@
 }
 
 .message.error {
-  color: #fca5a5;
+  color: var(--color-danger-text);
 }
 
 .message.success {
-  color: #6ee7b7;
+  color: var(--color-success-text);
 }
 
 .note {
   line-height: 1.5;
 }
-

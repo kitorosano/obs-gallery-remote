@@ -7,10 +7,13 @@
 
 .auth-card {
   width: min(100%, 420px);
+
   padding: 28px;
-  border: 1px solid #374151;
+
+  border: 1px solid var(--color-control-border);
   border-radius: 18px;
-  background: #111827;
+
+  background: var(--color-surface);
 }
 
 .auth-card h1 {
@@ -20,7 +23,7 @@
 
 .auth-description {
   margin-bottom: 24px;
-  color: #9ca3af;
+  color: var(--color-muted);
 }
 
 .auth-card form {
@@ -34,16 +37,20 @@
 
 .auth-card input {
   width: 100%;
+
   padding: 14px 16px;
-  border: 1px solid #4b5563;
+
+  border: 1px solid var(--color-control-border);
   border-radius: 10px;
+
   font: inherit;
-  background: #1f2937;
-  color: #f9fafb;
+
+  background: var(--color-surface-soft);
+  color: var(--color-text);
 }
 
 .auth-card input:focus {
-  outline: 2px solid #60a5fa;
+  outline: 2px solid var(--color-primary-soft);
   outline-offset: 2px;
 }
 

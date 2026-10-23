@@ -20,9 +20,8 @@
 
   padding: 1rem;
 
-  background: #172033;
-
-  border: 1px solid #374151;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-control-border);
   border-radius: 0.9rem;
 }
 
@@ -48,7 +47,7 @@
 
   letter-spacing: 0.09em;
 
-  color: #9ca3af;
+  color: var(--color-muted);
 }
 
 .output-status {
@@ -70,15 +69,13 @@
 }
 
 .output-status.active {
-  color: #fecaca;
-
-  background: #7f1d1d;
+  color: var(--color-danger-text);
+  background: var(--color-danger-bg);
 }
 
 .output-status.inactive {
-  color: #d1d5db;
-
-  background: #374151;
+  color: var(--color-muted);
+  background: var(--color-surface-soft);
 }
 
 .output-time {
@@ -90,9 +87,8 @@
 
   padding: 1rem;
 
-  background: #0b1020;
-
-  border: 1px solid #283247;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
 }
 
@@ -103,7 +99,7 @@
 
   letter-spacing: 0.08em;
 
-  color: #9ca3af;
+  color: var(--color-muted);
 }
 
 .output-time strong {
@@ -119,15 +115,13 @@
 }
 
 .output-action.start {
-  background: #047857;
-
-  border-color: #059669;
+  background: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .output-action.danger {
-  background: #b91c1c;
-
-  border-color: #dc2626;
+  background: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .output-warning {
@@ -137,7 +131,7 @@
 
   line-height: 1.4;
 
-  color: #9ca3af;
+  color: var(--color-muted);
 
   text-align: center;
 }
@@ -149,9 +143,8 @@
 
   padding: 0.85rem;
 
-  background: #0b1020;
-
-  border: 1px solid #283247;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
 }
 
@@ -171,7 +164,7 @@
 
   letter-spacing: 0.06em;
 
-  color: #9ca3af;
+  color: var(--color-muted);
 }
 
 .stream-delay-row strong {
@@ -188,9 +181,8 @@
 
   padding: 0.85rem;
 
-  background: #0b1020;
-
-  border: 1px solid #283247;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
   border-radius: 0.75rem;
 }
 
@@ -224,13 +216,6 @@
 
   .output-heading h2 {
     font-size: 1rem;
-  }
-
-  .output-heading #refresh-output {
-    padding: 0.45rem 0.7rem;
-    min-height: 0;
-
-    font-size: 0.75rem;
   }
 
   .output-grid {
@@ -291,9 +276,9 @@
 
     padding: 0.4rem 0.5rem;
 
-    background: #0b1020;
+    background: var(--color-bg);
 
-    border: 1px solid #283247;
+    border: 1px solid var(--color-border);
     border-radius: 0.5rem;
   }
 
@@ -325,11 +310,11 @@
 
     border-radius: 50%;
 
-    background: #6b7280;
+    background: var(--color-muted);
   }
 
   .stream-platform-row .output-status.active::before {
-    background: #ef4444;
+    background: var(--color-danger);
   }
 
   .output-time {
