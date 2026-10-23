@@ -25,10 +25,10 @@
 }
 
 .gallery-toolbar-options {
-  border: 1px solid #374151;
+  border: 1px solid var(--color-control-border);
   border-radius: 0.65rem;
 
-  background: #111827;
+  background: var(--color-surface);
 
   overflow: hidden;
 }
@@ -36,7 +36,7 @@
 .gallery-toolbar-options summary {
   padding: 0.65rem 0.8rem;
 
-  color: #d1d5db;
+  color: var(--color-text);
 
   font-size: 0.8rem;
   font-weight: 650;
@@ -48,7 +48,7 @@
 }
 
 .gallery-toolbar-options[open] summary {
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid var(--color-control-border);
 }
 
 .gallery-toolbar-options-content {
@@ -64,7 +64,7 @@
 }
 
 .gallery-toolbar-field > span {
-  color: #9ca3af;
+  color: var(--color-muted);
 
   font-size: 0.72rem;
   font-weight: 650;

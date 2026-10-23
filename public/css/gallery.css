@@ -141,7 +141,7 @@
 
   transform: translate(-50%, -50%) scale(1);
 
-  box-shadow: 0 20px 60px #000000aa;
+  box-shadow: 0 20px 60px var(--color-shadow);
 
   pointer-events: none;
 }
