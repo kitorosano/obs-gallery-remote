@@ -35,11 +35,7 @@
         <form id="login-form">
           <label for="login-password"> Contraseña </label>
 
-          <input
-            id="login-password"
-            type="password"
-            required
-          />
+          <input id="login-password" type="password" required />
 
           <button id="login-button" type="submit">Entrar</button>
         </form>
@@ -136,12 +132,44 @@
           data-view="gallery"
           aria-pressed="true"
         >
-          <span class="nav-icon" aria-hidden="true">▦</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </span>
           <span>Galería</span>
         </button>
 
         <button class="nav-button" data-view="control" aria-pressed="false">
-          <span class="nav-icon" aria-hidden="true">◉</span>
+          <span class="nav-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <circle cx="9" cy="6" r="2" />
+
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <circle cx="15" cy="12" r="2" />
+
+              <line x1="4" y1="18" x2="20" y2="18" />
+              <circle cx="11" cy="18" r="2" />
+            </svg>
+          </span>
           <span>Control</span>
         </button>
 
@@ -156,7 +184,22 @@
             class="nav-icon nav-output-status unknown"
             aria-hidden="true"
           >
-            ●
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="2" />
+
+              <path d="M8.5 8.5a5 5 0 0 0 0 7" />
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+
+              <path d="M5.5 5.5a9 9 0 0 0 0 13" />
+              <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+            </svg>
           </span>
 
           <span>Emisión</span>
