@@ -6,7 +6,6 @@
 
 .program-card {
   display: flex;
-
   flex-direction: column;
 
   gap: 0.55rem;
@@ -16,11 +15,11 @@
 
   padding: 1rem;
 
-  border: 1px solid #065f46;
+  border: 1px solid var(--color-success);
 
   border-radius: 0.9rem;
 
-  background: #062d27;
+  background: var(--color-success-bg);
 }
 
 .program-label {
@@ -36,7 +35,7 @@
 
   letter-spacing: 0.08em;
 
-  color: #6ee7b7;
+  color: var(--color-success-text);
 }
 
 .live-dot {
@@ -45,9 +44,9 @@
 
   border-radius: 50%;
 
-  background: #34d399;
+  background: var(--color-success);
 
-  box-shadow: 0 0 0 4px #34d39920;
+  box-shadow: 0 0 0 4px rgb(16 185 129 / 15%);
 }
 
 #current-scene {
@@ -95,23 +94,20 @@
 
   text-align: left;
 
-  background: #172033;
-
-  border: 1px solid #374151;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-control-border);
   border-radius: 0.65rem;
-
-  color: #f3f4f6;
+  color: var(--color-text);
 }
 
 .scene-button:not(:disabled):hover {
-  border-color: #60a5fa;
-
-  background: #1e293b;
+  border-color: var(--color-primary-soft);
+  background: var(--color-surface-soft);
 }
 
 .scene-button.active {
-  background: #064e3b;
-  border-color: #34d399;
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
 
   opacity: 1;
 }
@@ -129,8 +125,7 @@
 
 .scene-live-badge {
   font-size: 0.55rem;
-
   letter-spacing: 0.06em;
 
-  color: #a7f3d0;
+  color: var(--color-success-text);
 }
