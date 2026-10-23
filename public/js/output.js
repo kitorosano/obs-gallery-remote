@@ -128,11 +128,22 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     );
   }
 
-  function renderNavOutputStatus({ allStreamsActive, anyStreamActive }) {
+  function renderNavOutputStatus({
+    allStreamsActive,
+    anyStreamActive,
+    streamStarting,
+    streamStopping,
+  }) {
     let status = 'offline';
     let label = 'Fuera del aire';
 
-    if (allStreamsActive) {
+    if (streamStarting) {
+      status = 'pending';
+      label = 'Iniciando transmisiones';
+    } else if (streamStopping) {
+      status = 'pending';
+      label = 'Deteniendo transmisiones';
+    } else if (allStreamsActive) {
       status = 'live';
       label = 'En vivo';
     } else if (anyStreamActive) {
@@ -172,6 +183,8 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     renderNavOutputStatus({
       allStreamsActive,
       anyStreamActive,
+      streamStarting,
+      streamStopping,
     });
 
     if (streamStarting) {
