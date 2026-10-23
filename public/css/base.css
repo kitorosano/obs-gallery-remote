@@ -1,12 +1,20 @@
 :root {
+  color-scheme: dark;
+
   --color-bg: #0b1020;
   --color-surface: #111827;
   --color-surface-raised: #172033;
   --color-border: #283247;
   --color-control-border: #374151;
-  --color-muted: #9ca3af;
+
   --color-text: #f3f4f6;
+  --color-muted: #9ca3af;
+
   --color-primary: #2563eb;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
   --radius-panel: 1rem;
 
   font-family:
@@ -25,6 +33,19 @@
   text-rendering: optimizeLegibility;
 }
 
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f9fafb;
+  --color-border: #d1d5db;
+  --color-control-border: #cbd5e1;
+
+  --color-text: #111827;
+  --color-muted: #6b7280;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -32,6 +53,9 @@
 body {
   margin: 0;
   min-height: 100vh;
+
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .ui-icon {
@@ -51,4 +75,19 @@ body {
 .program-monitor-pip-button .ui-icon {
   width: 1rem;
   height: 1rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme='system'] {
+    color-scheme: light;
+
+    --color-bg: #f3f4f6;
+    --color-surface: #ffffff;
+    --color-surface-raised: #f9fafb;
+    --color-border: #d1d5db;
+    --color-control-border: #cbd5e1;
+
+    --color-text: #111827;
+    --color-muted: #6b7280;
+  }
 }
