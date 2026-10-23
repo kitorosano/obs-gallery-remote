@@ -9,10 +9,9 @@
 
   margin-bottom: 1rem;
 
-  border: 1px solid #283247;
+  border: 1px solid var(--color-border);
   border-radius: 0.85rem;
-
-  background: #111827;
+  background: var(--color-surface);
 
   width: fit-content;
 }
@@ -24,14 +23,12 @@
 
   border-color: transparent;
 
-  color: #9ca3af;
+  color: var(--color-muted);
 }
 
 .nav-button.active {
-  background: #2563eb;
-
-  border-color: #3b82f6;
-
+  background: var(--color-primary);
+  border-color: var(--color-primary-soft);
   color: #ffffff;
 }
 
@@ -75,10 +72,10 @@
     gap: 0.35rem;
 
     border: 0;
-    border-top: 1px solid #283247;
+    border-top: 1px solid var(--color-border);
     border-radius: 0;
 
-    background: #111827;
+    background: var(--color-surface);
   }
 
   .nav-button {
@@ -156,10 +153,8 @@
 
   .nav-button.active {
     background: transparent;
-
     border-color: transparent;
-
-    color: #2563eb;
+    color: var(--color-primary);
   }
 
   @keyframes nav-output-live-pulse {

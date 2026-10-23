@@ -10,10 +10,10 @@
 .control-section {
   overflow: hidden;
 
-  border: 1px solid #283247;
+  border: 1px solid var(--color-border);
   border-radius: 0.85rem;
 
-  background: #111827;
+  background: var(--color-surface);
 }
 
 .control-section-toggle {
@@ -29,7 +29,7 @@
   border-radius: 0;
 
   background: transparent;
-  color: #f3f4f6;
+  color: var(--color-text);
 
   text-align: left;
 }
@@ -54,7 +54,7 @@
 }
 
 .control-section-count {
-  color: #94a3b8;
+  color: var(--color-muted);
 
   font-size: 0.8rem;
   font-weight: 600;
@@ -76,7 +76,7 @@
 
   margin-bottom: 0.65rem;
 
-  color: #94a3b8;
+  color: var(--color-muted);
 
   font-size: 0.78rem;
 }
@@ -84,7 +84,7 @@
 .control-context strong {
   overflow: hidden;
 
-  color: #e5e7eb;
+  color: var(--color-text);
 
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -97,9 +97,9 @@
 
   background: transparent;
 
-  color: #94a3b8;
+  color: var(--color-muted);
 
-  border-color: #29364d;
+  border-color: var(--color-border-soft);
 
   font-size: 0.8rem;
 }

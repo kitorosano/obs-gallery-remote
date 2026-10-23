@@ -13,14 +13,14 @@ button {
   font: inherit;
 
   border-radius: 0.7rem;
-  border: 1px solid #374151;
+  border: 1px solid var(--color-control-border);
 
   padding: 0.75rem 0.9rem;
 }
 
 input:not([type='checkbox']):not([type='radio']) {
-  background: #111827;
-  color: #f9fafb;
+  background: var(--color-surface);
+  color: var(--color-text);
 
   flex: 1;
 
@@ -28,10 +28,10 @@ input:not([type='checkbox']):not([type='radio']) {
 }
 
 button {
-  background: #2563eb;
-  color: white;
+  background: var(--color-primary);
+  color: #ffffff;
 
-  border-color: #2563eb;
+  border-color: var(--color-primary);
 
   font-weight: 650;
 
@@ -44,6 +44,7 @@ button:disabled {
 }
 
 .secondary {
-  background: #1f2937;
-  border-color: #374151;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  border-color: var(--color-control-border);
 }
