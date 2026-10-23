@@ -34,3 +34,21 @@ body {
   min-height: 100vh;
 }
 
+.ui-icon {
+  display: block;
+
+  width: 1.25rem;
+  height: 1.25rem;
+
+  flex: 0 0 auto;
+}
+
+.topbar-menu-button .ui-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.program-monitor-pip-button .ui-icon {
+  width: 1rem;
+  height: 1rem;
+}
