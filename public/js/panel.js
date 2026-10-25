@@ -138,11 +138,18 @@ export function createPanelCoordinator({
     }, 100);
   }
 
+  function handleStreamStateChanged(data) {
+    output.handleStreamStateChanged(data);
+
+    scheduleOutputRefresh();
+  }
+
   const events = createObsEvents({
     onSceneChanged: handleSceneChanged,
     onAudioChanged: scheduleAudioRefresh,
     onSourceVisibilityChanged: scheduleSourcesRefresh,
     onOutputChanged: scheduleOutputRefresh,
+    onStreamStateChanged: handleStreamStateChanged,
     onGalleryImageChanged: syncGalleryFromObs,
     onObsDisconnected: handleObsDisconnected,
     onObsConnected: handleObsConnected,

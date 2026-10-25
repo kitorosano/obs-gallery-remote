@@ -3,6 +3,7 @@ export function createObsEvents({
   onAudioChanged,
   onSourceVisibilityChanged,
   onOutputChanged,
+  onStreamStateChanged,
   onObsConnected,
   onObsDisconnected,
   onGalleryImageChanged,
@@ -36,6 +37,8 @@ export function createObsEvents({
             onAudioChanged?.(message.data);
             break;
           case 'stream-state-changed':
+            onStreamStateChanged?.(message.data);
+            break;
           case 'record-state-changed':
           case 'aitum-output-changed':
             onOutputChanged?.(message.data);

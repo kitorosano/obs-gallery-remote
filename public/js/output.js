@@ -62,6 +62,28 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     ];
   }
 
+  function handleStreamStateChanged({ outputState } = {}) {
+    switch (outputState) {
+      case 'OBS_WEBSOCKET_OUTPUT_STARTING':
+        streamTransition = 'starting';
+        break;
+
+      case 'OBS_WEBSOCKET_OUTPUT_STOPPING':
+        streamTransition = 'stopping';
+        break;
+
+      case 'OBS_WEBSOCKET_OUTPUT_STARTED':
+      case 'OBS_WEBSOCKET_OUTPUT_STOPPED':
+        streamTransition = null;
+        break;
+
+      default:
+        return;
+    }
+
+    render();
+  }
+
   function renderStatus({ container, active, activeText, inactiveText }) {
     container.className = `output-status ${active ? 'active' : 'inactive'}`;
 
@@ -298,12 +320,11 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   }
 
   async function executeAction({ action, workingMessage, successMessage }) {
-    if (actionInProgress) return;
+    if (actionInProgress) return false;
 
     actionInProgress = true;
 
     render();
-
     setMessage(workingMessage);
 
     try {
@@ -321,6 +342,8 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       }
 
       setMessage(successMessage, 'success');
+
+      return true;
     } catch (error) {
       setMessage(`La operación falló: ${error.message}`, 'error');
 
@@ -328,6 +351,8 @@ export function createOutput({ obsService, elements, refreshStatus }) {
         silent: true,
         preserveMessage: true,
       });
+
+      return false;
     } finally {
       actionInProgress = false;
 
@@ -427,11 +452,15 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       render();
 
       try {
-        await executeAction({
+        const stopped = await executeAction({
           action: obsService.stopAllStreams,
           workingMessage: 'Deteniendo transmisiones…',
           successMessage: 'Esperando a que finalicen las transmisiones…',
         });
+
+        if (!stopped) {
+          throw new Error('La orden de detención no pudo completarse.');
+        }
 
         await waitForStreamsToStop();
 
@@ -459,11 +488,15 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     render();
 
     try {
-      await executeAction({
+      const started = await executeAction({
         action: obsService.startAllStreams,
         workingMessage: 'Iniciando transmisiones…',
         successMessage: 'Esperando Stream Delay…',
       });
+
+      if (!started) {
+        throw new Error('La orden de inicio no pudo completarse.');
+      }
 
       await waitForStreamsToStart();
 
@@ -571,6 +604,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     loadOutput,
     startRealtime,
     stopRealtime,
+    handleStreamStateChanged,
     reset: () => {
       outputLoaded = false;
       lastSyncAt = null;
