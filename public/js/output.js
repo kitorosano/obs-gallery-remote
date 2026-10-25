@@ -374,9 +374,6 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
   async function waitForStreamsToStart() {
     const startedAt = Date.now();
-    const delayMs = (Number(state.stream?.delaySeconds) || 0) * 1000;
-
-    let allActiveSince = null;
 
     while (Date.now() - startedAt < STREAM_TRANSITION_TIMEOUT_MS) {
       const refreshed = await loadOutput({
@@ -393,20 +390,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       const allActive =
         streams.length > 0 && streams.every((stream) => stream.active);
 
-      if (!allActive) {
-        allActiveSince = null;
-
-        await wait(STREAM_TRANSITION_POLL_MS);
-        continue;
-      }
-
-      if (allActiveSince === null) {
-        allActiveSince = Date.now();
-      }
-
-      if (Date.now() - allActiveSince >= delayMs) {
-        return;
-      }
+      if (allActive) return;
 
       await wait(STREAM_TRANSITION_POLL_MS);
     }
@@ -491,7 +475,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       const started = await executeAction({
         action: obsService.startAllStreams,
         workingMessage: 'Iniciando transmisiones…',
-        successMessage: 'Esperando Stream Delay…',
+        successMessage: 'Confirmando transmisiones…',
       });
 
       if (!started) {
