@@ -544,7 +544,12 @@ export function createOutput({ obsService, elements, refreshStatus }) {
    * sin generar polling excesivo.
    */
   async function syncWithObs() {
-    if (document.hidden || actionInProgress || elements.outputView.hidden) {
+    if (
+      document.hidden ||
+      actionInProgress ||
+      streamTransition !== null ||
+      elements.outputView.hidden
+    ) {
       return;
     }
 
