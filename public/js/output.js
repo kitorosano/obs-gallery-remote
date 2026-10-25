@@ -319,7 +319,12 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     }
   }
 
-  async function executeAction({ action, workingMessage, successMessage }) {
+  async function executeAction({
+    action,
+    workingMessage,
+    successMessage,
+    refreshAfterAction = true,
+  }) {
     if (actionInProgress) return false;
 
     actionInProgress = true;
@@ -330,15 +335,17 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     try {
       await action();
 
-      const refreshed = await loadOutput({
-        silent: true,
-        preserveMessage: true,
-      });
+      if (refreshAfterAction) {
+        const refreshed = await loadOutput({
+          silent: true,
+          preserveMessage: true,
+        });
 
-      if (!refreshed) {
-        throw new Error(
-          'La operación fue enviada, pero no se pudo confirmar el estado actual de OBS.',
-        );
+        if (!refreshed) {
+          throw new Error(
+            'La operación fue enviada, pero no se pudo confirmar el estado actual de OBS.',
+          );
+        }
       }
 
       setMessage(successMessage, 'success');
@@ -440,6 +447,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
           action: obsService.stopAllStreams,
           workingMessage: 'Deteniendo transmisiones…',
           successMessage: 'Esperando a que finalicen las transmisiones…',
+          refreshAfterAction: false,
         });
 
         if (!stopped) {
@@ -476,6 +484,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
         action: obsService.startAllStreams,
         workingMessage: 'Iniciando transmisiones…',
         successMessage: 'Confirmando transmisiones…',
+        refreshAfterAction: false,
       });
 
       if (!started) {
