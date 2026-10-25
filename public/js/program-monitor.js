@@ -1,4 +1,16 @@
-const REFRESH_INTERVAL_MS = 1000;
+const PERFORMANCE_STORAGE_KEY = 'obs-gallery-remote-program-performance';
+
+const PERFORMANCE_PROFILES = {
+  low: {
+    intervalMs: 2000,
+  },
+  medium: {
+    intervalMs: 1000,
+  },
+  high: {
+    intervalMs: 500,
+  },
+};
 const PIP_STORAGE_KEY = 'obs-gallery-remote-program-pip';
 const PIP_POSITION_STORAGE_KEY = 'obs-gallery-remote-program-pip-position';
 
@@ -6,6 +18,12 @@ export function createProgramMonitor({ programService, elements }) {
   let running = false;
   let timeoutId = null;
   let paused = false;
+
+  let performanceProfile =
+    localStorage.getItem(PERFORMANCE_STORAGE_KEY) || 'medium';
+  if (!PERFORMANCE_PROFILES[performanceProfile]) {
+    performanceProfile = 'medium';
+  }
 
   let pipEnabled = false;
   let pipPosition =
@@ -146,7 +164,10 @@ export function createProgramMonitor({ programService, elements }) {
 
     if (!running) return;
 
-    timeoutId = window.setTimeout(updateFrame, REFRESH_INTERVAL_MS);
+    timeoutId = window.setTimeout(
+      updateFrame,
+      PERFORMANCE_PROFILES[performanceProfile].intervalMs,
+    );
   }
 
   function start() {
@@ -242,11 +263,40 @@ export function createProgramMonitor({ programService, elements }) {
     setPip(!pipEnabled);
   }
 
+  function renderPerformanceProfile() {
+    for (const button of elements.performanceButtons) {
+      const active = button.dataset.programPerformance === performanceProfile;
+
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    }
+  }
+
+  function setPerformanceProfile(profile) {
+    if (!PERFORMANCE_PROFILES[profile]) return;
+
+    performanceProfile = profile;
+
+    localStorage.setItem(PERFORMANCE_STORAGE_KEY, profile);
+
+    renderPerformanceProfile();
+
+    if (!running || paused || document.hidden) return;
+
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+
+    updateFrame();
+  }
+
   pipEnabled = localStorage.getItem(PIP_STORAGE_KEY) === 'true';
 
   renderPipPosition();
   renderPipState();
   renderPauseState();
+  renderPerformanceProfile();
 
   document.addEventListener('visibilitychange', () => {
     if (!running) return;
@@ -263,6 +313,12 @@ export function createProgramMonitor({ programService, elements }) {
       updateFrame();
     }
   });
+
+  for (const button of elements.performanceButtons) {
+    button.addEventListener('click', () => {
+      setPerformanceProfile(button.dataset.programPerformance);
+    });
+  }
 
   elements.pauseButton.addEventListener('click', togglePaused);
   elements.pipButton.addEventListener('click', togglePip);

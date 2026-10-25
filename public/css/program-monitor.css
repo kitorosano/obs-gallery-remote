@@ -214,6 +214,41 @@
   background: var(--color-warning);
 }
 
+.program-monitor-performance {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+
+  padding: 0.2rem;
+
+  background: var(--color-surface-soft);
+
+  border-radius: 0.45rem;
+}
+
+.program-monitor-performance button {
+  padding: 0.3rem 0.45rem;
+
+  background: transparent;
+  color: var(--color-muted);
+
+  border: 0;
+  border-radius: 0.3rem;
+
+  font-size: 0.7rem;
+
+  cursor: pointer;
+}
+
+.program-monitor-performance button:hover {
+  color: var(--color-text);
+}
+
+.program-monitor-performance button.is-active {
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
 @media (max-width: 600px) {
   .program-monitor {
     padding: 0.5rem;
@@ -262,5 +297,12 @@
   .program-monitor.is-pip .program-monitor-action-button {
     width: 1.75rem;
     height: 1.75rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .program-monitor-performance button {
+    padding-inline: 0.35rem;
+    font-size: 0.65rem;
   }
 }

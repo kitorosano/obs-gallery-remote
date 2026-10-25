@@ -38,6 +38,7 @@ export const programMonitorElements = {
   image: $('#program-monitor-image'),
   scene: $('#program-monitor-scene'),
   placeholder: $('#program-monitor-placeholder'),
+  performanceButtons: document.querySelectorAll('[data-program-performance]'),
   pauseButton: $('#program-monitor-pause'),
   pipButton: $('#program-monitor-pip'),
 };
