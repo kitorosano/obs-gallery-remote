@@ -163,8 +163,18 @@ export function createPanelCoordinator({
 
   async function start() {
     events.connect();
-    await gallery.loadGallery();
+
     await obs.refreshStatus();
+
+    const outputPromise = output.loadOutput({
+      silent: true,
+      preserveMessage: true,
+    });
+
+    const galleryPromise = gallery.loadGallery();
+
+    await Promise.allSettled([outputPromise, galleryPromise]);
+
     await refreshFeatures();
   }
 
