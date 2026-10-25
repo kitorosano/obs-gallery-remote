@@ -5,6 +5,7 @@ const PIP_POSITION_STORAGE_KEY = 'obs-gallery-remote-program-pip-position';
 export function createProgramMonitor({ programService, elements }) {
   let running = false;
   let timeoutId = null;
+  let paused = false;
 
   let pipEnabled = false;
   let pipPosition =
@@ -109,9 +110,24 @@ export function createProgramMonitor({ programService, elements }) {
     );
   }
 
+  function renderPauseState() {
+    elements.root.classList.toggle('is-paused', paused);
+
+    elements.pauseButton.classList.toggle('is-active', paused);
+    elements.pauseButton.setAttribute('aria-pressed', String(paused));
+
+    elements.pauseButton.setAttribute(
+      'aria-label',
+      paused ? 'Reanudar monitor' : 'Pausar monitor',
+    );
+
+    elements.pauseButton.title = paused ? 'Reanudar monitor' : 'Pausar monitor';
+  }
+
   async function updateFrame() {
     timeoutId = null;
-    if (!running || document.hidden) return;
+
+    if (!running || paused || document.hidden) return;
 
     try {
       const data = await programService.screenshot();
@@ -146,6 +162,27 @@ export function createProgramMonitor({ programService, elements }) {
       window.clearTimeout(timeoutId);
       timeoutId = null;
     }
+  }
+
+  function setPaused(value) {
+    paused = value;
+
+    if (paused) {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    }
+
+    renderPauseState();
+
+    if (!paused && running && !document.hidden && timeoutId === null) {
+      updateFrame();
+    }
+  }
+
+  function togglePaused() {
+    setPaused(!paused);
   }
 
   function renderPipState() {
@@ -209,6 +246,7 @@ export function createProgramMonitor({ programService, elements }) {
 
   renderPipPosition();
   renderPipState();
+  renderPauseState();
 
   document.addEventListener('visibilitychange', () => {
     if (!running) return;
@@ -221,9 +259,12 @@ export function createProgramMonitor({ programService, elements }) {
       return;
     }
 
-    if (timeoutId === null) updateFrame();
+    if (!paused && timeoutId === null) {
+      updateFrame();
+    }
   });
 
+  elements.pauseButton.addEventListener('click', togglePaused);
   elements.pipButton.addEventListener('click', togglePip);
 
   elements.root.addEventListener('pointerdown', startDrag);
@@ -235,11 +276,13 @@ export function createProgramMonitor({ programService, elements }) {
     start,
     stop,
     refresh() {
-      if (!running) return;
+      if (!running || paused) return;
+
       if (timeoutId !== null) {
         window.clearTimeout(timeoutId);
         timeoutId = null;
       }
+
       updateFrame();
     },
     togglePip,

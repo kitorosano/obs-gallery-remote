@@ -110,7 +110,7 @@
   min-width: 0;
 }
 
-.program-monitor-pip-button {
+.program-monitor-action-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -133,12 +133,12 @@
   cursor: pointer;
 }
 
-.program-monitor-pip-button:hover {
+.program-monitor-action-button:hover {
   background: var(--color-surface-raised);
   color: var(--color-text);
 }
 
-.program-monitor-pip-button.is-active {
+.program-monitor-action-button.is-active {
   background: var(--color-surface-soft);
   color: var(--color-text);
 }
@@ -198,6 +198,22 @@
   touch-action: none;
 }
 
+.program-monitor-play-icon {
+  display: none;
+}
+
+.program-monitor.is-paused .program-monitor-pause-icon {
+  display: none;
+}
+
+.program-monitor.is-paused .program-monitor-play-icon {
+  display: block;
+}
+
+.program-monitor.is-paused .program-monitor-live-dot {
+  background: var(--color-warning);
+}
+
 @media (max-width: 600px) {
   .program-monitor {
     padding: 0.5rem;
@@ -243,7 +259,7 @@
     font-size: 0.68rem;
   }
 
-  .program-monitor.is-pip .program-monitor-pip-button {
+  .program-monitor.is-pip .program-monitor-action-button {
     width: 1.75rem;
     height: 1.75rem;
   }

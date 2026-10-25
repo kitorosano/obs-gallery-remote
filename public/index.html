@@ -148,8 +148,44 @@
           </span>
 
           <button
+            id="program-monitor-pause"
+            class="program-monitor-action-button"
+            type="button"
+            aria-label="Pausar monitor"
+            aria-pressed="false"
+            title="Pausar monitor"
+          >
+            <svg
+              class="ui-icon program-monitor-pause-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M8 5v14" />
+              <path d="M16 5v14" />
+            </svg>
+
+            <svg
+              class="ui-icon program-monitor-play-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m8 5 11 7-11 7z" />
+            </svg>
+          </button>
+
+          <button
             id="program-monitor-pip"
-            class="program-monitor-pip-button"
+            class="program-monitor-action-button"
             type="button"
             aria-label="Activar modo PiP"
             title="Modo PiP"
