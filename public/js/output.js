@@ -27,15 +27,6 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
   const setMessage = createMessagePresenter(elements.outputMessage);
 
-  async function waitForStreamDelay() {
-    const delaySeconds = Number(state.stream?.delaySeconds) || 0;
-    if (delaySeconds <= 0) return;
-
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, delaySeconds * 1000);
-    });
-  }
-
   function getEstimatedDuration(output) {
     if (!output?.active) {
       return 0;
@@ -307,9 +298,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   }
 
   async function executeAction({ action, workingMessage, successMessage }) {
-    if (actionInProgress) {
-      return;
-    }
+    if (actionInProgress) return;
 
     actionInProgress = true;
 
@@ -352,6 +341,56 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return getStreamStates().some((stream) => stream.active);
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+  }
+
+  async function waitForStreamsToStart() {
+    const startedAt = Date.now();
+    const delayMs = (Number(state.stream?.delaySeconds) || 0) * 1000;
+
+    let allActiveSince = null;
+
+    while (Date.now() - startedAt < STREAM_TRANSITION_TIMEOUT_MS) {
+      const refreshed = await loadOutput({
+        silent: true,
+        preserveMessage: true,
+      });
+
+      if (!refreshed) {
+        throw new Error('No se pudo confirmar el estado de las transmisiones.');
+      }
+
+      const streams = getStreamStates();
+
+      const allActive =
+        streams.length > 0 && streams.every((stream) => stream.active);
+
+      if (!allActive) {
+        allActiveSince = null;
+
+        await wait(STREAM_TRANSITION_POLL_MS);
+        continue;
+      }
+
+      if (allActiveSince === null) {
+        allActiveSince = Date.now();
+      }
+
+      if (Date.now() - allActiveSince >= delayMs) {
+        return;
+      }
+
+      await wait(STREAM_TRANSITION_POLL_MS);
+    }
+
+    throw new Error(
+      'No todas las transmisiones llegaron a estar activas dentro del tiempo de espera.',
+    );
+  }
+
   async function waitForStreamsToStop() {
     const startedAt = Date.now();
 
@@ -367,9 +406,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
       if (!isAnyStreamActive()) return;
 
-      await new Promise((resolve) => {
-        window.setTimeout(resolve, STREAM_TRANSITION_POLL_MS);
-      });
+      await wait(STREAM_TRANSITION_POLL_MS);
     }
 
     throw new Error(
@@ -421,22 +458,28 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     streamTransition = 'starting';
     render();
 
-    await executeAction({
-      action: obsService.startAllStreams,
-      workingMessage: 'Iniciando transmisiones…',
-      successMessage: 'Las transmisiones están en vivo.',
-    });
+    try {
+      await executeAction({
+        action: obsService.startAllStreams,
+        workingMessage: 'Iniciando transmisiones…',
+        successMessage: 'Esperando Stream Delay…',
+      });
 
-    await waitForStreamDelay();
+      await waitForStreamsToStart();
 
-    streamTransition = null;
+      setMessage('Las transmisiones están en vivo.', 'success');
+    } catch (error) {
+      setMessage(`No se pudo confirmar el inicio: ${error.message}`, 'error');
+    } finally {
+      streamTransition = null;
 
-    await loadOutput({
-      silent: true,
-      preserveMessage: true,
-    });
+      await loadOutput({
+        silent: true,
+        preserveMessage: true,
+      });
 
-    render();
+      render();
+    }
   }
 
   async function toggleRecord() {
