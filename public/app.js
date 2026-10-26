@@ -209,12 +209,6 @@ shellElements.connectButton.addEventListener('click', async () => {
       `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
       'success',
     );
-
-    scenes.reset();
-    sources.reset();
-    audio.reset();
-    output.reset();
-    await panel.refreshFeatures();
   } catch (error) {
     gallery.setMessage(
       `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,
