@@ -3,7 +3,6 @@ import { createMessagePresenter, renderEmptyState } from './ui.js';
 export function createScenes({ obsService, elements, refreshStatus }) {
   let scenes = [];
   let currentScene = null;
-  let scenesLoaded = false;
   let sceneChangeInProgress = false;
   let scenesLoadVersion = 0;
 
@@ -63,8 +62,6 @@ export function createScenes({ obsService, elements, refreshStatus }) {
 
       currentScene = data.currentScene || null;
 
-      scenesLoaded = true;
-
       render();
 
       if (!silent && !preserveMessage) {
@@ -76,8 +73,6 @@ export function createScenes({ obsService, elements, refreshStatus }) {
       if (loadVersion !== scenesLoadVersion) {
         return true;
       }
-
-      scenesLoaded = false;
 
       renderEmptyState(
         elements.sceneGrid,
@@ -137,11 +132,9 @@ export function createScenes({ obsService, elements, refreshStatus }) {
   }
 
   return {
-    isLoaded: () => scenesLoaded,
     loadScenes,
     reset: () => {
       scenesLoadVersion += 1;
-      scenesLoaded = false;
     },
   };
 }
