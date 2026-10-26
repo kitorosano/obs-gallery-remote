@@ -276,6 +276,14 @@
   background: color-mix(in srgb, var(--color-danger) 14%, transparent);
 }
 
+.stream-metric.warning strong {
+  color: var(--color-warning);
+}
+
+.stream-metric.danger strong {
+  color: var(--color-danger);
+}
+
 @media (max-width: 700px) {
   .output-panel {
     padding: 0.75rem;

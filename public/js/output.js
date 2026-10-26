@@ -202,6 +202,14 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     render();
   }
 
+  function setMetricState(element, level) {
+    element.closest('.stream-metric')?.classList.remove('warning', 'danger');
+
+    if (level) {
+      element.closest('.stream-metric')?.classList.add(level);
+    }
+  }
+
   function renderStatus({ container, active, activeText, inactiveText }) {
     container.className = `output-status ${active ? 'active' : 'inactive'}`;
 
@@ -382,8 +390,20 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     }
 
     elements.streamFps.textContent = `${stats.activeFps.toFixed(2)} FPS`;
-
     elements.streamCpu.textContent = `${stats.cpuUsage.toFixed(1)}%`;
+
+    const droppedPercent = Number(stream.skippedFramesPercent) || 0;
+    const fps = Number(stats.activeFps) || 0;
+
+    setMetricState(
+      elements.streamDroppedFrames,
+      droppedPercent >= 5 ? 'danger' : droppedPercent >= 1 ? 'warning' : null,
+    );
+
+    setMetricState(
+      elements.streamFps,
+      fps < 50 ? 'danger' : fps < 55 ? 'warning' : null,
+    );
   }
 
   async function loadOutput({ silent = false, preserveMessage = false } = {}) {
