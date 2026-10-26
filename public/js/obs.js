@@ -22,10 +22,6 @@ export function createObsController({ obsService, elements, onConnectionChange }
     }
   }
 
-  async function connect() {
-    return obsService.connect();
-  }
-
   async function showImage(image) {
     elements.showButton.disabled = true;
     elements.message.textContent = 'Enviando imagen a OBS…';
@@ -44,7 +40,6 @@ export function createObsController({ obsService, elements, onConnectionChange }
   }
 
   return {
-    connect,
     refreshStatus,
     showImage,
     setAvailability: (connected) => onConnectionChange?.(connected),

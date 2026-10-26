@@ -41,7 +41,11 @@ function setObsAvailability(connected) {
 
 const obs = createObsController({
   obsService: services.obs,
-  elements: { ...shellElements, ...galleryElements },
+  elements: {
+    status: shellElements.status,
+    showButton: galleryElements.showButton,
+    message: galleryElements.message,
+  },
   onConnectionChange: setObsAvailability,
 });
 const programMonitor = createProgramMonitor({
@@ -182,7 +186,7 @@ galleryElements.closeSourcesButton.addEventListener('click', () => {
 shellElements.connectButton.addEventListener('click', async () => {
   gallery.setMessage('Conectando con OBS…');
   try {
-    const result = await obs.connect();
+    const result = await services.obs.connect();
     gallery.setMessage(
       `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
       'success',
