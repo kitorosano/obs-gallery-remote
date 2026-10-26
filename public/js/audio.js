@@ -7,7 +7,6 @@ const CURRENT_SCENE_ONLY_STORAGE_KEY =
 export function createAudio({ obsService, elements, refreshStatus }) {
   let inputs = [];
   let audioLoaded = false;
-  let currentScene = null;
   let changeInProgress = false;
 
   const volumeChangesInProgress = new Set();
@@ -281,10 +280,9 @@ export function createAudio({ obsService, elements, refreshStatus }) {
       if (loadVersion !== audioLoadVersion) return true;
 
       inputs = Array.isArray(data.inputs) ? data.inputs : [];
-      currentScene = data.sceneName || null;
 
       elements.currentAudioScene.textContent =
-        currentScene || 'Sin información';
+        data.sceneName || 'Sin información';
       audioLoaded = true;
 
       render();
@@ -433,7 +431,7 @@ export function createAudio({ obsService, elements, refreshStatus }) {
     }
   }
 
-  elements.currentSceneOnly.addEventListener('change', async () => {
+  elements.currentSceneOnly.addEventListener('change', () => {
     currentSceneOnly = elements.currentSceneOnly.checked;
 
     localStorage.setItem(
