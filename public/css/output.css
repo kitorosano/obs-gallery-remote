@@ -232,6 +232,34 @@
   letter-spacing: 0.04em;
 }
 
+.stream-time {
+  text-align: center;
+  align-items: center;
+}
+
+.stream-time > strong {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.stream-time-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.stream-delay-inline {
+  color: var(--color-muted);
+}
+
+.stream-delay-inline strong {
+  font: inherit;
+  color: inherit;
+}
+
 @media (max-width: 700px) {
   .output-panel {
     padding: 0.75rem;
