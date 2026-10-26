@@ -85,8 +85,10 @@ function registerServiceWorker() {
 
   window.addEventListener('load', async () => {
     try {
-      const registration =
-        await navigator.serviceWorker.register('/service-worker.js');
+      const registration = await navigator.serviceWorker.register(
+        '/service-worker.js',
+        { updateViaCache: 'none' },
+      );
 
       console.log('Service Worker registrado:', registration.scope);
     } catch (error) {
