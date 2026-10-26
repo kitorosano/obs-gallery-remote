@@ -415,4 +415,21 @@
   .output-warning {
     display: none;
   }
+
+  .output-status-group {
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+  }
+
+  .output-status,
+  .stream-health {
+    padding: 0.3rem 0.45rem;
+
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
+  }
+
+  .stream-health {
+    gap: 0.25rem;
+  }
 }
