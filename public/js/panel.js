@@ -206,5 +206,5 @@ export function createPanelCoordinator({
     obs.setAvailability(false);
   }
 
-  return { start, stop, refreshFeatures };
+  return { start, stop };
 }
