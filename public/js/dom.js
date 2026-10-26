@@ -89,6 +89,10 @@ export const outputElements = {
   streamDelay: $('#stream-delay'),
   streamButton: $('#stream-button'),
   streamPlatforms: $('#stream-platforms'),
+  streamBitrate: $('#stream-bitrate'),
+  streamDroppedFrames: $('#stream-dropped-frames'),
+  streamFps: $('#stream-fps'),
+  streamCpu: $('#stream-cpu'),
 
   recordStatus: $('#record-status'),
   recordDuration: $('#record-duration'),

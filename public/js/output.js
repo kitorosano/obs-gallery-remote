@@ -16,6 +16,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   let state = {
     stream: null,
     record: null,
+    stats: null,
     aitumStreams: [],
   };
 
@@ -24,8 +25,34 @@ export function createOutput({ obsService, elements, refreshStatus }) {
    * confirmado por OBS.
    */
   let lastSyncAt = null;
+  let previousStreamSample = null;
+  let streamBitrateKbps = 0;
 
   const setMessage = createMessagePresenter(elements.outputMessage);
+
+  function updateStreamBitrate(stream, sampledAt) {
+    if (!stream?.active) {
+      previousStreamSample = null;
+      streamBitrateKbps = 0;
+      return;
+    }
+
+    const bytes = Number(stream.bytes) || 0;
+
+    if (previousStreamSample) {
+      const elapsedMs = sampledAt - previousStreamSample.sampledAt;
+      const bytesDelta = bytes - previousStreamSample.bytes;
+
+      if (elapsedMs > 0 && bytesDelta >= 0) {
+        streamBitrateKbps = (bytesDelta * 8) / (elapsedMs / 1000) / 1000;
+      }
+    }
+
+    previousStreamSample = {
+      bytes,
+      sampledAt,
+    };
+  }
 
   function getEstimatedDuration(output) {
     if (!output?.active) {
@@ -150,6 +177,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
      */
     const streams = getStreamStates();
     renderStreamPlatforms(streams);
+    renderStreamMetrics();
 
     const allStreamsActive =
       streams.length > 0 && streams.every((stream) => stream.active);
@@ -246,6 +274,26 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     }
   }
 
+  function renderStreamMetrics() {
+    const stream = state.stream;
+    const stats = state.stats;
+
+    if (!stream || !stats) return;
+
+    if (!stream.active) {
+      elements.streamBitrate.textContent = '—';
+      elements.streamDroppedFrames.textContent = '—';
+    } else {
+      elements.streamBitrate.textContent = `${Math.round(streamBitrateKbps)} kbps`;
+
+      elements.streamDroppedFrames.textContent = `${stream.skippedFrames} (${stream.skippedFramesPercent.toFixed(1)}%)`;
+    }
+
+    elements.streamFps.textContent = `${stats.activeFps.toFixed(2)} FPS`;
+
+    elements.streamCpu.textContent = `${stats.cpuUsage.toFixed(1)}%`;
+  }
+
   async function loadOutput({ silent = false, preserveMessage = false } = {}) {
     if (!silent) {
       setMessage('Consultando estado de emisión…');
@@ -257,13 +305,18 @@ export function createOutput({ obsService, elements, refreshStatus }) {
         obsService.aitum(),
       ]);
 
+      const sampledAt = Date.now();
+
+      updateStreamBitrate(data.stream, sampledAt);
+
       state = {
         stream: data.stream,
         record: data.record,
+        stats: data.stats,
         aitumStreams: aitumData?.outputs?.outputs ?? [],
       };
 
-      lastSyncAt = Date.now();
+      lastSyncAt = sampledAt;
       outputLoaded = true;
 
       render();
@@ -576,6 +629,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
       state = {
         stream: null,
         record: null,
+        stats: null,
         aitumStreams: [],
       };
 
