@@ -1,11 +1,16 @@
 import {
-  SCREENSHOT_HEIGHT,
-  SCREENSHOT_QUALITY,
-  SCREENSHOT_WIDTH,
+  DEFAULT_SCREENSHOT_PROFILE,
+  SCREENSHOT_PROFILES,
 } from '../constants/obs.js';
 import { obsClient } from '../obs/client.js';
 
-export async function getProgramScreenshot() {
+export async function getProgramScreenshot(
+  profileName = DEFAULT_SCREENSHOT_PROFILE,
+) {
+  const profile =
+    SCREENSHOT_PROFILES[profileName] ??
+    SCREENSHOT_PROFILES[DEFAULT_SCREENSHOT_PROFILE];
+
   const sceneResult = await obsClient.call('GetCurrentProgramScene');
 
   const sceneName = sceneResult.currentProgramSceneName;
@@ -13,9 +18,9 @@ export async function getProgramScreenshot() {
   const screenshot = await obsClient.call('GetSourceScreenshot', {
     sourceName: sceneName,
     imageFormat: 'jpg',
-    imageWidth: SCREENSHOT_WIDTH,
-    imageHeight: SCREENSHOT_HEIGHT,
-    imageCompressionQuality: SCREENSHOT_QUALITY,
+    imageWidth: profile.width,
+    imageHeight: profile.height,
+    imageCompressionQuality: profile.quality,
   });
 
   return {

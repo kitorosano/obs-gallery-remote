@@ -148,7 +148,7 @@ export function createProgramMonitor({ programService, elements }) {
     if (!running || paused || document.hidden) return;
 
     try {
-      const data = await programService.screenshot();
+      const data = await programService.screenshot(performanceProfile);
       if (!running) return;
 
       elements.image.src = data.imageData;

@@ -59,7 +59,10 @@ export function createServices(request) {
       stopRecord: () => post('/api/obs/record/stop'),
 
       program: {
-        screenshot: () => request('/api/obs/program/screenshot'),
+        screenshot: (profile = 'medium') =>
+          request(
+            `/api/obs/program/screenshot?profile=${encodeURIComponent(profile)}`,
+          ),
       },
     },
   };
