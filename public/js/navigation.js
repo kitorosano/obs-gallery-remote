@@ -43,6 +43,4 @@ export function createNavigation({
       await setActiveView(button.dataset.view);
     });
   });
-
-  return { setActiveView };
 }

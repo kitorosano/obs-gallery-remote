@@ -180,9 +180,23 @@ export function createPanelCoordinator({
 
     const galleryPromise = gallery.loadGallery();
 
-    await Promise.allSettled([outputPromise, galleryPromise]);
+    const featuresPromise = Promise.allSettled([
+      syncGalleryFromObs(),
+      scenes.loadScenes({
+        silent: true,
+        preserveMessage: true,
+      }),
+      sources.loadSources({
+        silent: true,
+        preserveMessage: true,
+      }),
+      audio.loadAudio({
+        silent: true,
+        preserveMessage: true,
+      }),
+    ]);
 
-    await refreshFeatures();
+    await Promise.allSettled([outputPromise, galleryPromise, featuresPromise]);
   }
 
   function stop() {
