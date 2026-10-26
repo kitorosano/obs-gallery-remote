@@ -249,6 +249,10 @@
   color: var(--color-text);
 }
 
+.program-monitor.is-pip .program-monitor-performance {
+  display: none;
+}
+
 @media (max-width: 600px) {
   .program-monitor {
     padding: 0.5rem;
