@@ -122,6 +122,7 @@ sourcesElements.manageSourcesButton.addEventListener('click', async () => {
 sourcesElements.closeSourcesButton.addEventListener('click', () => {
   sourcesElements.sourcesDialog.close();
 });
+
 audioElements.manageSourcesButton.addEventListener('click', async () => {
   if (!audio.isLoaded()) {
     await audio.loadAudio({
@@ -131,10 +132,10 @@ audioElements.manageSourcesButton.addEventListener('click', async () => {
   audio.renderSourceManager();
   audioElements.sourcesDialog.showModal();
 });
-
 audioElements.closeSourcesButton.addEventListener('click', () => {
   audioElements.sourcesDialog.close();
 });
+
 galleryElements.search.addEventListener('input', gallery.render);
 galleryElements.source.addEventListener('change', () => {
   gallery.setActiveSource(galleryElements.source.value);
@@ -179,30 +180,8 @@ galleryElements.manageSourcesButton.addEventListener('click', async () => {
   await gallerySources.load();
   galleryElements.sourcesDialog.showModal();
 });
-
 galleryElements.closeSourcesButton.addEventListener('click', () => {
   galleryElements.sourcesDialog.close();
-});
-shellElements.connectButton.addEventListener('click', async () => {
-  gallery.setMessage('Conectando con OBS…');
-  try {
-    const result = await services.obs.connect();
-    gallery.setMessage(
-      `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
-      'success',
-    );
-    scenes.reset();
-    sources.reset();
-    audio.reset();
-    output.reset();
-    await panel.refreshFeatures();
-  } catch (error) {
-    gallery.setMessage(
-      `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,
-      'error',
-    );
-  }
-  await obs.refreshStatus();
 });
 galleryElements.showButton.addEventListener('click', () => {
   const selectedImage = gallery.getSelectedImage();
@@ -219,6 +198,30 @@ const auth = createAuth({
     programMonitor.stop();
     panel.stop();
   },
+});
+
+shellElements.connectButton.addEventListener('click', async () => {
+  gallery.setMessage('Conectando con OBS…');
+
+  try {
+    const result = await services.obs.connect();
+    gallery.setMessage(
+      `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
+      'success',
+    );
+
+    scenes.reset();
+    sources.reset();
+    audio.reset();
+    output.reset();
+    await panel.refreshFeatures();
+  } catch (error) {
+    gallery.setMessage(
+      `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,
+      'error',
+    );
+  }
+  await obs.refreshStatus();
 });
 
 window.addEventListener('auth:unauthorized', () => {
