@@ -9,6 +9,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   let outputLoaded = false;
   let actionInProgress = false;
   let streamTransition = null;
+  let streamClockStartedAt = null;
 
   let syncInterval = null;
   let timerInterval = null;
@@ -70,6 +71,44 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return baseDuration + elapsed;
   }
 
+  function getEstimatedStreamDuration() {
+    if (!state.stream?.active || streamClockStartedAt === null) {
+      return 0;
+    }
+
+    return Math.max(0, Date.now() - streamClockStartedAt);
+  }
+
+  function syncStreamClock(stream, sampledAt) {
+    if (!stream?.active) {
+      streamClockStartedAt = null;
+      return;
+    }
+
+    // Si ya conocemos el inicio de esta transmisión,
+    // nunca lo reajustamos con outputDuration.
+    if (streamClockStartedAt !== null) return;
+
+    const durationMs = Number(stream.durationMs) || 0;
+    const delayMs = (Number(stream.delaySeconds) || 0) * 1000;
+
+    if (durationMs > 0) {
+      /*
+       * Nos conectamos/refrescamos cuando la transmisión ya estaba
+       * en marcha. Reconstruimos aproximadamente el momento del inicio.
+       *
+       * outputDuration no incluye el período inicial de Stream Delay.
+       */
+      streamClockStartedAt = sampledAt - durationMs - delayMs;
+    } else {
+      /*
+       * Estamos viendo el comienzo de la transmisión mientras
+       * outputDuration todavía permanece en 0 por el Stream Delay.
+       */
+      streamClockStartedAt = sampledAt;
+    }
+  }
+
   function getAdditionalStreams() {
     return state.aitumStreams.filter((output) => output.type === 'stream');
   }
@@ -120,7 +159,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   function renderTimers() {
     if (!state.stream || !state.record) return;
 
-    const streamDurationMs = getEstimatedDuration(state.stream);
+    const streamDurationMs = getEstimatedStreamDuration();
 
     elements.streamDuration.textContent = formatDuration(streamDurationMs);
 
@@ -307,6 +346,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
 
       const sampledAt = Date.now();
 
+      syncStreamClock(data.stream, sampledAt);
       updateStreamBitrate(data.stream, sampledAt);
 
       state = {
