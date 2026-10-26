@@ -160,14 +160,14 @@ export function createProgramMonitor({ programService, elements }) {
     try {
       const data = await programService.screenshot(performanceProfile);
 
-      if (!running) return;
+      if (!running || paused) return;
 
       elements.image.src = data.imageData;
       elements.scene.textContent = data.sceneName || '—';
       elements.root.classList.add('has-image');
       elements.root.classList.remove('is-disconnected');
     } catch (error) {
-      if (!running) return;
+      if (!running || paused) return;
 
       elements.root.classList.add('is-disconnected');
       elements.scene.textContent = 'OBS no disponible';
@@ -212,6 +212,8 @@ export function createProgramMonitor({ programService, elements }) {
     paused = value;
 
     if (paused) {
+      refreshPending = false;
+
       if (timeoutId !== null) {
         window.clearTimeout(timeoutId);
         timeoutId = null;
@@ -354,16 +356,5 @@ export function createProgramMonitor({ programService, elements }) {
   return {
     start,
     stop,
-    refresh() {
-      if (!running || paused) return;
-
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-
-      updateFrame();
-    },
-    togglePip,
   };
 }
