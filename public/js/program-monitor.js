@@ -19,6 +19,9 @@ export function createProgramMonitor({ programService, elements }) {
   let timeoutId = null;
   let paused = false;
 
+  let requestInProgress = false;
+  let refreshPending = false;
+
   let performanceProfile =
     localStorage.getItem(PERFORMANCE_STORAGE_KEY) || 'medium';
   if (!PERFORMANCE_PROFILES[performanceProfile]) {
@@ -147,8 +150,16 @@ export function createProgramMonitor({ programService, elements }) {
 
     if (!running || paused || document.hidden) return;
 
+    if (requestInProgress) {
+      refreshPending = true;
+      return;
+    }
+
+    requestInProgress = true;
+
     try {
       const data = await programService.screenshot(performanceProfile);
+
       if (!running) return;
 
       elements.image.src = data.imageData;
@@ -160,9 +171,20 @@ export function createProgramMonitor({ programService, elements }) {
 
       elements.root.classList.add('is-disconnected');
       elements.scene.textContent = 'OBS no disponible';
+    } finally {
+      requestInProgress = false;
     }
 
-    if (!running) return;
+    if (!running || paused || document.hidden) {
+      refreshPending = false;
+      return;
+    }
+
+    if (refreshPending) {
+      refreshPending = false;
+      updateFrame();
+      return;
+    }
 
     timeoutId = window.setTimeout(
       updateFrame,
@@ -178,6 +200,7 @@ export function createProgramMonitor({ programService, elements }) {
 
   function stop() {
     running = false;
+    refreshPending = false;
 
     if (timeoutId !== null) {
       window.clearTimeout(timeoutId);

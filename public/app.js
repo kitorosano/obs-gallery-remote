@@ -218,6 +218,7 @@ const auth = createAuth({
 });
 
 window.addEventListener('auth:unauthorized', () => {
+  programMonitor.stop();
   panel.stop();
   auth.showLogin();
 });
