@@ -107,9 +107,8 @@
   color: var(--color-muted);
 }
 
-.output-time strong {
+.output-time > strong {
   font-size: clamp(1.5rem, 5vw, 2.2rem);
-
   font-variant-numeric: tabular-nums;
 }
 
@@ -139,43 +138,6 @@
   color: var(--color-muted);
 
   text-align: center;
-}
-.stream-delay-info {
-  display: flex;
-  flex-direction: column;
-
-  gap: 0.65rem;
-
-  padding: 0.85rem;
-
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 0.75rem;
-}
-
-.stream-delay-row {
-  display: flex;
-
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 1rem;
-}
-
-.stream-delay-row span {
-  font-size: 0.65rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.06em;
-
-  color: var(--color-muted);
-}
-
-.stream-delay-row strong {
-  font-variant-numeric: tabular-nums;
-
-  white-space: nowrap;
 }
 
 .stream-platforms {
@@ -233,31 +195,33 @@
 }
 
 .stream-time {
-  text-align: center;
   align-items: center;
+  text-align: center;
 }
 
 .stream-time > strong {
-  display: block;
   width: 100%;
+  line-height: 1.1;
   text-align: center;
 }
 
-.stream-time-meta {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.3rem;
+.stream-time-meta > span {
   width: 100%;
+
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
 }
 
 .stream-delay-inline {
-  color: var(--color-muted);
+  white-space: nowrap;
 }
 
 .stream-delay-inline strong {
   font: inherit;
   color: inherit;
+  letter-spacing: inherit;
 }
 
 @media (max-width: 700px) {
@@ -376,36 +340,16 @@
     background: var(--color-danger);
   }
 
+  .stream-metrics {
+    margin: 0 0 0.7rem 0;
+  }
+
   .output-time {
     padding: 0.55rem 0.65rem;
 
     gap: 0.15rem;
 
     border-radius: 0.55rem;
-  }
-
-  .output-time span {
-    font-size: 0.55rem;
-  }
-
-  .output-time strong {
-    font-size: 1.35rem;
-  }
-
-  .stream-delay-info {
-    gap: 0.4rem;
-
-    padding: 0.55rem 0.65rem;
-
-    border-radius: 0.55rem;
-  }
-
-  .stream-delay-row span {
-    font-size: 0.55rem;
-  }
-
-  .stream-delay-row strong {
-    font-size: 0.8rem;
   }
 
   .output-action {
