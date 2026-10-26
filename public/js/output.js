@@ -79,6 +79,58 @@ export function createOutput({ obsService, elements, refreshStatus }) {
     return Math.max(0, Date.now() - streamClockStartedAt);
   }
 
+  function getStreamHealth() {
+    const stream = state.stream;
+    const stats = state.stats;
+
+    if (!stream?.active || !stats) {
+      return null;
+    }
+
+    const congestion = Number(stream.congestion) || 0;
+    const droppedPercent = Number(stream.skippedFramesPercent) || 0;
+    const fps = Number(stats.activeFps) || 0;
+
+    if (
+      stream.reconnecting ||
+      congestion >= 0.5 ||
+      droppedPercent >= 5 ||
+      fps < 50
+    ) {
+      return {
+        state: 'danger',
+        label: 'PROBLEMAS',
+      };
+    }
+
+    if (congestion >= 0.1 || droppedPercent >= 1 || fps < 55) {
+      return {
+        state: 'warning',
+        label: 'ATENCIÓN',
+      };
+    }
+
+    return {
+      state: 'healthy',
+      label: 'ESTABLE',
+    };
+  }
+
+  function renderStreamHealth() {
+    const health = getStreamHealth();
+
+    if (!health) {
+      elements.streamHealth.hidden = true;
+      elements.streamHealth.className = 'stream-health';
+      return;
+    }
+
+    elements.streamHealth.hidden = false;
+    elements.streamHealth.className = `stream-health ${health.state}`;
+
+    elements.streamHealthLabel.textContent = health.label;
+  }
+
   function syncStreamClock(stream, sampledAt) {
     if (!stream?.active) {
       streamClockStartedAt = null;
@@ -216,6 +268,7 @@ export function createOutput({ obsService, elements, refreshStatus }) {
      */
     const streams = getStreamStates();
     renderStreamPlatforms(streams);
+    renderStreamHealth();
     renderStreamMetrics();
 
     const allStreamsActive =

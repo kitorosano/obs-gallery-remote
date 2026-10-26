@@ -648,9 +648,15 @@
                   <h3>Transmisiones</h3>
                 </div>
 
-                <span id="stream-status" class="output-status inactive">
-                  —
-                </span>
+                <div class="output-status-group">
+                  <span id="stream-health" class="stream-health" hidden>
+                    <span id="stream-health-label">-</span>
+                  </span>
+
+                  <span id="stream-status" class="output-status inactive">
+                    -
+                  </span>
+                </div>
               </div>
 
               <div id="stream-platforms" class="stream-platforms"></div>
@@ -662,7 +668,6 @@
                   RETRASO <strong id="stream-delay">—</strong>
                 </span>
               </div>
-
               <div class="stream-metrics">
                 <div class="stream-metric">
                   <strong id="stream-bitrate">—</strong>

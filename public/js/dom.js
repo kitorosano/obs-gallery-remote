@@ -82,17 +82,22 @@ export const outputElements = {
   outputMessage: $('#output-message'),
 
   navOutputStatus: $('#nav-output-status'),
-
   streamStatus: $('#stream-status'),
+
   streamDuration: $('#stream-duration'),
   streamDelayInfo: $('#stream-delay-info'),
   streamDelay: $('#stream-delay'),
-  streamButton: $('#stream-button'),
+
+  streamHealth: $('#stream-health'),
+  streamHealthLabel: $('#stream-health-label'),
+
   streamPlatforms: $('#stream-platforms'),
   streamBitrate: $('#stream-bitrate'),
   streamDroppedFrames: $('#stream-dropped-frames'),
   streamFps: $('#stream-fps'),
   streamCpu: $('#stream-cpu'),
+
+  streamButton: $('#stream-button'),
 
   recordStatus: $('#record-status'),
   recordDuration: $('#record-duration'),

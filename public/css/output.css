@@ -205,7 +205,7 @@
   text-align: center;
 }
 
-.stream-time-meta > span {
+.stream-delay-info {
   width: 100%;
 
   font-size: 0.65rem;
@@ -222,6 +222,58 @@
   font: inherit;
   color: inherit;
   letter-spacing: inherit;
+}
+
+.output-status-group {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 0.4rem;
+}
+
+.stream-health {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 0.3rem;
+
+  padding: 0.35rem 0.55rem;
+
+  border-radius: 999px;
+
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.stream-health[hidden] {
+  display: none;
+}
+
+.stream-health-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stream-health.healthy {
+  color: var(--color-success);
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+}
+
+.stream-health.warning {
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+}
+
+.stream-health.danger {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
 }
 
 @media (max-width: 700px) {
