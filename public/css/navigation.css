@@ -66,7 +66,7 @@
 
     width: 100%;
 
-    margin: 0;
+    margin: 0 0 1rem 0;
     padding: 0.4rem 0.6rem calc(0.4rem + env(safe-area-inset-bottom));
 
     gap: 0.35rem;
