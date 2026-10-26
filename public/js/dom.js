@@ -87,7 +87,6 @@ export const outputElements = {
   streamDuration: $('#stream-duration'),
   streamDelayInfo: $('#stream-delay-info'),
   streamDelay: $('#stream-delay'),
-  streamTotalTime: $('#stream-total-time'),
   streamButton: $('#stream-button'),
   streamPlatforms: $('#stream-platforms'),
 

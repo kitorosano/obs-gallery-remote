@@ -91,51 +91,17 @@ export function createOutput({ obsService, elements, refreshStatus }) {
   }
 
   function renderTimers() {
-    if (!state.stream || !state.record) {
-      return;
-    }
+    if (!state.stream || !state.record) return;
 
-    /*
-     * Duración que OBS WebSocket reporta
-     * como efectivamente emitida.
-     */
     const streamDurationMs = getEstimatedDuration(state.stream);
 
     elements.streamDuration.textContent = formatDuration(streamDurationMs);
 
-    /*
-     * Stream Delay configurado.
-     */
     const delaySeconds = Number(state.stream.delaySeconds) || 0;
-
-    const delayMs = delaySeconds * 1000;
 
     elements.streamDelay.textContent = `${delaySeconds} s`;
     elements.streamDelayInfo.hidden = delaySeconds <= 0;
 
-    /*
-     * Nuestra prueba mostró:
-     *
-     * OBS visual: ~00:00:30
-     * WebSocket:   00:00:19.499
-     *
-     * Por lo tanto:
-     *
-     * tiempo desde inicio
-     * =
-     * tiempo emitido + Stream Delay
-     */
-    if (state.stream.active) {
-      const totalDurationMs = streamDurationMs + delayMs;
-
-      elements.streamTotalTime.textContent = `≈ ${formatDuration(totalDurationMs)}`;
-    } else {
-      elements.streamTotalTime.textContent = '—';
-    }
-
-    /*
-     * Grabación permanece igual.
-     */
     elements.recordDuration.textContent = formatDuration(
       getEstimatedDuration(state.record),
     );
