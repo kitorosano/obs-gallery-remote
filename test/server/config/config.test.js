@@ -6,9 +6,6 @@ const environmentKeys = [
   'GALLERY_ROOT',
   'HOST',
   'PORT',
-  'OBS_HOST',
-  'OBS_PORT',
-  'OBS_PASSWORD',
   'OBS_IMAGE_INPUT',
   'OBS_STREAM_DELAY_SECONDS',
 ];
@@ -49,9 +46,6 @@ describe('config', () => {
       galleryRoot: path.join(projectRoot, 'gallery'),
       host: '0.0.0.0',
       port: 3000,
-      obsHost: '127.0.0.1',
-      obsPort: 4455,
-      obsPassword: '',
       obsImageInput: 'OBS_GALLERY_REMOTE',
       obsStreamDelaySeconds: 0,
     });
@@ -62,9 +56,6 @@ describe('config', () => {
       GALLERY_ROOT: 'C:\\OBS-Gallery',
       HOST: '192.168.1.20',
       PORT: '8080',
-      OBS_HOST: '192.168.1.30',
-      OBS_PORT: '4456',
-      OBS_PASSWORD: 'obs-password',
       OBS_IMAGE_INPUT: 'Custom Input',
       OBS_STREAM_DELAY_SECONDS: '12',
     });
@@ -76,9 +67,6 @@ describe('config', () => {
     );
     assert.equal(config.host, '192.168.1.20');
     assert.equal(config.port, 8080);
-    assert.equal(config.obsHost, '192.168.1.30');
-    assert.equal(config.obsPort, 4456);
-    assert.equal(config.obsPassword, 'obs-password');
     assert.equal(config.obsImageInput, 'Custom Input');
     assert.equal(config.obsStreamDelaySeconds, 12);
   });
@@ -91,7 +79,6 @@ describe('config', () => {
     const candidate = {
       ...config,
       port: 1,
-      obsPort: 65535,
       obsStreamDelaySeconds: 0,
     };
     assert.equal(validateConfig(candidate), candidate);
@@ -127,33 +114,6 @@ describe('config', () => {
           obsStreamDelaySeconds: 0,
         },
         message: 'Configuración inválida o ausente: PORT.',
-      },
-      {
-        name: 'puerto de OBS no entero',
-        candidate: {
-          port: 3000,
-          obsPort: '4455',
-          obsStreamDelaySeconds: 0,
-        },
-        message: 'Configuración inválida o ausente: OBS_PORT.',
-      },
-      {
-        name: 'puerto de OBS menor que uno',
-        candidate: {
-          port: 3000,
-          obsPort: 0,
-          obsStreamDelaySeconds: 0,
-        },
-        message: 'Configuración inválida o ausente: OBS_PORT.',
-      },
-      {
-        name: 'puerto de OBS mayor que 65535',
-        candidate: {
-          port: 3000,
-          obsPort: 65536,
-          obsStreamDelaySeconds: 0,
-        },
-        message: 'Configuración inválida o ausente: OBS_PORT.',
       },
       {
         name: 'retardo no entero',
@@ -199,7 +159,7 @@ describe('config', () => {
         }),
       {
         message:
-          'Configuración inválida o ausente: PORT, OBS_PORT, OBS_STREAM_DELAY_SECONDS.',
+          'Configuración inválida o ausente: PORT, OBS_STREAM_DELAY_SECONDS.',
       },
     );
   });

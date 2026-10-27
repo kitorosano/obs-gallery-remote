@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import fs from 'node:fs/promises';
 import { config, validateConfig } from './config/config.js';
-import { startObsConnection } from './obs/connection.js';
 import galleryRoutes from './routes/gallery.routes.js';
 import healthRoutes from './routes/health.routes.js';
 import obsRoutes from './routes/obs.routes.js';
@@ -36,6 +35,4 @@ app.listen(config.port, config.host, () => {
   console.log(
     'Conexión OBS: ejecuta POST /api/obs/connect desde la interfaz o una herramienta HTTP.',
   );
-
-  startObsConnection();
 });
