@@ -93,10 +93,6 @@
               </div>
             </div>
 
-            <button id="connect" class="secondary" type="button">
-              Conectar con OBS
-            </button>
-
             <button id="install-app" class="secondary" type="button" hidden>
               Instalar aplicación
             </button>
@@ -301,6 +297,26 @@
           </span>
 
           <span>Emisión</span>
+        </button>
+
+        <button class="nav-button" data-view="settings" aria-pressed="false">
+          <span class="nav-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"
+              />
+            </svg>
+          </span>
+
+          <span>Ajustes</span>
         </button>
       </nav>
 
@@ -702,6 +718,107 @@
           </div>
 
           <p id="output-message" class="message" role="status"></p>
+        </div>
+      </section>
+
+      <!-- AJUSTES -->
+      <section id="settings-view" class="app-view" hidden>
+        <div class="settings-panel">
+          <section class="settings-section">
+            <div class="section-heading">
+              <div>
+                <h2>Conexión OBS</h2>
+                <p class="muted">
+                  Configura el servidor OBS WebSocket que quieres controlar.
+                </p>
+              </div>
+            </div>
+
+            <div class="obs-connection-card">
+              <div class="obs-connection-summary">
+                <div>
+                  <span
+                    id="settings-connection-indicator"
+                    class="settings-connection-indicator disconnected"
+                  ></span>
+
+                  <strong id="settings-connection-status">
+                    Sin conexión
+                  </strong>
+                </div>
+
+                <span id="settings-obs-version" class="muted"></span>
+              </div>
+
+              <form id="obs-connection-form">
+                <label class="settings-field">
+                  <span>Dirección</span>
+
+                  <input
+                    id="settings-obs-host"
+                    type="text"
+                    placeholder="127.0.0.1"
+                    autocomplete="off"
+                    required
+                  />
+                </label>
+
+                <label class="settings-field">
+                  <span>Puerto</span>
+
+                  <input
+                    id="settings-obs-port"
+                    type="number"
+                    min="1"
+                    max="65535"
+                    value="4455"
+                    required
+                  />
+                </label>
+
+                <label class="settings-field">
+                  <span>Contraseña</span>
+
+                  <div class="settings-password-field">
+                    <input
+                      id="settings-obs-password"
+                      type="password"
+                      autocomplete="current-password"
+                      placeholder="Contraseña de OBS WebSocket"
+                    />
+
+                    <button
+                      id="settings-toggle-password"
+                      class="secondary"
+                      type="button"
+                      aria-label="Mostrar contraseña"
+                    >
+                      Mostrar
+                    </button>
+                  </div>
+                </label>
+
+                <p
+                  id="settings-connection-message"
+                  class="message"
+                  role="status"
+                ></p>
+
+                <div class="settings-actions">
+                  <button id="settings-connect" type="submit">Conectar</button>
+
+                  <button
+                    id="settings-disconnect"
+                    class="secondary"
+                    type="button"
+                    hidden
+                  >
+                    Desconectar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
         </div>
       </section>
     </main>

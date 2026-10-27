@@ -9,6 +9,7 @@ import {
   outputElements,
   programMonitorElements,
   scenesElements,
+  settingsElements,
   shellElements,
   sourcesElements,
 } from './js/dom.js';
@@ -23,6 +24,7 @@ import { createProgramMonitor } from './js/program-monitor.js';
 import { initializePwa } from './js/pwa.js';
 import { createScenes } from './js/scenes.js';
 import { createServices } from './js/services.js';
+import { createSettings } from './js/settings.js';
 import { createSources } from './js/sources.js';
 
 initializePwa();
@@ -85,6 +87,11 @@ const output = createOutput({
   elements: { ...outputElements, outputView: navigationElements.outputView },
   refreshStatus: obs.refreshStatus,
 });
+const settings = createSettings({
+  obsService: services.obs,
+  elements: settingsElements,
+  refreshObsStatus: obs.refreshStatus,
+});
 const panel = createPanelCoordinator({
   services,
   obs,
@@ -103,6 +110,7 @@ createNavigation({
   loadSources: sources.loadSources,
   loadAudio: audio.loadAudio,
   loadOutput: output.loadOutput,
+  loadSettings: settings.load,
 
   startOutputRealtime: output.startRealtime,
   stopOutputRealtime: output.stopRealtime,
@@ -185,24 +193,6 @@ galleryElements.closeSourcesButton.addEventListener('click', () => {
 galleryElements.showButton.addEventListener('click', () => {
   const selectedImage = gallery.getSelectedImage();
   if (selectedImage) obs.showImage(selectedImage);
-});
-
-shellElements.connectButton.addEventListener('click', async () => {
-  gallery.setMessage('Conectando con OBS…');
-
-  try {
-    const result = await services.obs.connect();
-    gallery.setMessage(
-      `Conexión establecida${result.version ? ` con OBS ${result.version}` : ''}.`,
-      'success',
-    );
-  } catch (error) {
-    gallery.setMessage(
-      `No se pudo conectar con OBS: ${error.message}. Verifica que OBS esté abierto y que OBS WebSocket esté habilitado.`,
-      'error',
-    );
-  }
-  await obs.refreshStatus();
 });
 
 await panel.start();

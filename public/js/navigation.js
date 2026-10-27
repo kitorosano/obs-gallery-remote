@@ -6,6 +6,7 @@ export function createNavigation({
   loadSources,
   loadAudio,
   loadOutput,
+  loadSettings,
 
   startOutputRealtime,
   stopOutputRealtime,
@@ -14,6 +15,7 @@ export function createNavigation({
     elements.galleryView.hidden = viewName !== 'gallery';
     elements.controlView.hidden = viewName !== 'control';
     elements.outputView.hidden = viewName !== 'output';
+    elements.settingsView.hidden = viewName !== 'settings';
 
     elements.navigationButtons.forEach((button) => {
       const active = button.dataset.view === viewName;
@@ -35,6 +37,10 @@ export function createNavigation({
       await loadOutput();
     } else {
       stopOutputRealtime();
+    }
+
+    if (viewName === 'settings') {
+      await loadSettings();
     }
   }
 

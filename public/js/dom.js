@@ -3,7 +3,6 @@ const $ = (selector) => document.querySelector(selector);
 export const shellElements = {
   app: document.body,
   status: $('#obs-status'),
-  connectButton: $('#connect'),
   menuButton: $('#topbar-menu-button'),
   menuDropdown: $('#topbar-menu-dropdown'),
 };
@@ -104,9 +103,29 @@ export const outputElements = {
   recordButton: $('#record-button'),
 };
 
+export const settingsElements = {
+  view: $('#settings-view'),
+  form: $('#obs-connection-form'),
+
+  host: $('#settings-obs-host'),
+  port: $('#settings-obs-port'),
+  password: $('#settings-obs-password'),
+
+  togglePassword: $('#settings-toggle-password'),
+
+  status: $('#settings-connection-status'),
+  indicator: $('#settings-connection-indicator'),
+  version: $('#settings-obs-version'),
+  message: $('#settings-connection-message'),
+
+  connectButton: $('#settings-connect'),
+  disconnectButton: $('#settings-disconnect'),
+};
+
 export const navigationElements = {
   galleryView: $('#gallery-view'),
   controlView: $('#control-view'),
   outputView: $('#output-view'),
+  settingsView: $('#settings-view'),
   navigationButtons: document.querySelectorAll('.nav-button'),
 };

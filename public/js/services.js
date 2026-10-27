@@ -22,7 +22,8 @@ export function createServices(request) {
     },
     obs: {
       status: () => request('/api/obs/status'),
-      connect: () => post('/api/obs/connect'),
+      connect: (connection) => post('/api/obs/connect', connection),
+      disconnect: () => post('/api/obs/disconnect'),
 
       showImage: (imageId) => post('/api/obs/show', { imageId }),
       currentGalleryImage: () => request('/api/obs/gallery-image'),
