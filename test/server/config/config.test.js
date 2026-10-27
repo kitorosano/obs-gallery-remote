@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { test } from 'node:test';
+import { describe, test } from 'node:test';
 
 const environmentKeys = [
   'GALLERY_ROOT',

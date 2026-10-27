@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mock, test } from 'node:test';
+import { describe, mock, test } from 'node:test';
 
 const calls = [];
 const router = {
