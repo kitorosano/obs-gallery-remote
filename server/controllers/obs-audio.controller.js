@@ -3,7 +3,7 @@ import {
   changeInputVolume,
   listAudioInputs,
 } from '../services/obs-audio.js';
-import { requireObs, sendObsError } from './obs.controller-utils.js';
+import { requireObs, sendObsError } from '../utils/obs-controller.js';
 
 function cleanInputName(inputName, res) {
   if (typeof inputName !== 'string' || !inputName.trim()) {

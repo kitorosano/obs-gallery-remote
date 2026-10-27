@@ -3,7 +3,7 @@ import {
   setSourceVisibility,
 } from '../services/obs-sources.js';
 
-import { requireObs, sendObsError } from './obs.controller-utils.js';
+import { requireObs, sendObsError } from '../utils/obs-controller.js';
 
 export async function getSources(_req, res) {
   if (!requireObs(res)) return;

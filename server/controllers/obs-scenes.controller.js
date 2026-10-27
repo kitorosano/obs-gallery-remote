@@ -1,5 +1,5 @@
 import { changeScene, listScenes } from '../services/obs-scenes.js';
-import { requireObs, sendObsError } from './obs.controller-utils.js';
+import { requireObs, sendObsError } from '../utils/obs-controller.js';
 
 export async function getScenes(_req, res) {
   if (!requireObs(res)) return;

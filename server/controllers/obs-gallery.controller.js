@@ -3,7 +3,7 @@ import {
   displayGalleryImage,
   findCurrentGalleryImage,
 } from '../services/obs-gallery.js';
-import { requireObs, sendObsError } from './obs.controller-utils.js';
+import { requireObs, sendObsError } from '../utils/obs-controller.js';
 
 export async function showImage(req, res) {
   const { imageId } = req.body || {};

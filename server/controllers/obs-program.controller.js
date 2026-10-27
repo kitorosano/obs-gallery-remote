@@ -4,7 +4,7 @@ import {
 } from '../constants/obs.js';
 import { getProgramScreenshot } from '../services/obs-program.js';
 
-import { requireObs, sendObsError } from './obs.controller-utils.js';
+import { requireObs, sendObsError } from '../utils/obs-controller.js';
 
 export async function getProgramPreview(req, res) {
   if (!requireObs(res)) return;

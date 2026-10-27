@@ -14,3 +14,13 @@ export function sendObsError(res, error, fallback) {
     error: error?.message || fallback,
   });
 }
+
+export async function respondWithObsAction(res, action, fallback) {
+  if (!requireObs(res)) return;
+
+  try {
+    return res.json({ ok: true, ...(await action()) });
+  } catch (error) {
+    return sendObsError(res, error, fallback);
+  }
+}
