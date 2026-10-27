@@ -839,6 +839,28 @@ Para acceso remoto se recomienda utilizar **Tailscale Serve** en lugar de public
 
 ---
 
+## Pruebas unitarias y cobertura
+
+Las pruebas usan el runner nativo de Node.js y están ubicadas en `test/`. Ejecutar la suite completa:
+
+```powershell
+npm test
+```
+
+Para obtener el resumen de cobertura de los módulos JavaScript cargados desde `public/` y `server/`:
+
+```powershell
+npm run coverage
+```
+
+El informe se muestra en la consola e incluye cobertura de líneas, ramas y funciones. La cobertura solo contabiliza código que fue ejecutado por una prueba; por eso, cuando se agregue funcionalidad nueva en cualquiera de las dos carpetas, debe agregarse también una prueba que ejercite sus casos exitosos y de error.
+
+También se puede validar la referencia de assets del service worker junto con las pruebas:
+
+```powershell
+npm run check
+```
+
 # Estructura del proyecto
 
 ```text

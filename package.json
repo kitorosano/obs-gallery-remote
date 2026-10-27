@@ -7,12 +7,16 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "node scripts/run-tests.js",
-    "check": "node scripts/check-project.js && node scripts/run-tests.js"
+    "test": "node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js",
+    "coverage": "c8 --all --include=public/**/*.js --include=server/**/*.js --reporter=text --reporter=html node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js",
+    "check": "node scripts/check-project.js && node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "obs-websocket-js": "^5.0.6"
+  },
+  "devDependencies": {
+    "c8": "^12.0.0"
   }
 }
