@@ -7,9 +7,9 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node --watch server/index.js",
-    "test": "node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js test/server/controllers/*.test.js",
-    "coverage": "c8 --all --include=public/**/*.js --include=server/**/*.js --reporter=text --reporter=html node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js test/server/controllers/*.test.js",
-    "check": "node scripts/check-project.js && node --test --test-concurrency=1 test/*.test.js test/server/services/*.test.js test/server/controllers/*.test.js"
+    "test": "node --experimental-test-module-mocks --test --test-concurrency=1 test/*.test.js test/server/index.test.js test/server/services/*.test.js test/server/controllers/*.test.js",
+    "coverage": "c8 --all --include=public/**/*.js --include=server/**/*.js --reporter=text --reporter=html node --experimental-test-module-mocks --test --test-concurrency=1 test/*.test.js test/server/index.test.js test/server/services/*.test.js test/server/controllers/*.test.js",
+    "check": "node scripts/check-project.js && node --experimental-test-module-mocks --test --test-concurrency=1 test/*.test.js test/server/index.test.js test/server/services/*.test.js test/server/controllers/*.test.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
