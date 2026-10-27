@@ -8,13 +8,17 @@ import { broadcastObsEvent } from '../services/obs-events.js';
 import { obsClient } from './client.js';
 
 const state = {
+  status: 'disconnected',
   connected: false,
   version: null,
   lastError: null,
-  reconnecting: false,
+  endpoint: null,
 };
 
+let connectionConfig = null;
 let reconnectTimer = null;
+let manuallyDisconnected = false;
+let connectionAttemptInProgress = false;
 
 export function getObsConnectionState() {
   return { ...state };
@@ -24,39 +28,113 @@ export function isObsConnected() {
   return state.connected;
 }
 
-export async function connectObs() {
+function isAuthenticationError(error) {
+  return /authentication failed/i.test(error?.message || '');
+}
+
+export async function connectObs(
+  options = connectionConfig,
+  { reconnecting = false } = {},
+) {
+  if (!options) {
+    throw new Error('No hay una configuración de conexión OBS.');
+  }
+
+  const { host, port, password } = options;
+
+  if (!host) {
+    throw new Error('El host de OBS es obligatorio.');
+  }
+
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error('El puerto de OBS no es válido.');
+  }
+
   if (state.connected) {
     return { obsVersion: state.version };
   }
 
-  if (state.reconnecting) {
+  if (connectionAttemptInProgress) {
     throw new Error('Ya hay una conexión con OBS en curso.');
   }
 
-  state.reconnecting = true;
+  connectionConfig = {
+    host,
+    port,
+    password: password || '',
+  };
+
+  manuallyDisconnected = false;
+  connectionAttemptInProgress = true;
+
+  state.status = reconnecting ? 'reconnecting' : 'connecting';
+  state.lastError = null;
+  state.endpoint = { host, port };
 
   try {
     const result = await obsClient.connect(
-      `ws://${config.obsHost}:${config.obsPort}`,
-      config.obsPassword || undefined,
+      `ws://${host}:${port}`,
+      password || undefined,
       { rpcVersion: RCP_VERSION },
     );
 
+    const versionInfo = await obsClient.call('GetVersion');
+
+    state.status = 'connected';
     state.connected = true;
-    state.version = result.obsVersion || null;
+    state.version = versionInfo.obsVersion || null;
     state.lastError = null;
-    return result;
+
+    return {
+      ...result,
+      obsVersion: versionInfo.obsVersion || null,
+      obsWebSocketVersion: versionInfo.obsWebSocketVersion || null,
+    };
   } catch (error) {
+    state.status = 'error';
     state.connected = false;
+    state.version = null;
     state.lastError = error?.message || 'No se pudo conectar con OBS.';
+
+    if (isAuthenticationError(error)) {
+      manuallyDisconnected = true;
+    }
+
     throw error;
   } finally {
-    state.reconnecting = false;
+    connectionAttemptInProgress = false;
+  }
+}
+
+export async function disconnectObs() {
+  manuallyDisconnected = true;
+
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+
+  try {
+    if (state.connected) {
+      await obsClient.disconnect();
+    }
+  } finally {
+    connectionAttemptInProgress = false;
+
+    state.status = 'disconnected';
+    state.connected = false;
+    state.version = null;
+    state.lastError = null;
+    state.endpoint = null;
+
+    connectionConfig = null;
   }
 }
 
 function scheduleReconnect() {
-  if (reconnectTimer) return;
+  if (reconnectTimer || manuallyDisconnected || !connectionConfig) return;
+
+  state.status = 'reconnecting';
 
   console.log(
     `Reintentando conexión con OBS en ${RECONNECT_DELAY_MS / 1000} segundos…`,
@@ -64,10 +142,11 @@ function scheduleReconnect() {
 
   reconnectTimer = setTimeout(async () => {
     reconnectTimer = null;
-    if (state.connected) return;
+
+    if (state.connected || manuallyDisconnected || !connectionConfig) return;
 
     try {
-      await connectObs();
+      await connectObs(connectionConfig, { reconnecting: true });
       console.log('Reconexión automática con OBS establecida.');
     } catch {
       scheduleReconnect();
@@ -76,11 +155,15 @@ function scheduleReconnect() {
 }
 
 export async function startObsConnection() {
-  if (state.connected || state.reconnecting) return;
+  const initialConfig = {
+    host: config.obsHost,
+    port: config.obsPort,
+    password: config.obsPassword,
+  };
 
   try {
     console.log('Intentando conexión inicial con OBS…');
-    await connectObs();
+    await connectObs(initialConfig);
     console.log('Conexión inicial con OBS establecida.');
   } catch {
     console.log('OBS no está disponible al iniciar el servidor.');
@@ -103,11 +186,24 @@ obsClient.on('ConnectionOpened', () => {
 
 obsClient.on('ConnectionClosed', () => {
   const wasConnected = state.connected;
+
   state.connected = false;
   state.version = null;
 
   console.log('Conexión con OBS cerrada.');
-  if (wasConnected) broadcastObsEvent('obs-disconnected', { connected: false });
+
+  if (wasConnected) {
+    broadcastObsEvent('obs-disconnected', {
+      connected: false,
+    });
+  }
+
+  if (manuallyDisconnected || !connectionConfig) {
+    state.status = 'disconnected';
+    return;
+  }
+
+  state.status = 'reconnecting';
   scheduleReconnect();
 });
 

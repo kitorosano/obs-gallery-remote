@@ -11,6 +11,7 @@ import {
 } from '../controllers/obs-audio.controller.js';
 import {
   connectToObs,
+  disconnectFromObs,
   getObsStatus,
 } from '../controllers/obs-connection.controller.js';
 import { subscribeToObsEvents } from '../controllers/obs-events.controller.js';
@@ -37,6 +38,7 @@ const router = Router();
 
 router.get('/status', getObsStatus);
 router.post('/connect', connectToObs);
+router.post('/disconnect', disconnectFromObs);
 
 router.get('/scenes', getScenes);
 router.post('/scenes/current', setCurrentScene);
