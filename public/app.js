@@ -1,6 +1,5 @@
 import { api } from './js/api.js';
 import { createAudio } from './js/audio.js';
-import { createAuth } from './js/auth.js';
 import { createControl } from './js/control.js';
 import {
   audioElements,
@@ -188,18 +187,6 @@ galleryElements.showButton.addEventListener('click', () => {
   if (selectedImage) obs.showImage(selectedImage);
 });
 
-const auth = createAuth({
-  authService: services.auth,
-  onAuthenticated: async () => {
-    await panel.start();
-    programMonitor.start();
-  },
-  onLoggedOut: () => {
-    programMonitor.stop();
-    panel.stop();
-  },
-});
-
 shellElements.connectButton.addEventListener('click', async () => {
   gallery.setMessage('Conectando con OBS…');
 
@@ -218,13 +205,5 @@ shellElements.connectButton.addEventListener('click', async () => {
   await obs.refreshStatus();
 });
 
-window.addEventListener('auth:unauthorized', () => {
-  programMonitor.stop();
-  panel.stop();
-  auth.showLogin();
-});
-
-if (await auth.checkSession()) {
-  await panel.start();
-  programMonitor.start();
-}
+await panel.start();
+programMonitor.start();

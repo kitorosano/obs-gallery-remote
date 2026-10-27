@@ -6,11 +6,6 @@ export function createServices(request) {
     });
 
   return {
-    auth: {
-      status: () => request('/api/auth/status'),
-      login: (password) => post('/api/auth/login', { password }),
-      logout: () => post('/api/auth/logout'),
-    },
     gallery: {
       list: () => request('/api/gallery'),
       sources: () => request('/api/gallery/sources'),

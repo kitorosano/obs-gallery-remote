@@ -9,7 +9,6 @@ const APP_SHELL = [
 
   '/js/pwa.js',
   '/js/api.js',
-  '/js/auth.js',
   '/js/dom.js',
   '/js/gallery.js',
   '/js/navigation.js',
@@ -40,7 +39,6 @@ const APP_SHELL = [
   '/css/audio.css',
   '/css/control.css',
   '/css/output.css',
-  '/css/auth.css',
   '/css/pwa.css',
   '/css/program-monitor.css',
   '/css/responsive.css',
